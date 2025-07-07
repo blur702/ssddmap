@@ -1,0 +1,761 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #141414;
+    --bg-tertiary: #1a1a1a;
+    --bg-card: #1f1f1f;
+    --bg-hover: #2a2a2a;
+    
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #707070;
+    
+    --accent-primary: #3b82f6;
+    --accent-secondary: #2563eb;
+    --accent-hover: #1d4ed8;
+    
+    --party-republican: #ef4444;
+    --party-democrat: #3b82f6;
+    --party-independent: #8b5cf6;
+    
+    --border-color: #2a2a2a;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+#container {
+    display: flex;
+    height: 100vh;
+    background-color: var(--bg-primary);
+}
+
+#sidebar {
+    width: 400px;
+    background: var(--bg-secondary);
+    padding: 0;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scrollbar styling */
+#sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+#sidebar::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+    background: var(--bg-hover);
+    border-radius: 4px;
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: #404040;
+}
+
+/* Header */
+.sidebar-header {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    padding: 30px 25px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#sidebar h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Controls section */
+.controls {
+    padding: 25px;
+    background: var(--bg-secondary);
+}
+
+#map {
+    flex: 1;
+    height: 100%;
+    background-color: var(--bg-primary);
+}
+
+/* Buttons */
+.btn {
+    display: block;
+    width: 100%;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-primary);
+}
+
+.btn-secondary.active {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+}
+
+/* Address search */
+.address-search {
+    margin-bottom: 25px;
+}
+
+.address-search label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.search-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+#addressInput {
+    flex: 1;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+#addressInput:hover {
+    border-color: var(--accent-primary);
+}
+
+#addressInput:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-btn {
+    padding: 12px 16px;
+    background: var(--accent-primary);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-btn:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.search-results {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.search-result-item {
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-result-item:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent-primary);
+    transform: translateX(2px);
+}
+
+.search-result-item .address {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.search-result-item .district {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* State selector */
+.state-selector {
+    margin-bottom: 25px;
+}
+
+.state-selector label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#stateSelect {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+#stateSelect:hover {
+    border-color: var(--accent-primary);
+}
+
+#stateSelect:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* District list */
+.district-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0 25px 25px;
+}
+
+.district-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.district-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.district-list::-webkit-scrollbar-thumb {
+    background: var(--bg-hover);
+    border-radius: 3px;
+}
+
+.district-item {
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    background: var(--bg-card);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow);
+}
+
+.district-item:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-primary);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.district-item.active {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-color: transparent;
+    transform: translateX(4px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.district-item.active .district-number,
+.district-item.active .member-name {
+    color: white;
+}
+
+/* At-large district styling */
+.district-item.at-large {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.05));
+    border-color: rgba(168, 85, 247, 0.3);
+}
+
+.district-item.at-large:hover {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
+    border-color: var(--party-independent);
+}
+
+.district-item.at-large .district-number {
+    color: #c084fc;
+    font-weight: 800;
+}
+
+/* District header */
+.district-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.district-number {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.member-name {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* Party badges */
+.party-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.party-badge.republican {
+    background-color: var(--party-republican);
+}
+
+.party-badge.democrat {
+    background-color: var(--party-democrat);
+}
+
+.party-badge.independent {
+    background-color: var(--party-independent);
+}
+
+/* Info panel */
+.info-panel {
+    background: var(--bg-tertiary);
+    padding: 25px;
+    margin: 0 25px 25px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+}
+
+.info-panel h3 {
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+#districtInfo {
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+#districtInfo p {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+/* Member details */
+.member-details {
+    margin-top: 20px;
+}
+
+.member-photo {
+    width: 120px;
+    height: 144px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    display: block;
+    box-shadow: var(--shadow-lg);
+    border: 3px solid var(--bg-hover);
+}
+
+.member-details h4 {
+    font-size: 22px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.party-affiliation {
+    margin-bottom: 20px;
+}
+
+.contact-info {
+    margin-bottom: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.contact-info p {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contact-info strong {
+    color: var(--text-secondary);
+    font-weight: 600;
+    min-width: 70px;
+}
+
+.contact-info a {
+    color: var(--accent-primary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    padding: 6px 12px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.contact-info a:hover {
+    background: rgba(59, 130, 246, 0.2);
+    transform: translateX(2px);
+}
+
+/* Social links */
+.social-links {
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.social-links p {
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.social-link {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    background-color: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background-color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Loading indicator */
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    padding: 40px;
+    border-radius: 16px;
+    font-size: 18px;
+    z-index: 1000;
+    display: none;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+}
+
+.loading.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Map popup styles */
+.leaflet-popup-content-wrapper {
+    background: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+}
+
+.leaflet-popup-content {
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.leaflet-popup-tip {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+}
+
+.district-popup {
+    min-width: 220px;
+    padding: 8px;
+}
+
+.district-popup h4 {
+    margin-bottom: 8px;
+    color: var(--accent-primary);
+    font-weight: 700;
+}
+
+.district-popup p {
+    margin: 4px 0;
+    color: var(--text-secondary);
+}
+
+/* Leaflet controls */
+.leaflet-control-zoom a {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.leaflet-control-zoom a:hover {
+    background: var(--bg-hover);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #container {
+        flex-direction: column;
+    }
+    
+    #sidebar {
+        width: 100%;
+        height: 50vh;
+        order: 2;
+    }
+    
+    #map {
+        height: 50vh;
+        order: 1;
+    }
+    
+    .sidebar-header {
+        padding: 20px;
+    }
+    
+    #sidebar h1 {
+        font-size: 24px;
+    }
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+    background: var(--accent-primary);
+    color: white;
+}
+
+/* Map legend */
+.map-legend {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    z-index: 1000;
+    min-width: 200px;
+}
+
+.map-legend h4 {
+    margin: 0 0 15px 0;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.legend-scale {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 30px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+/* Section divider */
+.section-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 25px 0;
+}
+
+/* Legislation section */
+.legislation-section {
+    margin-bottom: 25px;
+}
+
+.legislation-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bill-selector {
+    margin-bottom: 20px;
+}
+
+.bill-selector label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#billSelect {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+#billSelect:hover {
+    border-color: var(--accent-primary);
+}
+
+#billSelect:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Vote colors */
+:root {
+    --vote-yes: #22c55e;
+    --vote-no: #ef4444;
+    --vote-abstain: #6b7280;
+    --vote-not-voting: #374151;
+}

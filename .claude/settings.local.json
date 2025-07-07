@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.census.gov)",
+      "WebFetch(domain:www2.census.gov)",
+      "Bash(wget:*)",
+      "Bash(ls:*)",
+      "Bash(python3:*)"
+    ],
+    "deny": []
+  }
+}

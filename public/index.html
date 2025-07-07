@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Congressional Districts Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="container">
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <h1>US Congressional Districts</h1>
+                <p class="subtitle">Interactive map with current House representatives</p>
+            </div>
+            
+            <div class="controls">
+                <button id="viewUSA" class="btn btn-primary">
+                    <span>View Full USA Map</span>
+                </button>
+                
+                <button id="toggleCounties" class="btn btn-secondary">
+                    <span>Show Counties</span>
+                </button>
+                
+                <button id="toggleRepView" class="btn btn-secondary">
+                    <span>Show by Representation</span>
+                </button>
+                
+                <div class="section-divider"></div>
+                
+                <div class="legislation-section">
+                    <h3>Legislation Tracking</h3>
+                    <div class="bill-selector">
+                        <label for="billSelect">Select Bill</label>
+                        <select id="billSelect">
+                            <option value="">Choose a bill...</option>
+                            <option value="hr1-2025">H.R. 1 - One Big Beautiful Bill Act</option>
+                        </select>
+                    </div>
+                    <button id="toggleVoteView" class="btn btn-secondary" style="display: none;">
+                        <span>Show Voting Pattern</span>
+                    </button>
+                </div>
+                
+                <div class="address-search">
+                    <label for="addressInput">Search Address</label>
+                    <div class="search-container">
+                        <input type="text" id="addressInput" placeholder="Enter address, city, or ZIP code..." />
+                        <button id="searchBtn" class="search-btn" title="Search">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="searchResults" class="search-results"></div>
+                </div>
+                
+                <div class="state-selector">
+                    <label for="stateSelect">Select State</label>
+                    <select id="stateSelect">
+                        <option value="">Choose a state...</option>
+                    </select>
+                </div>
+                
+                <div id="districtList" class="district-list">
+                    <!-- Districts will be populated here -->
+                </div>
+            </div>
+            
+            <div id="info" class="info-panel">
+                <h3>District Information</h3>
+                <div id="districtInfo">
+                    <p>Select a district to view details</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="map">
+            <div id="legend" class="map-legend" style="display: none;">
+                <h4>Representatives per State</h4>
+                <div class="legend-scale"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loading" class="loading">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <span>Loading...</span>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

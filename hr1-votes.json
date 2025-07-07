@@ -1,0 +1,17 @@
+{
+  "bill": {
+    "number": "H.R. 1",
+    "title": "One Big Beautiful Bill Act",
+    "congress": 119,
+    "voteDate": "2025-07-03",
+    "result": "Passed",
+    "totalYes": 218,
+    "totalNo": 214,
+    "totalNotVoting": 3
+  },
+  "votes": {
+    "comment": "This is mock data based on the reported party-line vote. Republicans generally voted YES, Democrats voted NO, with exceptions for Brian Fitzpatrick (R-PA) and Thomas Massie (R-KY) who voted NO.",
+    "republicans_no": ["PA-1", "KY-4"],
+    "note": "Since actual vote data isn't available, this uses party affiliation from member data to approximate the vote"
+  }
+}
