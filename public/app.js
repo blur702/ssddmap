@@ -28,6 +28,9 @@ let stateRepCounts = null;
 let showVoteView = false;
 let currentBillVotes = null;
 let houseMembersCache = null;
+let showCountyPolitics = false;
+let countyPoliticsData = null;
+let showCountyFIPS = false;
 
 // Elements
 const stateSelect = document.getElementById('stateSelect');
@@ -43,6 +46,8 @@ const toggleRepViewBtn = document.getElementById('toggleRepView');
 const legendEl = document.getElementById('legend');
 const billSelect = document.getElementById('billSelect');
 const toggleVoteViewBtn = document.getElementById('toggleVoteView');
+const toggleCountyPoliticsBtn = document.getElementById('toggleCountyPolitics');
+const toggleCountyFIPSBtn = document.getElementById('toggleCountyFIPS');
 
 // Show/hide loading indicator
 function setLoading(show) {
@@ -1022,6 +1027,334 @@ toggleVoteViewBtn.addEventListener('click', async () => {
         // Reset to original colors
         if (allDistrictsLayer) {
             loadUSAMap();
+        }
+    }
+});
+
+// Load county political data
+async function loadCountyPolitics() {
+    try {
+        setLoading(true);
+        const response = await fetch('/api/county-politics');
+        countyPoliticsData = await response.json();
+        return countyPoliticsData;
+    } catch (error) {
+        console.error('Error loading county politics:', error);
+        return null;
+    } finally {
+        setLoading(false);
+    }
+}
+
+// Apply county political colors
+function applyCountyPoliticalColors() {
+    if (!countyLayer || !countyPoliticsData) return;
+    
+    countyLayer.eachLayer(layer => {
+        if (layer.feature && layer.feature.properties) {
+            const state = layer.feature.properties.state;
+            const countyName = layer.feature.properties.name;
+            const countyKey = `${state}-${countyName}`;
+            const countyData = countyPoliticsData.counties[countyKey];
+            
+            if (countyData) {
+                let color, opacity;
+                switch(countyData.control) {
+                    case 'republican':
+                        color = '#ef4444'; // Red
+                        opacity = 0.6;
+                        break;
+                    case 'democrat':
+                        color = '#3b82f6'; // Blue
+                        opacity = 0.6;
+                        break;
+                    case 'split':
+                        color = '#a855f7'; // Purple
+                        opacity = 0.6;
+                        break;
+                    case 'independent':
+                        color = '#8b5cf6'; // Violet
+                        opacity = 0.6;
+                        break;
+                    default:
+                        color = '#6b7280'; // Gray
+                        opacity = 0.3;
+                }
+                
+                layer.setStyle({
+                    fillColor: color,
+                    fillOpacity: opacity,
+                    color: '#333',
+                    weight: 0.5
+                });
+                
+                // Update tooltip with political info
+                let tooltipContent = `<strong>${countyName} County, ${state}</strong><br>`;
+                if (countyData.control === 'split') {
+                    tooltipContent += `Split between parties<br>`;
+                    countyData.districts.forEach(d => {
+                        tooltipContent += `${d.district}: ${d.party}<br>`;
+                    });
+                } else if (countyData.control !== 'noData') {
+                    tooltipContent += `${countyData.control.charAt(0).toUpperCase() + countyData.control.slice(1)} control<br>`;
+                    if (countyData.districts.length > 0) {
+                        tooltipContent += `Rep: ${countyData.districts[0].member}`;
+                    }
+                } else {
+                    tooltipContent += `No data available`;
+                }
+                
+                layer.bindTooltip(tooltipContent, {
+                    permanent: false,
+                    direction: 'center',
+                    className: 'county-tooltip'
+                });
+            }
+        }
+    });
+}
+
+// Create county politics legend
+function createCountyPoliticsLegend() {
+    const legendScale = document.querySelector('.legend-scale');
+    legendScale.innerHTML = '';
+    
+    // Add statistics if available
+    if (countyPoliticsData && countyPoliticsData.stats) {
+        const stats = countyPoliticsData.stats;
+        const statsDiv = document.createElement('div');
+        statsDiv.className = 'county-stats';
+        statsDiv.innerHTML = `
+            <h5>County Control (${countyPoliticsData.total} total)</h5>
+            <p style="font-size: 12px; margin: 5px 0;">
+                <span style="color: #ef4444;">Republican: ${stats.republican}</span><br>
+                <span style="color: #3b82f6;">Democrat: ${stats.democrat}</span><br>
+                <span style="color: #a855f7;">Split: ${stats.split}</span><br>
+                <span style="color: #6b7280;">No data: ${stats.noData}</span>
+            </p>
+            <hr style="margin: 10px 0; border-color: var(--border-color);">
+        `;
+        legendScale.appendChild(statsDiv);
+    }
+    
+    const legendData = [
+        { control: 'republican', color: '#ef4444', label: 'Republican District(s)' },
+        { control: 'democrat', color: '#3b82f6', label: 'Democratic District(s)' },
+        { control: 'split', color: '#a855f7', label: 'Split Control' },
+        { control: 'independent', color: '#8b5cf6', label: 'Independent' },
+        { control: 'noData', color: '#6b7280', label: 'No Data' }
+    ];
+    
+    legendData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'legend-item';
+        div.innerHTML = `
+            <div class="legend-color" style="background-color: ${item.color}"></div>
+            <span>${item.label}</span>
+        `;
+        legendScale.appendChild(div);
+    });
+}
+
+// Toggle county politics view
+toggleCountyPoliticsBtn.addEventListener('click', async () => {
+    showCountyPolitics = !showCountyPolitics;
+    toggleCountyPoliticsBtn.classList.toggle('active', showCountyPolitics);
+    
+    if (showCountyPolitics) {
+        toggleCountyPoliticsBtn.querySelector('span').textContent = 'Hide County Politics';
+        
+        // Turn off other views
+        if (showRepresentationView) {
+            showRepresentationView = false;
+            toggleRepViewBtn.classList.remove('active');
+            toggleRepViewBtn.querySelector('span').textContent = 'Show by Representation';
+        }
+        if (showVoteView) {
+            showVoteView = false;
+            toggleVoteViewBtn.classList.remove('active');
+            toggleVoteViewBtn.querySelector('span').textContent = 'Show Voting Pattern';
+        }
+        
+        // Make sure counties are visible
+        if (!showCounties) {
+            showCounties = true;
+            toggleCountiesBtn.classList.add('active');
+            toggleCountiesBtn.querySelector('span').textContent = 'Hide Counties';
+            if (!countyLayer) {
+                await loadCountyBoundaries();
+            } else {
+                countyLayer.addTo(map);
+            }
+        }
+        
+        // Load politics data if not already loaded
+        if (!countyPoliticsData) {
+            await loadCountyPolitics();
+        }
+        
+        // Apply colors and show legend
+        applyCountyPoliticalColors();
+        createCountyPoliticsLegend();
+        legendEl.style.display = 'block';
+    } else {
+        toggleCountyPoliticsBtn.querySelector('span').textContent = 'Show County Politics';
+        legendEl.style.display = 'none';
+        
+        // Remove FIPS labels if they exist
+        removeFIPSLabels();
+        
+        // Reset county colors
+        if (countyLayer) {
+            countyLayer.eachLayer(layer => {
+                layer.setStyle({
+                    fillColor: 'transparent',
+                    fillOpacity: 0,
+                    color: '#666666',
+                    weight: 0.5,
+                    opacity: 0.6,
+                    dashArray: '2, 4'
+                });
+            });
+        }
+    }
+});
+
+// Apply FIPS code display to counties
+function applyCountyFIPSDisplay() {
+    if (!countyLayer) return;
+    
+    countyLayer.eachLayer(layer => {
+        if (layer.feature && layer.feature.properties) {
+            const props = layer.feature.properties;
+            const fipsCode = props.geoid || 'N/A';
+            const countyName = props.name;
+            const state = props.state;
+            
+            // Style for FIPS display - light background with visible text
+            layer.setStyle({
+                fillColor: '#f3f4f6',
+                fillOpacity: 0.7,
+                color: '#1f2937',
+                weight: 1
+            });
+            
+            // Create a permanent label with FIPS code
+            const center = layer.getBounds().getCenter();
+            const label = L.divIcon({
+                className: 'fips-label',
+                html: `<div style="background: rgba(255,255,255,0.9); padding: 2px 4px; border-radius: 3px; border: 1px solid #333; font-size: 10px; font-weight: bold; color: #000;">${fipsCode}</div>`,
+                iconSize: [50, 20],
+                iconAnchor: [25, 10]
+            });
+            
+            // Store the label marker so we can remove it later
+            if (!layer.fipsMarker) {
+                layer.fipsMarker = L.marker(center, { icon: label });
+            }
+            layer.fipsMarker.addTo(map);
+            
+            // Update tooltip
+            const tooltipContent = `<strong>${countyName} County, ${state}</strong><br>FIPS Code: ${fipsCode}`;
+            layer.bindTooltip(tooltipContent, {
+                permanent: false,
+                direction: 'center',
+                className: 'county-tooltip'
+            });
+        }
+    });
+}
+
+// Remove FIPS labels
+function removeFIPSLabels() {
+    if (!countyLayer) return;
+    
+    countyLayer.eachLayer(layer => {
+        if (layer.fipsMarker) {
+            map.removeLayer(layer.fipsMarker);
+        }
+    });
+}
+
+// Create FIPS legend
+function createFIPSLegend() {
+    const legendScale = document.querySelector('.legend-scale');
+    legendScale.innerHTML = '';
+    
+    const legendDiv = document.createElement('div');
+    legendDiv.innerHTML = `
+        <h5>County FIPS Codes</h5>
+        <p style="font-size: 12px; margin: 10px 0;">
+            FIPS (Federal Information Processing Standards) codes uniquely identify counties.<br><br>
+            Format: <strong>SSCCC</strong><br>
+            SS = State code (2 digits)<br>
+            CCC = County code (3 digits)<br><br>
+            Example: 06037 = Los Angeles County, CA
+        </p>
+    `;
+    legendScale.appendChild(legendDiv);
+}
+
+// Toggle county FIPS view
+toggleCountyFIPSBtn.addEventListener('click', async () => {
+    showCountyFIPS = !showCountyFIPS;
+    toggleCountyFIPSBtn.classList.toggle('active', showCountyFIPS);
+    
+    if (showCountyFIPS) {
+        toggleCountyFIPSBtn.querySelector('span').textContent = 'Hide County FIPS';
+        
+        // Turn off other views
+        if (showRepresentationView) {
+            showRepresentationView = false;
+            toggleRepViewBtn.classList.remove('active');
+            toggleRepViewBtn.querySelector('span').textContent = 'Show by Representation';
+        }
+        if (showVoteView) {
+            showVoteView = false;
+            toggleVoteViewBtn.classList.remove('active');
+            toggleVoteViewBtn.querySelector('span').textContent = 'Show Voting Pattern';
+        }
+        if (showCountyPolitics) {
+            showCountyPolitics = false;
+            toggleCountyPoliticsBtn.classList.remove('active');
+            toggleCountyPoliticsBtn.querySelector('span').textContent = 'Show County Politics';
+        }
+        
+        // Make sure counties are visible
+        if (!showCounties) {
+            showCounties = true;
+            toggleCountiesBtn.classList.add('active');
+            toggleCountiesBtn.querySelector('span').textContent = 'Hide Counties';
+            if (!countyLayer) {
+                await loadCountyBoundaries();
+            } else {
+                countyLayer.addTo(map);
+            }
+        }
+        
+        // Apply FIPS display and show legend
+        applyCountyFIPSDisplay();
+        createFIPSLegend();
+        legendEl.style.display = 'block';
+    } else {
+        toggleCountyFIPSBtn.querySelector('span').textContent = 'Show County FIPS';
+        legendEl.style.display = 'none';
+        
+        // Remove FIPS labels
+        removeFIPSLabels();
+        
+        // Reset county colors
+        if (countyLayer) {
+            countyLayer.eachLayer(layer => {
+                layer.setStyle({
+                    fillColor: 'transparent',
+                    fillOpacity: 0,
+                    color: '#666666',
+                    weight: 0.5,
+                    opacity: 0.6,
+                    dashArray: '2, 4'
+                });
+            });
         }
     }
 });

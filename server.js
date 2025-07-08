@@ -697,6 +697,111 @@ app.get('/api/find-location', async (req, res) => {
     }
 });
 
+// Endpoint to analyze county political control
+app.get('/api/county-politics', async (req, res) => {
+    try {
+        // Load all necessary data
+        await loadDistrictGeometries();
+        await loadCountyData();
+        const members = await fetchHouseMembers();
+        
+        if (!countyGeometryCache || !districtGeometryCache) {
+            return res.status(500).json({ error: 'Data not loaded' });
+        }
+        
+        const countyPolitics = {};
+        const countyStats = {
+            republican: 0,
+            democrat: 0,
+            independent: 0,
+            split: 0,
+            noData: 0
+        };
+        
+        // For each county, find which congressional district(s) it overlaps
+        for (const county of countyGeometryCache) {
+            const countyKey = `${county.stateAbbr}-${county.name}`;
+            const overlappingDistricts = [];
+            
+            // Check intersection with each district
+            for (const district of districtGeometryCache) {
+                try {
+                    // Create turf polygons
+                    const countyPoly = turf.polygon(
+                        county.geometry.type === 'Polygon' ? 
+                        [county.geometry.coordinates[0]] : 
+                        county.geometry.coordinates[0]
+                    );
+                    
+                    const districtPoly = turf.polygon(
+                        district.geometry.type === 'Polygon' ? 
+                        [district.geometry.coordinates[0]] : 
+                        district.geometry.coordinates[0]
+                    );
+                    
+                    // Check if they intersect
+                    if (turf.booleanIntersects(countyPoly, districtPoly)) {
+                        const memberKey = `${district.state}-${parseInt(district.district)}`;
+                        const member = members[memberKey];
+                        
+                        if (member) {
+                            overlappingDistricts.push({
+                                district: `${district.state}-${district.district}`,
+                                party: member.party,
+                                member: member.name
+                            });
+                        }
+                    }
+                } catch (err) {
+                    // Skip invalid geometries
+                }
+            }
+            
+            // Determine county's political control
+            const parties = [...new Set(overlappingDistricts.map(d => d.party))];
+            let control = 'noData';
+            
+            if (overlappingDistricts.length === 0) {
+                countyStats.noData++;
+            } else if (parties.length === 1) {
+                // County is entirely in one party's district(s)
+                const party = parties[0];
+                if (party === 'R') {
+                    control = 'republican';
+                    countyStats.republican++;
+                } else if (party === 'D') {
+                    control = 'democrat';
+                    countyStats.democrat++;
+                } else {
+                    control = 'independent';
+                    countyStats.independent++;
+                }
+            } else {
+                // County is split between parties
+                control = 'split';
+                countyStats.split++;
+            }
+            
+            countyPolitics[countyKey] = {
+                county: county.name,
+                state: county.stateAbbr,
+                control: control,
+                districts: overlappingDistricts
+            };
+        }
+        
+        res.json({
+            counties: countyPolitics,
+            stats: countyStats,
+            total: countyGeometryCache.length
+        });
+        
+    } catch (error) {
+        console.error('County politics error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Endpoint to get bill voting data
 app.get('/api/bill-votes/:billId', async (req, res) => {
     try {
