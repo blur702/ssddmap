@@ -1,103 +1,32 @@
-// Define bounds for USA and territories
-// This includes continental US, Alaska, Hawaii, Puerto Rico, US Virgin Islands, Guam
-const usaBounds = L.latLngBounds(
-    L.latLng(17, -172),  // Southwest corner (includes Hawaii and Pacific territories)
-    L.latLng(72, -65)    // Northeast corner (includes Alaska and Atlantic territories)
-);
-
-// Initialize map with smooth zoom animations and USA bounds
+// Initialize map with smooth zoom animations
 const map = L.map('map', {
     zoomAnimation: true,
     zoomAnimationThreshold: 4,
     fadeAnimation: true,
-    markerZoomAnimation: true,
-    maxBounds: usaBounds,
-    maxBoundsViscosity: 0.7, // Softer bounds to prevent harsh snapping
-    minZoom: 3,
-    maxZoom: 12
-}).setView([37.0902, -95.7129], 4); // Center of continental USA (Kansas)
+    markerZoomAnimation: true
+}).setView([39.8283, -98.5795], 4); // Center of USA
 
-// Create custom panes for proper layering
-map.createPane('districts');
-map.getPane('districts').style.zIndex = 200; // Below labels (which are at 650)
-
-// Map style configurations
-const mapStyles = {
-    dark: {
-        base: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
-        labels: 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',
-        attribution: '© OpenStreetMap contributors © CARTO'
-    },
-    light: {
-        base: 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
-        labels: 'https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png',
-        attribution: '© OpenStreetMap contributors © CARTO'
-    },
-    voyager: {
-        base: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
-        labels: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_only_labels/{z}/{x}/{y}{r}.png',
-        attribution: '© OpenStreetMap contributors © CARTO'
-    },
-    satellite: {
-        base: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        labels: 'https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png',
-        attribution: '© Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN'
-    },
-    terrain: {
-        base: 'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-background/{z}/{x}/{y}{r}.png',
-        labels: 'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-labels/{z}/{x}/{y}{r}.png',
-        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>'
-    }
-};
-
-// Current map layers
-let currentBaseLayer = null;
-let currentLabelLayer = null;
-
-// Function to set map style
-function setMapStyle(style) {
-    const styleConfig = mapStyles[style] || mapStyles.dark;
-    
-    // Remove existing layers
-    if (currentBaseLayer) map.removeLayer(currentBaseLayer);
-    if (currentLabelLayer) map.removeLayer(currentLabelLayer);
-    
-    // Add new base layer
-    currentBaseLayer = L.tileLayer(styleConfig.base, {
-        attribution: styleConfig.attribution,
-        subdomains: 'abcd',
-        maxZoom: 12,
-        minZoom: 3,
-        pane: 'tilePane'
-    }).addTo(map);
-    
-    // Add new label layer
-    currentLabelLayer = L.tileLayer(styleConfig.labels, {
-        subdomains: 'abcd',
-        maxZoom: 12,
-        minZoom: 3,
-        pane: 'shadowPane'
-    }).addTo(map);
-}
-
-// Initialize with light theme to match the new bright design
-setMapStyle('voyager');
+// Add dark theme base tile layer
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© OpenStreetMap contributors © CARTO',
+    subdomains: 'abcd',
+    maxZoom: 20
+}).addTo(map);
 
 // Global variables
 let currentLayer = null;
 let allDistrictsLayer = null;
 let stateDistrictsLayer = null;
-let stateOutlineLayer = null;
 let selectedState = null;
 let selectedDistrict = null;
 let addressMarker = null;
-let distanceLine = null;
-let boundaryMarker = null;
 let searchTimeout = null;
 let countyLayer = null;
 let showCounties = false;
 let showRepresentationView = false;
 let stateRepCounts = null;
+let showVoteView = false;
+let currentBillVotes = null;
 let houseMembersCache = null;
 let showCountyPolitics = false;
 let countyPoliticsData = null;
@@ -111,70 +40,18 @@ const loadingEl = document.getElementById('loading');
 const districtInfo = document.getElementById('districtInfo');
 const addressInput = document.getElementById('addressInput');
 const searchBtn = document.getElementById('searchBtn');
-const autosuggestToggle = document.getElementById('autosuggestToggle');
 const searchResults = document.getElementById('searchResults');
 const toggleCountiesBtn = document.getElementById('toggleCounties');
 const toggleRepViewBtn = document.getElementById('toggleRepView');
 const legendEl = document.getElementById('legend');
+const billSelect = document.getElementById('billSelect');
+const toggleVoteViewBtn = document.getElementById('toggleVoteView');
 const toggleCountyPoliticsBtn = document.getElementById('toggleCountyPolitics');
 const toggleCountyFIPSBtn = document.getElementById('toggleCountyFIPS');
-const refreshCacheBtn = document.getElementById('refreshCacheBtn');
-const cacheStatusEl = document.getElementById('cacheStatus');
-const mapStyleSelect = document.getElementById('mapStyle');
 
 // Show/hide loading indicator
 function setLoading(show) {
     loadingEl.classList.toggle('show', show);
-}
-
-// Get party color
-function getPartyColor(party, opacity = 0.7) {
-    switch(party) {
-        case 'R':
-            return { fill: '#ef4444', stroke: '#dc2626', opacity: opacity }; // Republican red
-        case 'D':
-            return { fill: '#3b82f6', stroke: '#2563eb', opacity: opacity }; // Democrat blue
-        case 'I':
-            return { fill: '#8b5cf6', stroke: '#7c3aed', opacity: opacity }; // Independent purple
-        default:
-            return { fill: '#6b7280', stroke: '#4b5563', opacity: opacity }; // Unknown gray
-    }
-}
-
-// Create state outline from districts (but don't add to map yet)
-function createStateOutline(districtFeatures) {
-    if (stateOutlineLayer) {
-        map.removeLayer(stateOutlineLayer);
-    }
-    
-    // Create a union of all district geometries to form state outline
-    stateOutlineLayer = L.geoJSON({
-        type: 'FeatureCollection',
-        features: districtFeatures
-    }, {
-        style: {
-            fillOpacity: 0,
-            color: '#475569', // Darker gray for state outline
-            weight: 3.5, // Bolder than districts (1.5)
-            opacity: 0.8,
-            dashArray: null // Solid line for state borders
-        },
-        interactive: false // Don't respond to mouse events
-    });
-}
-
-// Show the pre-created state outline
-function showStateOutline() {
-    if (stateOutlineLayer && !map.hasLayer(stateOutlineLayer)) {
-        stateOutlineLayer.addTo(map);
-    }
-}
-
-// Hide state outline
-function hideStateOutline() {
-    if (stateOutlineLayer && map.hasLayer(stateOutlineLayer)) {
-        map.removeLayer(stateOutlineLayer);
-    }
 }
 
 // Fetch House members data
@@ -182,7 +59,7 @@ async function fetchHouseMembers() {
     if (houseMembersCache) return houseMembersCache;
     
     try {
-        const response = await fetch('/ssddmap/api/members');
+        const response = await fetch('/api/members');
         houseMembersCache = await response.json();
         return houseMembersCache;
     } catch (error) {
@@ -194,7 +71,7 @@ async function fetchHouseMembers() {
 // Load available states
 async function loadStates() {
     try {
-        const response = await fetch('/ssddmap/api/states');
+        const response = await fetch('/api/states');
         const states = await response.json();
         
         states.forEach(state => {
@@ -212,7 +89,7 @@ async function loadStates() {
 async function loadStateDistricts(stateCode) {
     try {
         setLoading(true);
-        const response = await fetch(`/ssddmap/api/state/${stateCode}`);
+        const response = await fetch(`/api/state/${stateCode}`);
         const districts = await response.json();
         
         // Clear district list
@@ -274,7 +151,7 @@ async function loadStateDistricts(stateCode) {
 async function loadDistrict(stateCode, districtNumber) {
     try {
         setLoading(true);
-        const response = await fetch(`/ssddmap/api/district/${stateCode}/${districtNumber}`);
+        const response = await fetch(`/api/district/${stateCode}/${districtNumber}`);
         const data = await response.json();
         
         // Clear current layer
@@ -282,15 +159,13 @@ async function loadDistrict(stateCode, districtNumber) {
             map.removeLayer(currentLayer);
         }
         
-        // Add new district layer with party-based colors
-        // Use consistent opacity (0.5) for all districts including at-large
-        const partyColors = data.member ? getPartyColor(data.member.party, 0.5) : getPartyColor(null, 0.5);
+        // Add new district layer
+        const fillColor = data.isAtLarge ? '#a855f7' : '#3b82f6'; // Purple for at-large, blue for regular
         currentLayer = L.geoJSON(data.geojson, {
-            pane: 'districts',
             style: {
-                fillColor: partyColors.fill,
-                fillOpacity: partyColors.opacity,
-                color: partyColors.stroke,
+                fillColor: fillColor,
+                fillOpacity: 0.7,
+                color: data.isAtLarge ? '#c084fc' : '#60a5fa',
                 weight: 3
             },
             onEachFeature: (feature, layer) => {
@@ -305,22 +180,7 @@ async function loadDistrict(stateCode, districtNumber) {
                     popupContent += `
                         <p><strong>${data.member.name}</strong> (${data.member.party})</p>
                     `;
-                    if (data.member.website) {
-                        popupContent += `
-                            <p><a href="${data.member.website}" target="_blank" rel="noopener noreferrer">Official Website</a></p>
-                        `;
-                    }
                 }
-                
-                // Add ZIP code lookup link
-                popupContent += `
-                    <p style="margin-top: 8px; font-size: 12px;">
-                        <a href="#" onclick="showDistrictZipCodes('${stateCode}', '${districtNumber}'); return false;" 
-                           style="color: var(--accent-primary); text-decoration: underline;">
-                           View ZIP codes for this district →
-                        </a>
-                    </p>
-                `;
                 
                 popupContent += `</div>`;
                 layer.bindPopup(popupContent);
@@ -328,21 +188,11 @@ async function loadDistrict(stateCode, districtNumber) {
         }).addTo(map);
         
         // Fit map to district bounds with smooth animation
-        const bounds = currentLayer.getBounds();
-        
-        // Special handling for territories that might be far from continental US
-        let zoomOptions = { 
+        map.flyToBounds(currentLayer.getBounds(), { 
             padding: [50, 50],
             duration: 0.6,
             easeLinearity: 0.5
-        };
-        
-        // For territories, ensure we don't zoom out too far
-        if (['PR', 'VI', 'GU', 'AS', 'MP'].includes(stateCode)) {
-            zoomOptions.maxZoom = 10;
-        }
-        
-        map.flyToBounds(bounds, zoomOptions);
+        });
         
         // Update info panel with member details
         updateDistrictInfo(stateCode, districtNumber, data.member, data.isAtLarge);
@@ -364,12 +214,8 @@ async function loadStateMap(stateCode) {
         if (stateDistrictsLayer) {
             map.removeLayer(stateDistrictsLayer);
         }
-        if (stateOutlineLayer) {
-            map.removeLayer(stateOutlineLayer);
-            stateOutlineLayer = null;
-        }
         
-        const response = await fetch(`/ssddmap/api/state/${stateCode}`);
+        const response = await fetch(`/api/state/${stateCode}`);
         const districts = await response.json();
         
         const layers = [];
@@ -383,16 +229,14 @@ async function loadStateMap(stateCode) {
         // Load each district
         for (const district of districts) {
             try {
-                const distResponse = await fetch(`/ssddmap/api/district/${district.state}/${district.district}`);
+                const distResponse = await fetch(`/api/district/${district.state}/${district.district}`);
                 const distData = await distResponse.json();
                 
-                const partyColors = distData.member ? getPartyColor(distData.member.party, 0.5) : getPartyColor(null, 0.5);
                 const layer = L.geoJSON(distData.geojson, {
-                    pane: 'districts',
                     style: {
-                        fillColor: partyColors.fill,
-                        fillOpacity: partyColors.opacity,
-                        color: partyColors.stroke,
+                        fillColor: getDistrictColor(parseInt(district.district)),
+                        fillOpacity: 0.6,
+                        color: '#4a5568',
                         weight: 1.5
                     },
                     onEachFeature: (feature, layer) => {
@@ -405,24 +249,9 @@ async function loadStateMap(stateCode) {
                             popupContent += `
                                 <p><strong>${distData.member.name}</strong> (${distData.member.party})</p>
                             `;
-                            if (distData.member.website) {
-                                popupContent += `
-                                    <p><a href="${distData.member.website}" target="_blank" rel="noopener noreferrer">Official Website</a></p>
-                                `;
-                            }
                         } else {
                             popupContent += `<p>Congressional District ${district.district}</p>`;
                         }
-                        
-                        // Add ZIP code lookup link
-                        popupContent += `
-                            <p style="margin-top: 8px; font-size: 12px;">
-                                <a href="#" onclick="showDistrictZipCodes('${district.state}', '${district.district}'); return false;" 
-                                   style="color: var(--accent-primary); text-decoration: underline;">
-                                   View ZIP codes for this district →
-                                </a>
-                            </p>
-                        `;
                         
                         popupContent += `</div>`;
                         layer.bindPopup(popupContent);
@@ -435,8 +264,6 @@ async function loadStateMap(stateCode) {
                                     weight: 3,
                                     color: '#ffffff'
                                 });
-                                // Show state outline on hover
-                                showStateOutline();
                             },
                             mouseout: (e) => {
                                 e.target.setStyle({
@@ -444,8 +271,6 @@ async function loadStateMap(stateCode) {
                                     weight: 1.5,
                                     color: '#4a5568'
                                 });
-                                // Hide state outline
-                                hideStateOutline();
                             },
                             click: () => {
                                 loadDistrict(district.state, district.district);
@@ -468,21 +293,6 @@ async function loadStateMap(stateCode) {
                 console.error(`Error loading district ${district.state}-${district.district}:`, err);
             }
         }
-        
-        // Create state outline from all district features
-        const allFeatures = [];
-        for (const district of districts) {
-            try {
-                const distResponse = await fetch(`/ssddmap/api/district/${district.state}/${district.district}`);
-                const distData = await distResponse.json();
-                if (distData.geojson && distData.geojson.features) {
-                    allFeatures.push(...distData.geojson.features);
-                }
-            } catch (err) {
-                console.error(`Error fetching district for outline:`, err);
-            }
-        }
-        createStateOutline(allFeatures);
         
         // Create layer group
         stateDistrictsLayer = L.layerGroup(layers).addTo(map);
@@ -516,45 +326,28 @@ async function loadUSAMap() {
             map.removeLayer(stateDistrictsLayer);
             stateDistrictsLayer = null;
         }
-        if (stateOutlineLayer) {
-            map.removeLayer(stateOutlineLayer);
-            stateOutlineLayer = null;
-        }
-        if (distanceLine) {
-            map.removeLayer(distanceLine);
-            distanceLine = null;
-        }
-        if (boundaryMarker) {
-            map.removeLayer(boundaryMarker);
-            boundaryMarker = null;
-        }
         
         // Check if we already have the USA layer
         if (allDistrictsLayer) {
             allDistrictsLayer.addTo(map);
-            map.setView([37.0902, -95.7129], 4);
+            map.setView([39.8283, -98.5795], 4);
             return;
         }
         
-        const response = await fetch('/ssddmap/api/all-districts');
+        const response = await fetch('/api/all-districts');
         const data = await response.json();
         
         // First, fetch all member data
         const members = await fetchHouseMembers();
         
         allDistrictsLayer = L.geoJSON(data, {
-            pane: 'districts',
             style: (feature) => {
-                const props = feature.properties;
-                const memberKey = `${props.state}-${parseInt(props.district)}`;
-                const member = members[memberKey];
-                const partyColors = member ? getPartyColor(member.party, 0.5) : getPartyColor(null, 0.5);
-                
+                const isAtLarge = feature.properties.isAtLarge;
                 return {
-                    fillColor: partyColors.fill,
-                    fillOpacity: partyColors.opacity,
-                    color: partyColors.stroke,
-                    weight: 0.8
+                    fillColor: isAtLarge ? '#a855f7' : getStateColor(feature.properties.state),
+                    fillOpacity: isAtLarge ? 0.6 : 0.5,
+                    color: isAtLarge ? '#c084fc' : '#4a5568',
+                    weight: isAtLarge ? 1.5 : 0.8
                 };
             },
             onEachFeature: (feature, layer) => {
@@ -571,27 +364,12 @@ async function loadUSAMap() {
                     popupContent += `
                         <p><strong>${member.name}</strong> (${member.party})</p>
                     `;
-                    if (member.website) {
-                        popupContent += `
-                            <p><a href="${member.website}" target="_blank" rel="noopener noreferrer">Official Website</a></p>
-                        `;
-                    }
                 } else {
                     popupContent += `<p>No representative data</p>`;
                 }
                 
-                // Add ZIP code lookup link
                 popupContent += `
-                    <p style="margin-top: 8px; font-size: 12px;">
-                        <a href="#" onclick="showDistrictZipCodes('${props.state}', '${props.district}'); return false;" 
-                           style="color: var(--accent-primary); text-decoration: underline;">
-                           View ZIP codes →
-                        </a>
-                    </p>
-                `;
-                
-                popupContent += `
-                        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; font-style: italic;">Click district to zoom in</p>
+                        <p style="font-size: 12px; color: var(--text-secondary);">Click to view details</p>
                     </div>
                 `;
                 
@@ -758,8 +536,8 @@ async function searchAddress(query) {
     
     try {
         if (method === 'census') {
-            // Use Census geocoding API
-            const response = await fetch(`/ssddmap/api/geocode-census?address=${encodeURIComponent(query)}`);
+            // Use existing geocoding method
+            const response = await fetch(`/api/geocode?address=${encodeURIComponent(query)}`);
             const results = await response.json();
             
             if (results.length === 0) {
@@ -770,7 +548,6 @@ async function searchAddress(query) {
             searchResults.innerHTML = results.map(result => `
                 <div class="search-result-item" data-lat="${result.lat}" data-lon="${result.lon}">
                     <div class="address">${result.display_name}</div>
-                    <div style="font-size: 12px; color: var(--text-secondary);">Source: U.S. Census Bureau</div>
                 </div>
             `).join('');
             
@@ -793,7 +570,7 @@ async function searchAddress(query) {
             }
             
             setLoading(true);
-            const response = await fetch(`/ssddmap/api/address-lookup-zip4?${new URLSearchParams({
+            const response = await fetch(`/api/address-lookup-zip4?${new URLSearchParams({
                 street: addressParts.street,
                 city: addressParts.city,
                 state: addressParts.state,
@@ -808,7 +585,7 @@ async function searchAddress(query) {
                 showComparisonResults(result);
             } else if (result.success) {
                 // Show single result
-                await showZip4Result(result);
+                showZip4Result(result);
             } else {
                 searchResults.innerHTML = `<div class="search-result-item">Error: ${result.error || 'Address not found'}</div>`;
             }
@@ -836,20 +613,8 @@ function parseAddress(addressStr) {
 }
 
 // Show ZIP+4 lookup result
-async function showZip4Result(result) {
+function showZip4Result(result) {
     const districtCode = `${result.district.state}-${result.district.district}`;
-    
-    // Fetch member information for this district
-    let memberInfo = '';
-    try {
-        const distResponse = await fetch(`/ssddmap/api/district/${result.district.state}/${result.district.district}`);
-        const distData = await distResponse.json();
-        if (distData.member) {
-            memberInfo = `<div style="margin-top: 5px; color: var(--text-primary);"><strong>Rep:</strong> ${distData.member.name} (${distData.member.party})</div>`;
-        }
-    } catch (error) {
-        console.error('Error fetching member info:', error);
-    }
     
     searchResults.innerHTML = `
         <div class="search-result-item">
@@ -857,7 +622,6 @@ async function showZip4Result(result) {
                 `${result.standardized.street}, ${result.standardized.city}, ${result.standardized.state} ${result.standardized.zip5}-${result.standardized.zip4}` : 
                 'Standardized address'}</div>
             <div class="district">Congressional District: <strong>${districtCode}</strong></div>
-            ${memberInfo}
             ${result.district.countyFips ? `<div>County FIPS: ${result.district.countyFips}</div>` : ''}
             <div style="font-size: 12px; color: var(--text-secondary); margin-top: 5px;">
                 Source: ${result.source || result.method || 'ZIP+4 lookup'}
@@ -907,7 +671,6 @@ function showComparisonResults(result) {
                     <h5>Geographic Method</h5>
                     ${censusMethod.district?.found ? `
                         <p class="district-code">${censusMethod.district.state}-${censusMethod.district.district}</p>
-                        ${censusMember ? `<p><strong>Rep:</strong> ${censusMember.name} (${censusMember.party})</p>` : ''}
                         <p>County: ${censusMethod.county?.name || 'N/A'}, ${censusMethod.county?.state || ''}</p>
                         <p>County FIPS: ${censusMethod.county?.geoid || 'N/A'}</p>
                     ` : `
@@ -943,14 +706,6 @@ async function showAddressOnMap(lat, lon, displayName) {
         map.removeLayer(addressMarker);
     }
     
-    // Remove existing distance line and boundary marker
-    if (distanceLine) {
-        map.removeLayer(distanceLine);
-    }
-    if (boundaryMarker) {
-        map.removeLayer(boundaryMarker);
-    }
-    
     // Create custom icon for the marker
     const customIcon = L.divIcon({
         className: 'custom-marker',
@@ -959,9 +714,9 @@ async function showAddressOnMap(lat, lon, displayName) {
         iconAnchor: [15, 15]
     });
     
-    // Add marker (we'll update the popup with distance info after finding the district)
+    // Add marker
     addressMarker = L.marker([lat, lon], { icon: customIcon }).addTo(map);
-    addressMarker.bindPopup(`<b>Location:</b><br>${displayName}<br><i>Finding district information...</i>`).openPopup();
+    addressMarker.bindPopup(`<b>Location:</b><br>${displayName}`).openPopup();
     
     // Zoom to location
     map.flyTo([lat, lon], 15, {
@@ -973,82 +728,13 @@ async function showAddressOnMap(lat, lon, displayName) {
     findDistrictForLocation(lat, lon);
 }
 
-// Draw a line from the searched point to the nearest district boundary
-function drawDistanceLine(fromLat, fromLon, toGeoJSON, districtInfo = null, color = '#2563eb') {
-    // Remove existing line and marker if any
-    if (distanceLine) {
-        map.removeLayer(distanceLine);
-    }
-    if (boundaryMarker) {
-        map.removeLayer(boundaryMarker);
-    }
-    
-    // Parse the GeoJSON point
-    let toCoords;
-    if (typeof toGeoJSON === 'string') {
-        toCoords = JSON.parse(toGeoJSON).coordinates;
-    } else {
-        toCoords = toGeoJSON.coordinates;
-    }
-    
-    // Create line
-    const latlngs = [
-        [fromLat, fromLon],
-        [toCoords[1], toCoords[0]] // GeoJSON is [lon, lat]
-    ];
-    
-    distanceLine = L.polyline(latlngs, {
-        color: color,
-        weight: 3,
-        opacity: 0.8,
-        dashArray: '10, 10',
-        dashOffset: '0'
-    }).addTo(map);
-    
-    // Add animated dash effect
-    let offset = 0;
-    const animateDash = () => {
-        offset = (offset + 1) % 20;
-        distanceLine.setStyle({ dashOffset: offset.toString() });
-        if (map.hasLayer(distanceLine)) {
-            requestAnimationFrame(animateDash);
-        }
-    };
-    animateDash();
-    
-    // Add a small circle at the boundary point
-    boundaryMarker = L.circleMarker([toCoords[1], toCoords[0]], {
-        radius: 5,
-        fillColor: color,
-        color: '#fff',
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 0.8
-    }).addTo(map);
-    
-    // Add popup with district info
-    if (districtInfo) {
-        const districtLabel = districtInfo.isAtLarge ? 'At-Large' : districtInfo.district;
-        let popupContent = `<div style="min-width: 200px;">`;
-        popupContent += `<b>District Boundary</b><br>`;
-        popupContent += `<b>SSDD:</b> ${districtInfo.state}-${districtLabel}<br>`;
-        if (districtInfo.member) {
-            popupContent += `<b>Rep:</b> ${districtInfo.member.name} (${districtInfo.member.party})`;
-        }
-        popupContent += `</div>`;
-        boundaryMarker.bindPopup(popupContent);
-    } else {
-        boundaryMarker.bindPopup('Nearest point on district boundary');
-    }
-}
-
 // Find which congressional district contains a point
 async function findDistrictForLocation(lat, lon) {
     setLoading(true);
     
     try {
         // Use the new endpoint that finds both district and county
-        const response = await fetch(`/ssddmap/api/find-location?lat=${lat}&lon=${lon}`);
+        const response = await fetch(`/api/find-location?lat=${lat}&lon=${lon}`);
         const result = await response.json();
         
         if (result.district && result.district.found) {
@@ -1079,43 +765,16 @@ async function findDistrictForLocation(lat, lon) {
                     <p><strong>Congressional District:</strong> ${districtLabel}</p>
             `;
             
-            // Add member information first if available
-            if (result.district.member) {
-                infoHTML += `
-                    <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 6px; margin: 10px 0;">
-                        <p style="font-weight: 600; color: var(--text-primary);">Representative:</p>
-                        <p style="font-size: 18px; margin: 5px 0;">${result.district.member.name}</p>
-                        <p style="color: var(--text-secondary);">
-                            <span class="party-badge ${result.district.member.party === 'R' ? 'republican' : result.district.member.party === 'D' ? 'democrat' : 'independent'}">
-                                ${result.district.member.party === 'R' ? 'Republican' : result.district.member.party === 'D' ? 'Democrat' : 'Independent'}
-                            </span>
-                        </p>
-                    </div>
-                `;
-            }
-            
-            // Add distance to boundary information
-            if (result.district.distanceToBoundary) {
-                const distance = result.district.distanceToBoundary;
-                if (distance.meters > 0) {
-                    infoHTML += `
-                        <p style="color: var(--accent-secondary); margin-top: 8px;">
-                            <strong>Distance to District Boundary:</strong><br>
-                            ${distance.meters.toLocaleString()} meters (${distance.miles} miles)
-                        </p>
-                    `;
-                } else {
-                    infoHTML += `
-                        <p style="color: var(--accent-secondary); margin-top: 8px;">
-                            <strong>Location is on the district boundary</strong>
-                        </p>
-                    `;
-                }
-            }
-            
             if (result.county && result.county.found) {
                 infoHTML += `
                     <p><strong>County:</strong> ${result.county.name}, ${result.county.state}</p>
+                `;
+            }
+            
+            if (result.district.member) {
+                infoHTML += `
+                    <p style="margin-top: 10px;"><strong>Representative:</strong></p>
+                    <p>${result.district.member.name} (${result.district.member.party})</p>
                 `;
             }
             
@@ -1123,58 +782,6 @@ async function findDistrictForLocation(lat, lon) {
             
             const existingInfo = districtInfo.innerHTML;
             districtInfo.innerHTML = infoHTML + existingInfo;
-            
-            // Draw line to nearest boundary point if available
-            if (result.district.closestBoundaryPoint && result.district.distanceToBoundary.meters > 0) {
-                drawDistanceLine(lat, lon, result.district.closestBoundaryPoint, result.district);
-            }
-            
-            // Update marker popup with distance info
-            if (addressMarker) {
-                const distance = result.district.distanceToBoundary;
-                let popupContent = `<div style="min-width: 250px;">`;
-                popupContent += `<b>📍 ${displayName}</b><br>`;
-                popupContent += `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-color);">`;
-                popupContent += `<b>Congressional District:</b> ${result.district.state}-${districtLabel}<br>`;
-                
-                if (result.district.member) {
-                    popupContent += `<b>Representative:</b> ${result.district.member.name} (${result.district.member.party})<br>`;
-                }
-                
-                if (distance.meters > 0) {
-                    popupContent += `<b>Distance to boundary:</b> ${distance.meters.toLocaleString()}m (${distance.miles} mi)`;
-                } else {
-                    popupContent += `<b>Location:</b> On district boundary`;
-                }
-                popupContent += `</div></div>`;
-                addressMarker.setPopupContent(popupContent);
-            }
-        } else if (result.nearestDistrict) {
-            // Location not found in any district, but show nearest
-            const nearest = result.nearestDistrict;
-            let infoHTML = `
-                <div style="background: var(--bg-card); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                    <p style="color: var(--party-republican);">
-                        ⚠️ Location not found in any congressional district
-                    </p>
-                    <p style="font-size: 12px; color: var(--text-secondary); margin-top: 5px;">
-                        This might be outside the US or in a body of water
-                    </p>
-                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color);">
-                        <p><strong>Nearest Congressional District:</strong></p>
-                        <p>${nearest.state}-${nearest.district} (${nearest.stateName})</p>
-                        <p><strong>Distance:</strong> ${nearest.distance.meters.toLocaleString()} meters (${nearest.distance.miles} miles)</p>
-                        ${nearest.memberName ? `<p><strong>Representative:</strong> ${nearest.memberName} (${nearest.party})</p>` : ''}
-                    </div>
-                </div>
-            `;
-            
-            districtInfo.innerHTML = infoHTML + districtInfo.innerHTML;
-            
-            // Draw line to nearest district
-            if (nearest.closestPoint) {
-                drawDistanceLine(lat, lon, nearest.closestPoint, '#ff9800');
-            }
         } else {
             // Location not found in any district
             districtInfo.innerHTML = `
@@ -1208,16 +815,12 @@ searchBtn.addEventListener('click', () => {
 addressInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') {
         searchAddress(addressInput.value);
-    } else if (autosuggestToggle && autosuggestToggle.checked) {
-        // Only autosuggest if toggle is checked
+    } else {
+        // Debounce search
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
             searchAddress(addressInput.value);
         }, 500);
-    } else {
-        // Clear results if autosuggest is disabled
-        clearTimeout(searchTimeout);
-        searchResults.innerHTML = '';
     }
 });
 
@@ -1228,28 +831,16 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Handle autosuggest toggle
-if (autosuggestToggle) {
-    autosuggestToggle.addEventListener('change', (e) => {
-        if (!e.target.checked) {
-            // Clear any existing search results when autosuggest is disabled
-            clearTimeout(searchTimeout);
-            searchResults.innerHTML = '';
-        }
-    });
-}
-
 // Load and display county boundaries
 async function loadCountyBoundaries() {
     try {
         setLoading(true);
         
-        const response = await fetch('/ssddmap/api/county-boundaries');
+        const response = await fetch('/api/county-boundaries');
         const data = await response.json();
         
         // Create county layer with subtle styling
         countyLayer = L.geoJSON(data, {
-            pane: 'districts',
             style: {
                 fillColor: 'transparent',
                 fillOpacity: 0,
@@ -1317,7 +908,7 @@ function getRepresentationColor(repCount) {
 // Load state representation counts
 async function loadStateRepCounts() {
     try {
-        const response = await fetch('/ssddmap/api/state-rep-counts');
+        const response = await fetch('/api/state-rep-counts');
         stateRepCounts = await response.json();
         return stateRepCounts;
     } catch (error) {
@@ -1380,6 +971,12 @@ toggleRepViewBtn.addEventListener('click', async () => {
     if (showRepresentationView) {
         toggleRepViewBtn.querySelector('span').textContent = 'Hide Representation View';
         
+        // Turn off vote view if it's on
+        if (showVoteView) {
+            showVoteView = false;
+            toggleVoteViewBtn.classList.remove('active');
+            toggleVoteViewBtn.querySelector('span').textContent = 'Show Voting Pattern';
+        }
         
         // Load rep counts if not already loaded
         if (!stateRepCounts) {
@@ -1416,13 +1013,171 @@ toggleRepViewBtn.addEventListener('click', async () => {
     }
 });
 
+// Load bill voting data
+async function loadBillVotes(billId) {
+    try {
+        setLoading(true);
+        const response = await fetch(`/api/bill-votes/${billId}`);
+        const data = await response.json();
+        currentBillVotes = data;
+        return data;
+    } catch (error) {
+        console.error('Error loading bill votes:', error);
+        return null;
+    } finally {
+        setLoading(false);
+    }
+}
 
+// Apply vote colors to districts
+function applyVoteColors() {
+    if (!allDistrictsLayer || !currentBillVotes) return;
+    
+    allDistrictsLayer.eachLayer(layer => {
+        if (layer.feature && layer.feature.properties) {
+            const state = layer.feature.properties.state;
+            const district = layer.feature.properties.district;
+            const voteKey = `${state}-${parseInt(district)}`;
+            const voteData = currentBillVotes.districtVotes[voteKey];
+            
+            if (voteData) {
+                let color;
+                switch(voteData.vote) {
+                    case 'YES':
+                        color = '#22c55e'; // Green
+                        break;
+                    case 'NO':
+                        color = '#ef4444'; // Red
+                        break;
+                    case 'PRESENT':
+                        color = '#6b7280'; // Gray
+                        break;
+                    default:
+                        color = '#374151'; // Dark gray
+                }
+                
+                layer.setStyle({
+                    fillColor: color,
+                    fillOpacity: 0.7,
+                    color: '#333',
+                    weight: 1
+                });
+                
+                // Update popup with vote info
+                const popupContent = `
+                    <div class="district-popup">
+                        <h4>${state}-${district}</h4>
+                        <p><strong>${voteData.member}</strong> (${voteData.party})</p>
+                        <p>Vote: <strong style="color: ${color}">${voteData.vote}</strong></p>
+                    </div>
+                `;
+                layer.bindPopup(popupContent);
+            }
+        }
+    });
+}
+
+// Create vote legend
+function createVoteLegend() {
+    const legendScale = document.querySelector('.legend-scale');
+    legendScale.innerHTML = '';
+    
+    const legendData = [
+        { vote: 'YES', color: '#22c55e', label: 'Voted Yes' },
+        { vote: 'NO', color: '#ef4444', label: 'Voted No' },
+        { vote: 'PRESENT', color: '#6b7280', label: 'Present' },
+        { vote: 'NOT VOTING', color: '#374151', label: 'Not Voting' }
+    ];
+    
+    // Add bill info
+    if (currentBillVotes) {
+        const billInfo = document.createElement('div');
+        billInfo.className = 'bill-info';
+        billInfo.innerHTML = `
+            <h5>${currentBillVotes.bill.number}</h5>
+            <p style="font-size: 12px; margin: 5px 0;">${currentBillVotes.bill.title}</p>
+            <p style="font-size: 11px; color: var(--text-secondary);">
+                Yes: ${currentBillVotes.bill.totalYes} | No: ${currentBillVotes.bill.totalNo}
+            </p>
+            <hr style="margin: 10px 0; border-color: var(--border-color);">
+        `;
+        legendScale.appendChild(billInfo);
+    }
+    
+    legendData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'legend-item';
+        div.innerHTML = `
+            <div class="legend-color" style="background-color: ${item.color}"></div>
+            <span>${item.label}</span>
+        `;
+        legendScale.appendChild(div);
+    });
+}
+
+// Event listener for bill selection
+billSelect.addEventListener('change', async (e) => {
+    const billId = e.target.value;
+    
+    if (billId) {
+        const voteData = await loadBillVotes(billId);
+        if (voteData) {
+            toggleVoteViewBtn.style.display = 'block';
+        }
+    } else {
+        toggleVoteViewBtn.style.display = 'none';
+        showVoteView = false;
+        toggleVoteViewBtn.classList.remove('active');
+        toggleVoteViewBtn.querySelector('span').textContent = 'Show Voting Pattern';
+        legendEl.style.display = 'none';
+        
+        // Reset colors
+        if (allDistrictsLayer) {
+            loadUSAMap();
+        }
+    }
+});
+
+// Toggle vote view
+toggleVoteViewBtn.addEventListener('click', async () => {
+    showVoteView = !showVoteView;
+    toggleVoteViewBtn.classList.toggle('active', showVoteView);
+    
+    if (showVoteView) {
+        toggleVoteViewBtn.querySelector('span').textContent = 'Hide Voting Pattern';
+        
+        // Turn off representation view if it's on
+        if (showRepresentationView) {
+            showRepresentationView = false;
+            toggleRepViewBtn.classList.remove('active');
+            toggleRepViewBtn.querySelector('span').textContent = 'Show by Representation';
+        }
+        
+        // Make sure we're on USA view
+        if (!allDistrictsLayer || !map.hasLayer(allDistrictsLayer)) {
+            await loadUSAMap();
+        }
+        
+        // Apply vote colors and show legend
+        applyVoteColors();
+        createVoteLegend();
+        legendEl.style.display = 'block';
+    } else {
+        toggleVoteViewBtn.querySelector('span').textContent = 'Show Voting Pattern';
+        legendEl.style.display = 'none';
+        
+        // Reset to original colors
+        if (allDistrictsLayer) {
+            loadUSAMap();
+        }
+    }
+});
 
 // Load county political data
 async function loadCountyPolitics() {
     try {
         setLoading(true);
-        const response = await fetch('/ssddmap/api/county-politics');
+        const response = await fetch('/api/county-politics');
         countyPoliticsData = await response.json();
         return countyPoliticsData;
     } catch (error) {
@@ -1757,7 +1512,7 @@ const authorizeUspsBtn = document.getElementById('authorizeUspsBtn');
 // Check configuration status on load
 async function checkConfigStatus() {
     try {
-        const response = await fetch('/ssddmap/api/config-status');
+        const response = await fetch('/api/config-status');
         const status = await response.json();
         
         // Update USPS status indicator
@@ -1799,7 +1554,7 @@ saveConfigBtn.addEventListener('click', async () => {
     };
     
     try {
-        const response = await fetch('/ssddmap/api/save-config', {
+        const response = await fetch('/api/save-config', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(config)
@@ -1843,7 +1598,7 @@ testUspsBtn.addEventListener('click', async () => {
 // Authorize USPS OAuth
 authorizeUspsBtn.addEventListener('click', async () => {
     try {
-        const response = await fetch('/ssddmap/api/usps-auth');
+        const response = await fetch('/api/usps-auth');
         const data = await response.json();
         window.open(data.authUrl, '_blank');
     } catch (error) {
@@ -1875,111 +1630,9 @@ testSmartyBtn.addEventListener('click', async () => {
     }, 1000);
 });
 
-// Check cache status
-async function checkCacheStatus() {
-    try {
-        const response = await fetch('/ssddmap/api/cache-status');
-        const status = await response.json();
-        
-        // Handle new format
-        const members = status.members || status; // Backwards compatibility
-        
-        if (members.hasCachedData) {
-            const ageText = members.cacheAgeHours < 1 ? 'less than 1 hour' : 
-                           members.cacheAgeHours === 1 ? '1 hour' : 
-                           `${members.cacheAgeHours} hours`;
-            
-            let statusText = `Members: ${ageText} old (${members.count} cached)`;
-            
-            // Add county and district info if available
-            if (status.counties) {
-                statusText += ` | Counties: ${status.counties.count || 0} cached`;
-            }
-            if (status.districts) {
-                statusText += ` | Districts: ${status.districts.count || 0} cached`;
-            }
-            
-            cacheStatusEl.textContent = statusText;
-            cacheStatusEl.style.color = members.cacheAgeHours > 20 ? '#ff9800' : '#4CAF50';
-        } else {
-            cacheStatusEl.textContent = 'No cached data available';
-            cacheStatusEl.style.color = '#f44336';
-        }
-    } catch (error) {
-        console.error('Error checking cache status:', error);
-        cacheStatusEl.textContent = 'Error checking cache status';
-        cacheStatusEl.style.color = '#f44336';
-    }
-}
-
-// Refresh cache
-async function refreshCache() {
-    if (!confirm('This will refresh all House member data from house.gov. Continue?')) {
-        return;
-    }
-    
-    setLoading(true);
-    refreshCacheBtn.disabled = true;
-    cacheStatusEl.textContent = 'Refreshing data...';
-    cacheStatusEl.style.color = '#2196F3';
-    
-    try {
-        const response = await fetch('/ssddmap/api/refresh-members-cache', {
-            method: 'POST'
-        });
-        const result = await response.json();
-        
-        if (result.success) {
-            cacheStatusEl.textContent = `Data refreshed! ${result.memberCount} members loaded`;
-            cacheStatusEl.style.color = '#4CAF50';
-            
-            // Reload the member data in the UI
-            await loadHouseMembers();
-            
-            // Refresh current view if showing districts
-            if (selectedState) {
-                await loadDistricts(selectedState);
-            }
-        } else {
-            throw new Error(result.error || 'Refresh failed');
-        }
-    } catch (error) {
-        console.error('Error refreshing cache:', error);
-        cacheStatusEl.textContent = 'Error refreshing data';
-        cacheStatusEl.style.color = '#f44336';
-    } finally {
-        setLoading(false);
-        refreshCacheBtn.disabled = false;
-        
-        // Check status again after a delay
-        setTimeout(checkCacheStatus, 2000);
-    }
-}
-
-// Add event listener for refresh button
-refreshCacheBtn.addEventListener('click', refreshCache);
-
-// Add event listener for map style selector
-mapStyleSelect.addEventListener('change', (e) => {
-    setMapStyle(e.target.value);
-});
-
 // Initialize
-async function initialize() {
-    loadStates();
-    checkConfigStatus();
-    checkCacheStatus();
-    
-    // Load House members first, then the USA map
-    await fetchHouseMembers();
-    loadUSAMap();
-}
-
-// Start initialization
-initialize();
-
-// Check cache status every 5 minutes
-setInterval(checkCacheStatus, 300000);
+loadStates();
+checkConfigStatus();
 
 // Batch processing functionality
 const batchProcessBtn = document.getElementById('batchProcessBtn');
@@ -2086,7 +1739,7 @@ processBatchBtn.addEventListener('click', async () => {
     try {
         // Create batch request
         const batchId = Date.now().toString();
-        const response = await fetch('/ssddmap/api/batch-process', {
+        const response = await fetch('/api/batch-process', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -2164,7 +1817,7 @@ function showBatchResults(results) {
 // Download batch results as CSV
 window.downloadBatchResults = async (batchId) => {
     try {
-        const response = await fetch(`/ssddmap/api/batch-results/${batchId}/download`);
+        const response = await fetch(`/api/batch-results/${batchId}/download`);
         if (!response.ok) {
             throw new Error('Failed to download results');
         }
@@ -2182,43 +1835,4 @@ window.downloadBatchResults = async (batchId) => {
         console.error('Download error:', error);
         alert('Error downloading results: ' + error.message);
     }
-};
-
-// Show ZIP codes for a district (placeholder for future implementation)
-window.showDistrictZipCodes = function(state, district) {
-    // Create a modal or info display
-    const zipInfo = `
-        <div style="background: var(--bg-card); padding: 20px; border-radius: 8px; margin-bottom: 10px;">
-            <h3 style="color: var(--accent-primary); margin-bottom: 15px;">ZIP Codes for ${state}-${district}</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 15px;">
-                Each congressional district contains hundreds to thousands of ZIP codes and tens of thousands of ZIP+4 codes.
-            </p>
-            <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 6px; margin-bottom: 15px;">
-                <p style="font-weight: 600; margin-bottom: 10px;">Why isn't a full list shown?</p>
-                <ul style="margin-left: 20px; color: var(--text-secondary);">
-                    <li>Districts can span 500+ ZIP codes</li>
-                    <li>Each ZIP code can have 100+ ZIP+4 extensions</li>
-                    <li>ZIP codes often cross district boundaries</li>
-                    <li>The data would be too large for a popup</li>
-                </ul>
-            </div>
-            <p style="color: var(--text-secondary);">
-                <strong>To find a specific ZIP code's district:</strong><br>
-                Use the address search above with any address in that ZIP code.
-            </p>
-            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
-                <p style="font-size: 12px; color: var(--text-tertiary);">
-                    <em>Note: A comprehensive ZIP code database integration is planned for a future update.</em>
-                </p>
-            </div>
-        </div>
-    `;
-    
-    // Update the district info panel with ZIP code information
-    const districtInfo = document.getElementById('districtInfo');
-    const existingContent = districtInfo.innerHTML;
-    districtInfo.innerHTML = zipInfo + existingContent;
-    
-    // Scroll to the info panel
-    districtInfo.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };

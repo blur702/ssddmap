@@ -181,10 +181,66 @@ class AddressService {
     }
 
     /**
+     * Look up congressional district using Census Geocoder
+     */
+    async lookupDistrictCensus(address) {
+        const { street, city, state, zip } = address;
+        
+        try {
+            // First geocode the address using Census
+            const addressStr = [street, city, state, zip].filter(Boolean).join(', ');
+            const url = `/ssddmap/api/geocode-census?address=${encodeURIComponent(addressStr)}`;
+            
+            const response = await fetch(url);
+            const geocodeResults = await response.json();
+            
+            if (!geocodeResults || geocodeResults.length === 0) {
+                return { success: false, error: 'Address not found' };
+            }
+            
+            const result = geocodeResults[0];
+            
+            // Now find the district using the coordinates
+            const districtResponse = await fetch(`/ssddmap/api/find-location?lat=${result.lat}&lon=${result.lon}`);
+            const districtData = await districtResponse.json();
+            
+            if (districtData.district && districtData.district.found) {
+                return {
+                    success: true,
+                    district: {
+                        state: districtData.district.state,
+                        district: districtData.district.district,
+                        countyFips: districtData.county?.geoid,
+                        countyName: districtData.county?.name
+                    },
+                    standardized: {
+                        street: street,
+                        city: city,
+                        state: state,
+                        zip5: zip,
+                        lat: result.lat,
+                        lon: result.lon,
+                        display_name: result.display_name
+                    },
+                    census_data: result.census_data
+                };
+            }
+            
+            return { success: false, error: 'District not found for location' };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
      * Combined lookup - try multiple methods
      */
-    async lookupDistrict(address, method = 'smarty') {
+    async lookupDistrict(address, method = 'census') {
         switch (method) {
+            case 'census':
+                const censusResult = await this.lookupDistrictCensus(address);
+                return { ...censusResult, method: 'census' };
+                
             case 'usps-local':
                 // First standardize with USPS
                 const uspsResult = await this.standardizeUSPS(address);

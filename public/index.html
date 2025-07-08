@@ -16,6 +16,17 @@
             </div>
             
             <div class="controls">
+                <div class="map-style-selector">
+                    <label for="mapStyle">Map Style</label>
+                    <select id="mapStyle">
+                        <option value="voyager" selected>Voyager</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                        <option value="satellite">Satellite</option>
+                        <option value="terrain">Terrain</option>
+                    </select>
+                </div>
+                
                 <button id="viewUSA" class="btn btn-primary">
                     <span>View Full USA Map</span>
                 </button>
@@ -38,26 +49,12 @@
                 
                 <div class="section-divider"></div>
                 
-                <div class="legislation-section">
-                    <h3>Legislation Tracking</h3>
-                    <div class="bill-selector">
-                        <label for="billSelect">Select Bill</label>
-                        <select id="billSelect">
-                            <option value="">Choose a bill...</option>
-                            <option value="hr1-2025">H.R. 1 - One Big Beautiful Bill Act</option>
-                        </select>
-                    </div>
-                    <button id="toggleVoteView" class="btn btn-secondary" style="display: none;">
-                        <span>Show Voting Pattern</span>
-                    </button>
-                </div>
-                
                 <div class="address-search">
                     <label for="addressInput">Search Address</label>
                     <div class="lookup-method">
                         <label class="method-option">
                             <input type="radio" name="lookupMethod" value="census" checked>
-                            <span>Geographic (Census)</span>
+                            <span>Census Geocoder (Free)</span>
                         </label>
                         <label class="method-option">
                             <input type="radio" name="lookupMethod" value="zip4">
@@ -71,6 +68,12 @@
                             ⚙️ Configure APIs
                         </button>
                     </div>
+                    <div class="autosuggest-toggle" style="margin: 10px 0;">
+                        <label class="toggle-option">
+                            <input type="checkbox" id="autosuggestToggle" checked>
+                            <span>Enable address suggestions</span>
+                        </label>
+                    </div>
                     <div class="search-container">
                         <input type="text" id="addressInput" placeholder="Enter address, city, state, ZIP..." />
                         <button id="searchBtn" class="search-btn" title="Search">
@@ -81,6 +84,19 @@
                         </button>
                     </div>
                     <div id="searchResults" class="search-results"></div>
+                </div>
+                
+                <div class="section-divider"></div>
+                
+                <div class="cache-section">
+                    <h3>Data Management</h3>
+                    <div class="cache-info">
+                        <p>House member data is cached for 24 hours</p>
+                        <p id="cacheStatus" class="cache-status">Loading cache status...</p>
+                        <button id="refreshCacheBtn" class="btn btn-secondary">
+                            <span>Refresh Member Data</span>
+                        </button>
+                    </div>
                 </div>
                 
                 <div class="section-divider"></div>
@@ -135,6 +151,25 @@
             <div id="legend" class="map-legend" style="display: none;">
                 <h4>Representatives per State</h4>
                 <div class="legend-scale"></div>
+            </div>
+            <div id="partyLegend" class="party-legend">
+                <h4>Party Affiliation</h4>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #3b82f6;"></span>
+                    <span>Democrat</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #ef4444;"></span>
+                    <span>Republican</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #8b5cf6;"></span>
+                    <span>Independent</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color" style="background-color: #6b7280;"></span>
+                    <span>Vacant/Unknown</span>
+                </div>
             </div>
         </div>
     </div>

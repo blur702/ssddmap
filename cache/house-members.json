@@ -1,0 +1,8064 @@
+{
+  "data": {
+    "KY-5": {
+      "name": "Mr.  Harold  Rogers",
+      "party": "R",
+      "phone": "(202) 225-54601",
+      "state": "Kentucky",
+      "district": 5,
+      "office": "2406 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "MD-5": {
+      "name": "Mr.  Steny H. Hoyer",
+      "party": "D",
+      "phone": "(202) 225-54131",
+      "state": "Maryland",
+      "district": 5,
+      "office": "1705 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "NJ-4": {
+      "name": "Mr.  Christopher H. Smith",
+      "party": "R",
+      "phone": "(202) 225-53765",
+      "state": "New Jersey",
+      "district": 4,
+      "office": "2373 undefined",
+      "social": {},
+      "committees": {
+        "_": "Foreign Affairs",
+        "title": "Member"
+      }
+    },
+    "NJ-6": {
+      "name": "Mr.  Frank  Pallone Jr.",
+      "party": "D",
+      "phone": "(202) 225-54671",
+      "state": "New Jersey",
+      "district": 6,
+      "office": "2107 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "OH-9": {
+      "name": "Ms.  Marcy  Kaptur",
+      "party": "D",
+      "phone": "(202) 225-54146",
+      "state": "Ohio",
+      "district": 9,
+      "office": "2186 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "SC-6": {
+      "name": "Mr.  James E. Clyburn",
+      "party": "D",
+      "phone": "(202) 225-53315",
+      "state": "South Carolina",
+      "district": 6,
+      "office": "274 undefined",
+      "social": {},
+      "committees": []
+    },
+    "AZ-3": {
+      "name": "Ms.  Yassamin  Ansari",
+      "party": "D",
+      "phone": "(202) 225-54065",
+      "state": "Arizona",
+      "district": 3,
+      "office": "1432 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "AK-0": {
+      "name": "Mr.  Nicholas J. Begich III",
+      "party": "R",
+      "phone": "(202) 225-55765",
+      "state": "Alaska",
+      "district": 0,
+      "office": "153 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "CT-3": {
+      "name": "Ms.  Rosa L. DeLauro",
+      "party": "D",
+      "phone": "(202) 225-53661",
+      "state": "Connecticut",
+      "district": 3,
+      "office": "2413 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "AZ-8": {
+      "name": "Mr.  Abraham J. Hamadeh",
+      "party": "R",
+      "phone": "(202) 225-54576",
+      "state": "Arizona",
+      "district": 8,
+      "office": "1722 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "CA-12": {
+      "name": "Ms.  Lateefah  Simon",
+      "party": "D",
+      "phone": "(202) 225-52661",
+      "state": "California",
+      "district": 12,
+      "office": "1023 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-13": {
+      "name": "Mr.  Adam  Gray",
+      "party": "D",
+      "phone": "(202) 225-51947",
+      "state": "California",
+      "district": 13,
+      "office": "1230 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "WA-6": {
+      "name": "Ms.  Emily  Randall",
+      "party": "D",
+      "phone": "(202) 225-55916",
+      "state": "Washington",
+      "district": 6,
+      "office": "1531 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        }
+      ]
+    },
+    "AL-4": {
+      "name": "Mr.  Robert B. Aderholt",
+      "party": "R",
+      "phone": "(202) 225-54876",
+      "state": "Alabama",
+      "district": 4,
+      "office": "266 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "CO-1": {
+      "name": "Ms.  Diana  DeGette",
+      "party": "D",
+      "phone": "(202) 225-54431",
+      "state": "Colorado",
+      "district": 1,
+      "office": "2111 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "IL-7": {
+      "name": "Mr.  Danny K. Davis",
+      "party": "D",
+      "phone": "(202) 225-55006",
+      "state": "Illinois",
+      "district": 7,
+      "office": "2159 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "CT-1": {
+      "name": "Mr.  John B. Larson",
+      "party": "D",
+      "phone": "(202) 225-52265",
+      "state": "Connecticut",
+      "district": 1,
+      "office": "1501 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "ID-2": {
+      "name": "Mr.  Michael K. Simpson",
+      "party": "R",
+      "phone": "(202) 225-55531",
+      "state": "Idaho",
+      "district": 2,
+      "office": "2084 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "IL-9": {
+      "name": "Ms.  Janice D. Schakowsky",
+      "party": "D",
+      "phone": "(202) 225-52111",
+      "state": "Illinois",
+      "district": 9,
+      "office": "2408 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "WA-9": {
+      "name": "Mr.  Adam  Smith",
+      "party": "D",
+      "phone": "(202) 225-58901",
+      "state": "Washington",
+      "district": 9,
+      "office": "2264 undefined",
+      "social": {},
+      "committees": {
+        "_": "Armed Services",
+        "title": "Member"
+      }
+    },
+    "MS-2": {
+      "name": "Mr.  Bennie G. Thompson",
+      "party": "D",
+      "phone": "(202) 225-55876",
+      "state": "Mississippi",
+      "district": 2,
+      "office": "2466 undefined",
+      "social": {},
+      "committees": {
+        "_": "Homeland Security",
+        "title": "Member"
+      }
+    },
+    "MO-6": {
+      "name": "Mr.  Sam  Graves",
+      "party": "R",
+      "phone": "(202) 225-57041",
+      "state": "Missouri",
+      "district": 6,
+      "office": "1135 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "WA-2": {
+      "name": "Mr.  Rick  Larsen",
+      "party": "D",
+      "phone": "(202) 225-52605",
+      "state": "Washington",
+      "district": 2,
+      "office": "2163 undefined",
+      "social": {},
+      "committees": {
+        "_": "Transportation",
+        "title": "Member"
+      }
+    },
+    "SC-2": {
+      "name": "Mr.  Joe  Wilson",
+      "party": "R",
+      "phone": "(202) 225-52452",
+      "state": "South Carolina",
+      "district": 2,
+      "office": "1436 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-16": {
+      "name": "Mr.  Sam T. Liccardo",
+      "party": "D",
+      "phone": "(202) 225-58104",
+      "state": "California",
+      "district": 16,
+      "office": "1117 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "AL-3": {
+      "name": "Mr.  Mike  Rogers",
+      "party": "R",
+      "phone": "(202) 225-53261",
+      "state": "Alabama",
+      "district": 3,
+      "office": "2469 undefined",
+      "social": {},
+      "committees": {
+        "_": "Armed Services",
+        "title": "Member"
+      }
+    },
+    "TX-31": {
+      "name": "Mr.  John R. Carter",
+      "party": "R",
+      "phone": "(202) 225-53864",
+      "state": "Texas",
+      "district": 31,
+      "office": "2208 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "GA-2": {
+      "name": "Mr.  Sanford D. Bishop Jr.",
+      "party": "D",
+      "phone": "(202) 225-53631",
+      "state": "Georgia",
+      "district": 2,
+      "office": "2407 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        }
+      ]
+    },
+    "VA-3": {
+      "name": "Mr.  Robert C. \"Bobby\" Scott",
+      "party": "D",
+      "phone": "(202) 225-58351",
+      "state": "Virginia",
+      "district": 3,
+      "office": "2328 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-27": {
+      "name": "Mr.  George  Whitesides",
+      "party": "D",
+      "phone": "(202) 225-51956",
+      "state": "California",
+      "district": 27,
+      "office": "1504 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "MN-4": {
+      "name": "Ms.  Betty  McCollum",
+      "party": "D",
+      "phone": "(202) 225-56631",
+      "state": "Minnesota",
+      "district": 4,
+      "office": "2426 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "MO-5": {
+      "name": "Mr.  Emanuel  Cleaver",
+      "party": "D",
+      "phone": "(202) 225-54535",
+      "state": "Missouri",
+      "district": 5,
+      "office": "2217 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "NC-5": {
+      "name": "Ms.  Virginia  Foxx",
+      "party": "R",
+      "phone": "(202) 225-52071",
+      "state": "North Carolina",
+      "district": 5,
+      "office": "2462 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "OK-3": {
+      "name": "Mr.  Frank D. Lucas",
+      "party": "R",
+      "phone": "(202) 225-55565",
+      "state": "Oklahoma",
+      "district": 3,
+      "office": "2405 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "OK-4": {
+      "name": "Mr.  Tom  Cole",
+      "party": "R",
+      "phone": "(202) 225-56165",
+      "state": "Oklahoma",
+      "district": 4,
+      "office": "2207 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-10": {
+      "name": "Mr.  Michael T. McCaul",
+      "party": "R",
+      "phone": "(202) 225-52401",
+      "state": "Texas",
+      "district": 10,
+      "office": "2300 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-28": {
+      "name": "Mr.  Henry  Cuellar",
+      "party": "D",
+      "phone": "(202) 225-51640",
+      "state": "Texas",
+      "district": 28,
+      "office": "2372 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "CA-29": {
+      "name": "Ms.  Luz M. Rivas",
+      "party": "D",
+      "phone": "(202) 225-56131",
+      "state": "California",
+      "district": 29,
+      "office": "1319 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "CT-2": {
+      "name": "Mr.  Joe  Courtney",
+      "party": "D",
+      "phone": "(202) 225-52076",
+      "state": "Connecticut",
+      "district": 2,
+      "office": "2449 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-4": {
+      "name": "Mr.  Henry C. \"Hank\" Johnson Jr.",
+      "party": "D",
+      "phone": "(202) 225-51605",
+      "state": "Georgia",
+      "district": 4,
+      "office": "2240 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NE-3": {
+      "name": "Mr.  Adrian  Smith",
+      "party": "R",
+      "phone": "(202) 225-56435",
+      "state": "Nebraska",
+      "district": 3,
+      "office": "502 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Joint Taxation",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "TN-9": {
+      "name": "Mr.  Steve  Cohen",
+      "party": "D",
+      "phone": "(202) 225-53265",
+      "state": "Tennessee",
+      "district": 9,
+      "office": "2268 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "DC-0": {
+      "name": "Ms.  Eleanor Holmes Norton",
+      "party": "D",
+      "phone": "(202) 225-58050",
+      "state": "District of Columbia",
+      "district": 0,
+      "office": "2136 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "VA-1": {
+      "name": "Mr.  Robert J. Wittman",
+      "party": "R",
+      "phone": "(202) 225-54261",
+      "state": "Virginia",
+      "district": 1,
+      "office": "2055 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-5": {
+      "name": "Mr.  Robert E. Latta",
+      "party": "R",
+      "phone": "(202) 225-56405",
+      "state": "Ohio",
+      "district": 5,
+      "office": "2467 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "CA-45": {
+      "name": "Mr.  Derek  Tran",
+      "party": "D",
+      "phone": "(202) 225-52415",
+      "state": "California",
+      "district": 45,
+      "office": "1127 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "IN-7": {
+      "name": "Mr.  Andre  Carson",
+      "party": "D",
+      "phone": "(202) 225-54011",
+      "state": "Indiana",
+      "district": 7,
+      "office": "2135 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "LA-1": {
+      "name": "Mr.  Steve  Scalise",
+      "party": "R",
+      "phone": "(202) 225-53015",
+      "state": "Louisiana",
+      "district": 1,
+      "office": "2049 undefined",
+      "social": {},
+      "committees": []
+    },
+    "CT-4": {
+      "name": "Mr.  James A. Himes",
+      "party": "D",
+      "phone": "(202) 225-55541",
+      "state": "Connecticut",
+      "district": 4,
+      "office": "2137 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "KY-2": {
+      "name": "Mr.  Brett  Guthrie",
+      "party": "R",
+      "phone": "(202) 225-53501",
+      "state": "Kentucky",
+      "district": 2,
+      "office": "2434 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "ME-1": {
+      "name": "Ms.  Chellie  Pingree",
+      "party": "D",
+      "phone": "(202) 225-56116",
+      "state": "Maine",
+      "district": 1,
+      "office": "2354 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-5": {
+      "name": "Mr.  Mike  Quigley",
+      "party": "D",
+      "phone": "(202) 225-54061",
+      "state": "Illinois",
+      "district": 5,
+      "office": "2083 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "AL-7": {
+      "name": "Ms.  Terri A. Sewell",
+      "party": "D",
+      "phone": "(202) 225-52665",
+      "state": "Alabama",
+      "district": 7,
+      "office": "1035 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        },
+        {
+          "_": "Joint Library",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "AR-1": {
+      "name": "Mr.  Eric A. \"Rick\" Crawford",
+      "party": "R",
+      "phone": "(202) 225-54076",
+      "state": "Arkansas",
+      "district": 1,
+      "office": "2422 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "AR-3": {
+      "name": "Mr.  Steve  Womack",
+      "party": "R",
+      "phone": "(202) 225-54301",
+      "state": "Arkansas",
+      "district": 3,
+      "office": "2412 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "GA-8": {
+      "name": "Mr.  Austin  Scott",
+      "party": "R",
+      "phone": "(202) 225-56531",
+      "state": "Georgia",
+      "district": 8,
+      "office": "2185 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-13": {
+      "name": "Mr.  David  Scott",
+      "party": "D",
+      "phone": "(202) 225-52939",
+      "state": "Georgia",
+      "district": 13,
+      "office": "468 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "MD-1": {
+      "name": "Mr.  Andy  Harris",
+      "party": "R",
+      "phone": "(202) 225-55311",
+      "state": "Maryland",
+      "district": 1,
+      "office": "1536 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "OH-4": {
+      "name": "Mr.  Jim  Jordan",
+      "party": "R",
+      "phone": "(202) 225-52676",
+      "state": "Ohio",
+      "district": 4,
+      "office": "2056 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "TN-3": {
+      "name": "Mr.  Charles J. \"Chuck\" Fleischmann",
+      "party": "R",
+      "phone": "(202) 225-53271",
+      "state": "Tennessee",
+      "district": 3,
+      "office": "2187 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "TN-4": {
+      "name": "Mr.  Scott  DesJarlais",
+      "party": "R",
+      "phone": "(202) 225-56831",
+      "state": "Tennessee",
+      "district": 4,
+      "office": "2304 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "VA-9": {
+      "name": "Mr.  H. Morgan Griffith",
+      "party": "R",
+      "phone": "(202) 225-53861",
+      "state": "Virginia",
+      "district": 9,
+      "office": "2202 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        }
+      ]
+    },
+    "WI-4": {
+      "name": "Ms.  Gwen  Moore",
+      "party": "D",
+      "phone": "(202) 225-54572",
+      "state": "Wisconsin",
+      "district": 4,
+      "office": "2252 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "NV-2": {
+      "name": "Mr.  Mark E. Amodei",
+      "party": "R",
+      "phone": "(202) 225-56155",
+      "state": "Nevada",
+      "district": 2,
+      "office": "104 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Joint Library",
+          "title": "Member"
+        }
+      ]
+    },
+    "OR-1": {
+      "name": "Ms.  Suzanne  Bonamici",
+      "party": "D",
+      "phone": "(202) 225-50855",
+      "state": "Oregon",
+      "district": 1,
+      "office": "2231 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "KY-4": {
+      "name": "Mr.  Thomas  Massie",
+      "party": "R",
+      "phone": "(202) 225-53465",
+      "state": "Kentucky",
+      "district": 4,
+      "office": "2453 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Rules",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "WA-1": {
+      "name": "Ms.  Suzan K. DelBene",
+      "party": "D",
+      "phone": "(202) 225-56311",
+      "state": "Washington",
+      "district": 1,
+      "office": "2330 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "CA-1": {
+      "name": "Mr.  Doug  LaMalfa",
+      "party": "R",
+      "phone": "(202) 225-53076",
+      "state": "California",
+      "district": 1,
+      "office": "408 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-2": {
+      "name": "Mr.  Jared  Huffman",
+      "party": "D",
+      "phone": "(202) 225-55161",
+      "state": "California",
+      "district": 2,
+      "office": "2445 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-26": {
+      "name": "Ms.  Julia  Brownley",
+      "party": "D",
+      "phone": "(202) 225-55811",
+      "state": "California",
+      "district": 26,
+      "office": "2262 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Transportation",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "MO-2": {
+      "name": "Mrs. Ann  Wagner",
+      "party": "R",
+      "phone": "(202) 225-51621",
+      "state": "Missouri",
+      "district": 2,
+      "office": "2350 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-6": {
+      "name": "Ms.  Grace  Meng",
+      "party": "D",
+      "phone": "(202) 225-52601",
+      "state": "New York",
+      "district": 6,
+      "office": "2209 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "NY-8": {
+      "name": "Mr.  Hakeem S. Jeffries",
+      "party": "D",
+      "phone": "(202) 225-55936",
+      "state": "New York",
+      "district": 8,
+      "office": "2433 undefined",
+      "social": {},
+      "committees": []
+    },
+    "OH-3": {
+      "name": "Mrs. Joyce  Beatty",
+      "party": "D",
+      "phone": "(202) 225-54324",
+      "state": "Ohio",
+      "district": 3,
+      "office": "2079 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "OH-14": {
+      "name": "Mr.  David P. Joyce",
+      "party": "R",
+      "phone": "(202) 225-55731",
+      "state": "Ohio",
+      "district": 14,
+      "office": "2065 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Ethics",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-14": {
+      "name": "Mr.  Randy K. Weber Sr.",
+      "party": "R",
+      "phone": "(202) 225-52831",
+      "state": "Texas",
+      "district": 14,
+      "office": "107 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-20": {
+      "name": "Mr.  Joaquin  Castro",
+      "party": "D",
+      "phone": "(202) 225-53236",
+      "state": "Texas",
+      "district": 20,
+      "office": "2241 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-25": {
+      "name": "Mr.  Roger  Williams",
+      "party": "R",
+      "phone": "(202) 225-59896",
+      "state": "Texas",
+      "district": 25,
+      "office": "2336 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-33": {
+      "name": "Mr.  Marc A. Veasey",
+      "party": "D",
+      "phone": "(202) 225-59897",
+      "state": "Texas",
+      "district": 33,
+      "office": "2348 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        }
+      ]
+    },
+    "WI-2": {
+      "name": "Mr.  Mark  Pocan",
+      "party": "D",
+      "phone": "(202) 225-52906",
+      "state": "Wisconsin",
+      "district": 2,
+      "office": "1026 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "CA-38": {
+      "name": "Ms.  Linda T. Sanchez",
+      "party": "D",
+      "phone": "(202) 225-56676",
+      "state": "California",
+      "district": 38,
+      "office": "2428 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "CA-43": {
+      "name": "Ms.  Maxine  Waters",
+      "party": "D",
+      "phone": "(202) 225-52201",
+      "state": "California",
+      "district": 43,
+      "office": "2221 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "FL-12": {
+      "name": "Mr.  Gus M. Bilirakis",
+      "party": "R",
+      "phone": "(202) 225-55755",
+      "state": "Florida",
+      "district": 12,
+      "office": "2306 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "FL-14": {
+      "name": "Ms.  Kathy  Castor",
+      "party": "D",
+      "phone": "(202) 225-53376",
+      "state": "Florida",
+      "district": 14,
+      "office": "2052 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-16": {
+      "name": "Mr.  Vern  Buchanan",
+      "party": "R",
+      "phone": "(202) 225-55015",
+      "state": "Florida",
+      "district": 16,
+      "office": "2110 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Joint Taxation",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-24": {
+      "name": "Ms.  Frederica S. Wilson",
+      "party": "D",
+      "phone": "(202) 225-54506",
+      "state": "Florida",
+      "district": 24,
+      "office": "2080 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-11": {
+      "name": "Mr.  Bill  Foster",
+      "party": "D",
+      "phone": "(202) 225-53515",
+      "state": "Illinois",
+      "district": 11,
+      "office": "2366 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "MA-1": {
+      "name": "Mr.  Richard E. Neal",
+      "party": "D",
+      "phone": "(202) 225-55601",
+      "state": "Massachusetts",
+      "district": 1,
+      "office": "372 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Joint Taxation",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "MA-2": {
+      "name": "Mr.  James P. McGovern",
+      "party": "D",
+      "phone": "(202) 225-56101",
+      "state": "Massachusetts",
+      "district": 2,
+      "office": "370 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        }
+      ]
+    },
+    "MA-8": {
+      "name": "Mr.  Stephen F. Lynch",
+      "party": "D",
+      "phone": "(202) 225-58273",
+      "state": "Massachusetts",
+      "district": 8,
+      "office": "2109 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "MA-9": {
+      "name": "Mr.  William R. Keating",
+      "party": "D",
+      "phone": "(202) 225-53111",
+      "state": "Massachusetts",
+      "district": 9,
+      "office": "2351 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "NV-1": {
+      "name": "Ms.  Dina  Titus",
+      "party": "D",
+      "phone": "(202) 225-55965",
+      "state": "Nevada",
+      "district": 1,
+      "office": "2464 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-5": {
+      "name": "Mr.  Gregory W. Meeks",
+      "party": "D",
+      "phone": "(202) 225-53461",
+      "state": "New York",
+      "district": 5,
+      "office": "2310 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-7": {
+      "name": "Ms.  Nydia M. Velazquez",
+      "party": "D",
+      "phone": "(202) 225-52361",
+      "state": "New York",
+      "district": 7,
+      "office": "2302 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-20": {
+      "name": "Mr.  Paul  Tonko",
+      "party": "D",
+      "phone": "(202) 225-55076",
+      "state": "New York",
+      "district": 20,
+      "office": "2369 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-10": {
+      "name": "Mr.  Michael R. Turner",
+      "party": "R",
+      "phone": "(202) 225-56465",
+      "state": "Ohio",
+      "district": 10,
+      "office": "2183 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-47": {
+      "name": "Mr.  Dave  Min",
+      "party": "D",
+      "phone": "(202) 225-55611",
+      "state": "California",
+      "district": 47,
+      "office": "1034 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "CO-3": {
+      "name": "Mr.  Jeff  Hurd",
+      "party": "R",
+      "phone": "(202) 225-54676",
+      "state": "Colorado",
+      "district": 3,
+      "office": "1641 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "KY-6": {
+      "name": "Mr.  Andy  Barr",
+      "party": "R",
+      "phone": "(202) 225-54706",
+      "state": "Kentucky",
+      "district": 6,
+      "office": "2430 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-2": {
+      "name": "Ms.  Robin L. Kelly",
+      "party": "D",
+      "phone": "(202) 225-50773",
+      "state": "Illinois",
+      "district": 2,
+      "office": "2329 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "MO-8": {
+      "name": "Mr.  Jason  Smith",
+      "party": "R",
+      "phone": "(202) 225-54404",
+      "state": "Missouri",
+      "district": 8,
+      "office": "1011 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Joint Taxation",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "MA-5": {
+      "name": "Ms.  Katherine M. Clark",
+      "party": "D",
+      "phone": "(202) 225-52836",
+      "state": "Massachusetts",
+      "district": 5,
+      "office": "2368 undefined",
+      "social": {},
+      "committees": []
+    },
+    "NY-9": {
+      "name": "Ms.  Yvette D. Clarke",
+      "party": "D",
+      "phone": "(202) 225-56231",
+      "state": "New York",
+      "district": 9,
+      "office": "2058 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-12": {
+      "name": "Ms.  Alma S. Adams",
+      "party": "D",
+      "phone": "(202) 225-51510",
+      "state": "North Carolina",
+      "district": 12,
+      "office": "2436 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        }
+      ]
+    },
+    "NJ-1": {
+      "name": "Mr.  Donald  Norcross",
+      "party": "D",
+      "phone": "(202) 225-56501",
+      "state": "New Jersey",
+      "district": 1,
+      "office": "2427 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        }
+      ]
+    },
+    "AL-6": {
+      "name": "Mr.  Gary J. Palmer",
+      "party": "R",
+      "phone": "(202) 225-54921",
+      "state": "Alabama",
+      "district": 6,
+      "office": "170 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "AR-2": {
+      "name": "Mr.  J. French Hill",
+      "party": "R",
+      "phone": "(202) 225-52506",
+      "state": "Arkansas",
+      "district": 2,
+      "office": "1533 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "AR-4": {
+      "name": "Mr.  Bruce  Westerman",
+      "party": "R",
+      "phone": "(202) 225-53772",
+      "state": "Arkansas",
+      "district": 4,
+      "office": "202 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-35": {
+      "name": "Mrs. Norma J. Torres",
+      "party": "D",
+      "phone": "(202) 225-56161",
+      "state": "California",
+      "district": 35,
+      "office": "2227 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-1": {
+      "name": "Mr.  Earl L. \"Buddy\" Carter",
+      "party": "R",
+      "phone": "(202) 225-55831",
+      "state": "Georgia",
+      "district": 1,
+      "office": "2432 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-11": {
+      "name": "Mr.  Barry  Loudermilk",
+      "party": "R",
+      "phone": "(202) 225-52931",
+      "state": "Georgia",
+      "district": 11,
+      "office": "2133 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-12": {
+      "name": "Mr.  Rick W. Allen",
+      "party": "R",
+      "phone": "(202) 225-52823",
+      "state": "Georgia",
+      "district": 12,
+      "office": "462 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-12": {
+      "name": "Mr.  Mike  Bost",
+      "party": "R",
+      "phone": "(202) 225-55661",
+      "state": "Illinois",
+      "district": 12,
+      "office": "352 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "MA-6": {
+      "name": "Mr.  Seth  Moulton",
+      "party": "D",
+      "phone": "(202) 225-58020",
+      "state": "Massachusetts",
+      "district": 6,
+      "office": "1126 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-7": {
+      "name": "Mr.  David  Rouzer",
+      "party": "R",
+      "phone": "(202) 225-52731",
+      "state": "North Carolina",
+      "district": 7,
+      "office": "2333 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NJ-12": {
+      "name": "Mrs. Bonnie  Watson Coleman",
+      "party": "D",
+      "phone": "(202) 225-55801",
+      "state": "New Jersey",
+      "district": 12,
+      "office": "168 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "NY-21": {
+      "name": "Ms.  Elise M. Stefanik",
+      "party": "R",
+      "phone": "(202) 225-54611",
+      "state": "New York",
+      "district": 21,
+      "office": "2211 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-36": {
+      "name": "Mr.  Brian  Babin",
+      "party": "R",
+      "phone": "(202) 225-51555",
+      "state": "Texas",
+      "district": 36,
+      "office": "2236 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "VA-8": {
+      "name": "Mr.  Donald S. Beyer Jr.",
+      "party": "D",
+      "phone": "(202) 225-54376",
+      "state": "Virginia",
+      "district": 8,
+      "office": "1119 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "VI-0": {
+      "name": "Ms.  Stacey E. Plaskett",
+      "party": "D",
+      "phone": "(202) 225-51790",
+      "state": "Virgin Islands",
+      "district": 0,
+      "office": "2059 undefined",
+      "social": {},
+      "committees": {
+        "_": "Intelligence (Permanent)",
+        "title": "Member"
+      }
+    },
+    "WA-4": {
+      "name": "Mr.  Dan  Newhouse",
+      "party": "R",
+      "phone": "(202) 225-55816",
+      "state": "Washington",
+      "district": 4,
+      "office": "504 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "WI-6": {
+      "name": "Mr.  Glenn  Grothman",
+      "party": "R",
+      "phone": "(202) 225-52476",
+      "state": "Wisconsin",
+      "district": 6,
+      "office": "1511 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "MN-6": {
+      "name": "Mr.  Tom  Emmer",
+      "party": "R",
+      "phone": "(202) 225-52331",
+      "state": "Minnesota",
+      "district": 6,
+      "office": "464 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "AQ-0": {
+      "name": "Mrs. Aumua Amata Coleman Radewagen",
+      "party": "R",
+      "phone": "(202) 225-58577",
+      "state": "American Samoa",
+      "district": 0,
+      "office": "2001 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "MS-1": {
+      "name": "Mr.  Trent  Kelly",
+      "party": "R",
+      "phone": "(202) 225-54306",
+      "state": "Mississippi",
+      "district": 1,
+      "office": "2243 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-8": {
+      "name": "Mr.  Warren  Davidson",
+      "party": "R",
+      "phone": "(202) 225-56205",
+      "state": "Ohio",
+      "district": 8,
+      "office": "2113 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "KY-1": {
+      "name": "Mr.  James  Comer",
+      "party": "R",
+      "phone": "(202) 225-53115",
+      "state": "Kentucky",
+      "district": 1,
+      "office": "2410 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "AZ-5": {
+      "name": "Mr.  Andy  Biggs",
+      "party": "R",
+      "phone": "(202) 225-52635",
+      "state": "Arizona",
+      "district": 5,
+      "office": "252 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-17": {
+      "name": "Mr.  Ro  Khanna",
+      "party": "D",
+      "phone": "(202) 225-52631",
+      "state": "California",
+      "district": 17,
+      "office": "306 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-24": {
+      "name": "Mr.  Salud O. Carbajal",
+      "party": "D",
+      "phone": "(202) 225-53601",
+      "state": "California",
+      "district": 24,
+      "office": "2331 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-44": {
+      "name": "Ms.  Nanette Diaz Barragan",
+      "party": "D",
+      "phone": "(202) 225-58220",
+      "state": "California",
+      "district": 44,
+      "office": "2312 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "CA-46": {
+      "name": "Mr.  J. Luis Correa",
+      "party": "D",
+      "phone": "(202) 225-52965",
+      "state": "California",
+      "district": 46,
+      "office": "2301 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-2": {
+      "name": "Mr.  Neal P. Dunn",
+      "party": "R",
+      "phone": "(202) 225-55235",
+      "state": "Florida",
+      "district": 2,
+      "office": "466 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-9": {
+      "name": "Mr.  Darren  Soto",
+      "party": "D",
+      "phone": "(202) 225-59889",
+      "state": "Florida",
+      "district": 9,
+      "office": "2353 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-11": {
+      "name": "Mr.  Daniel  Webster",
+      "party": "R",
+      "phone": "(202) 225-51002",
+      "state": "Florida",
+      "district": 11,
+      "office": "2184 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-8": {
+      "name": "Mr.  Raja  Krishnamoorthi",
+      "party": "D",
+      "phone": "(202) 225-53711",
+      "state": "Illinois",
+      "district": 8,
+      "office": "2367 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-10": {
+      "name": "Mr.  Bradley Scott Schneider",
+      "party": "D",
+      "phone": "(202) 225-54835",
+      "state": "Illinois",
+      "district": 10,
+      "office": "300 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "LA-3": {
+      "name": "Mr.  Clay  Higgins",
+      "party": "R",
+      "phone": "(202) 225-52031",
+      "state": "Louisiana",
+      "district": 3,
+      "office": "572 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "LA-4": {
+      "name": "Mr.  Mike  Johnson",
+      "party": "R",
+      "phone": "(202) 225-52777",
+      "state": "Louisiana",
+      "district": 4,
+      "office": "568 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "MD-8": {
+      "name": "Mr.  Jamie  Raskin",
+      "party": "D",
+      "phone": "(202) 225-55341",
+      "state": "Maryland",
+      "district": 8,
+      "office": "2242 undefined",
+      "social": {},
+      "committees": {
+        "_": "Oversight and Gov Reform",
+        "title": "Member"
+      }
+    },
+    "MI-1": {
+      "name": "Mr.  Jack  Bergman",
+      "party": "R",
+      "phone": "(202) 225-54735",
+      "state": "Michigan",
+      "district": 1,
+      "office": "566 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "NE-2": {
+      "name": "Mr.  Don  Bacon",
+      "party": "R",
+      "phone": "(202) 225-54155",
+      "state": "Nebraska",
+      "district": 2,
+      "office": "2104 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "NJ-5": {
+      "name": "Mr.  Josh  Gottheimer",
+      "party": "D",
+      "phone": "(202) 225-54465",
+      "state": "New Jersey",
+      "district": 5,
+      "office": "203 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-13": {
+      "name": "Mr.  Adriano  Espaillat",
+      "party": "D",
+      "phone": "(202) 225-54365",
+      "state": "New York",
+      "district": 13,
+      "office": "2332 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "TN-8": {
+      "name": "Mr.  David  Kustoff",
+      "party": "R",
+      "phone": "(202) 225-54714",
+      "state": "Tennessee",
+      "district": 8,
+      "office": "560 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "TX-19": {
+      "name": "Mr.  Jodey C. Arrington",
+      "party": "R",
+      "phone": "(202) 225-54005",
+      "state": "Texas",
+      "district": 19,
+      "office": "1107 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "WA-7": {
+      "name": "Ms.  Pramila  Jayapal",
+      "party": "D",
+      "phone": "(202) 225-53106",
+      "state": "Washington",
+      "district": 7,
+      "office": "2346 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "KS-4": {
+      "name": "Mr.  Ron  Estes",
+      "party": "R",
+      "phone": "(202) 225-56216",
+      "state": "Kansas",
+      "district": 4,
+      "office": "2234 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "SC-5": {
+      "name": "Mr.  Ralph  Norman",
+      "party": "R",
+      "phone": "(202) 225-55501",
+      "state": "South Carolina",
+      "district": 5,
+      "office": "569 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-34": {
+      "name": "Mr.  Jimmy  Gomez",
+      "party": "D",
+      "phone": "(202) 225-56235",
+      "state": "California",
+      "district": 34,
+      "office": "506 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-17": {
+      "name": "Mr.  W. Gregory Steube",
+      "party": "R",
+      "phone": "(202) 225-55792",
+      "state": "Florida",
+      "district": 17,
+      "office": "2457 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "TX-27": {
+      "name": "Mr.  Michael  Cloud",
+      "party": "R",
+      "phone": "(202) 225-57742",
+      "state": "Texas",
+      "district": 27,
+      "office": "171 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "OH-12": {
+      "name": "Mr.  Troy  Balderson",
+      "party": "R",
+      "phone": "(202) 225-55355",
+      "state": "Ohio",
+      "district": 12,
+      "office": "2429 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "NY-25": {
+      "name": "Mr.  Joseph D. Morelle",
+      "party": "D",
+      "phone": "(202) 225-53615",
+      "state": "New York",
+      "district": 25,
+      "office": "570 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        },
+        {
+          "_": "Joint Library",
+          "title": "Member"
+        }
+      ]
+    },
+    "OK-1": {
+      "name": "Mr.  Kevin  Hern",
+      "party": "R",
+      "phone": "(202) 225-52211",
+      "state": "Oklahoma",
+      "district": 1,
+      "office": "1019 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "CA-49": {
+      "name": "Mr.  Mike  Levin",
+      "party": "D",
+      "phone": "(202) 225-53906",
+      "state": "California",
+      "district": 49,
+      "office": "2352 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "CO-2": {
+      "name": "Mr.  Joe  Neguse",
+      "party": "D",
+      "phone": "(202) 225-52161",
+      "state": "Colorado",
+      "district": 2,
+      "office": "2400 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CO-6": {
+      "name": "Mr.  Jason  Crow",
+      "party": "D",
+      "phone": "(202) 225-57882",
+      "state": "Colorado",
+      "district": 6,
+      "office": "1323 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "CT-5": {
+      "name": "Mrs. Jahana  Hayes",
+      "party": "D",
+      "phone": "(202) 225-54476",
+      "state": "Connecticut",
+      "district": 5,
+      "office": "2458 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        }
+      ]
+    },
+    "HI-1": {
+      "name": "Mr.  Ed  Case",
+      "party": "D",
+      "phone": "(202) 225-52726",
+      "state": "Hawaii",
+      "district": 1,
+      "office": "2210 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "ID-1": {
+      "name": "Mr.  Russ  Fulcher",
+      "party": "R",
+      "phone": "(202) 225-56611",
+      "state": "Idaho",
+      "district": 1,
+      "office": "1514 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-6": {
+      "name": "Mr.  Sean  Casten",
+      "party": "D",
+      "phone": "(202) 225-54561",
+      "state": "Illinois",
+      "district": 6,
+      "office": "2440 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-14": {
+      "name": "Ms.  Lauren  Underwood",
+      "party": "D",
+      "phone": "(202) 225-52976",
+      "state": "Illinois",
+      "district": 14,
+      "office": "1410 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "IN-4": {
+      "name": "Mr.  James R. Baird",
+      "party": "R",
+      "phone": "(202) 225-55037",
+      "state": "Indiana",
+      "district": 4,
+      "office": "2303 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "KS-3": {
+      "name": "Ms.  Sharice  Davids",
+      "party": "D",
+      "phone": "(202) 225-52865",
+      "state": "Kansas",
+      "district": 3,
+      "office": "2435 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MA-3": {
+      "name": "Mrs. Lori  Trahan",
+      "party": "D",
+      "phone": "(202) 225-53411",
+      "state": "Massachusetts",
+      "district": 3,
+      "office": "2439 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "MA-7": {
+      "name": "Ms.  Ayanna  Pressley",
+      "party": "D",
+      "phone": "(202) 225-55111",
+      "state": "Massachusetts",
+      "district": 7,
+      "office": "402 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "MI-11": {
+      "name": "Ms.  Haley M. Stevens",
+      "party": "D",
+      "phone": "(202) 225-58171",
+      "state": "Michigan",
+      "district": 11,
+      "office": "2411 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "MN-5": {
+      "name": "Ms.  Ilhan  Omar",
+      "party": "D",
+      "phone": "(202) 225-54755",
+      "state": "Minnesota",
+      "district": 5,
+      "office": "1730 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "MN-8": {
+      "name": "Mr.  Pete  Stauber",
+      "party": "R",
+      "phone": "(202) 225-56211",
+      "state": "Minnesota",
+      "district": 8,
+      "office": "145 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MS-3": {
+      "name": "Mr.  Michael  Guest",
+      "party": "R",
+      "phone": "(202) 225-55031",
+      "state": "Mississippi",
+      "district": 3,
+      "office": "450 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Ethics",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        }
+      ]
+    },
+    "NH-1": {
+      "name": "Mr.  Chris  Pappas",
+      "party": "D",
+      "phone": "(202) 225-55456",
+      "state": "New Hampshire",
+      "district": 1,
+      "office": "452 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "NJ-11": {
+      "name": "Ms.  Mikie  Sherrill",
+      "party": "D",
+      "phone": "(202) 225-55034",
+      "state": "New Jersey",
+      "district": 11,
+      "office": "1427 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "NV-3": {
+      "name": "Ms. Susie  Lee",
+      "party": "D",
+      "phone": "(202) 225-53252",
+      "state": "Nevada",
+      "district": 3,
+      "office": "365 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "NV-4": {
+      "name": "Mr.  Steven  Horsford",
+      "party": "D",
+      "phone": "(202) 225-59894",
+      "state": "Nevada",
+      "district": 4,
+      "office": "406 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-14": {
+      "name": "Ms.  Alexandria  Ocasio-Cortez",
+      "party": "D",
+      "phone": "(202) 225-53965",
+      "state": "New York",
+      "district": 14,
+      "office": "250 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-1": {
+      "name": "Mr.  Brian K. Fitzpatrick",
+      "party": "R",
+      "phone": "(202) 225-54276",
+      "state": "Pennsylvania",
+      "district": 1,
+      "office": "271 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-2": {
+      "name": "Mr.  Brendan F. Boyle",
+      "party": "D",
+      "phone": "(202) 225-56111",
+      "state": "Pennsylvania",
+      "district": 2,
+      "office": "1502 undefined",
+      "social": {},
+      "committees": {
+        "_": "the Budget",
+        "title": "Member"
+      }
+    },
+    "PA-3": {
+      "name": "Mr.  Dwight  Evans",
+      "party": "D",
+      "phone": "(202) 225-54001",
+      "state": "Pennsylvania",
+      "district": 3,
+      "office": "1105 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "PA-4": {
+      "name": "Ms.  Madeleine  Dean",
+      "party": "D",
+      "phone": "(202) 225-54731",
+      "state": "Pennsylvania",
+      "district": 4,
+      "office": "150 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-6": {
+      "name": "Ms.  Chrissy  Houlahan",
+      "party": "D",
+      "phone": "(202) 225-54315",
+      "state": "Pennsylvania",
+      "district": 6,
+      "office": "1727 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-9": {
+      "name": "Mr.  Daniel  Meuser",
+      "party": "R",
+      "phone": "(202) 225-56511",
+      "state": "Pennsylvania",
+      "district": 9,
+      "office": "350 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-10": {
+      "name": "Mr.  Scott  Perry",
+      "party": "R",
+      "phone": "(202) 225-55836",
+      "state": "Pennsylvania",
+      "district": 10,
+      "office": "2160 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-11": {
+      "name": "Mr.  Lloyd  Smucker",
+      "party": "R",
+      "phone": "(202) 225-52411",
+      "state": "Pennsylvania",
+      "district": 11,
+      "office": "302 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-13": {
+      "name": "Mr.  John  Joyce",
+      "party": "R",
+      "phone": "(202) 225-52431",
+      "state": "Pennsylvania",
+      "district": 13,
+      "office": "152 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "PA-14": {
+      "name": "Mr.  Guy  Reschenthaler",
+      "party": "R",
+      "phone": "(202) 225-52065",
+      "state": "Pennsylvania",
+      "district": 14,
+      "office": "342 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-15": {
+      "name": "Mr.  Glenn  Thompson",
+      "party": "R",
+      "phone": "(202) 225-55121",
+      "state": "Pennsylvania",
+      "district": 15,
+      "office": "400 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-16": {
+      "name": "Mr.  Mike  Kelly",
+      "party": "R",
+      "phone": "(202) 225-55406",
+      "state": "Pennsylvania",
+      "district": 16,
+      "office": "1707 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "SC-4": {
+      "name": "Mr.  William R. Timmons IV",
+      "party": "R",
+      "phone": "(202) 225-56030",
+      "state": "South Carolina",
+      "district": 4,
+      "office": "267 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "SD-0": {
+      "name": "Mr.  Dusty  Johnson",
+      "party": "R",
+      "phone": "(202) 225-52801",
+      "state": "South Dakota",
+      "district": 0,
+      "office": "1714 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "TN-2": {
+      "name": "Mr.  Tim  Burchett",
+      "party": "R",
+      "phone": "(202) 225-55435",
+      "state": "Tennessee",
+      "district": 2,
+      "office": "1122 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "TN-6": {
+      "name": "Mr.  John W. Rose",
+      "party": "R",
+      "phone": "(202) 225-54231",
+      "state": "Tennessee",
+      "district": 6,
+      "office": "2238 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "TN-7": {
+      "name": "Mr.  Mark E. Green",
+      "party": "R",
+      "phone": "(202) 225-52811",
+      "state": "Tennessee",
+      "district": 7,
+      "office": "2446 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-2": {
+      "name": "Mr.  Dan  Crenshaw",
+      "party": "R",
+      "phone": "(202) 225-56565",
+      "state": "Texas",
+      "district": 2,
+      "office": "248 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-5": {
+      "name": "Mr.  Lance  Gooden",
+      "party": "R",
+      "phone": "(202) 225-53484",
+      "state": "Texas",
+      "district": 5,
+      "office": "2431 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-7": {
+      "name": "Mrs. Lizzie  Fletcher",
+      "party": "D",
+      "phone": "(202) 225-52571",
+      "state": "Texas",
+      "district": 7,
+      "office": "346 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "TX-16": {
+      "name": "Ms.  Veronica  Escobar",
+      "party": "D",
+      "phone": "(202) 225-54831",
+      "state": "Texas",
+      "district": 16,
+      "office": "2448 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Ethics",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-21": {
+      "name": "Mr.  Chip  Roy",
+      "party": "R",
+      "phone": "(202) 225-54236",
+      "state": "Texas",
+      "district": 21,
+      "office": "103 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Rules",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-29": {
+      "name": "Ms.  Sylvia R. Garcia",
+      "party": "D",
+      "phone": "(202) 225-51688",
+      "state": "Texas",
+      "district": 29,
+      "office": "2419 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "VA-6": {
+      "name": "Mr.  Ben  Cline",
+      "party": "R",
+      "phone": "(202) 225-55431",
+      "state": "Virginia",
+      "district": 6,
+      "office": "2443 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "WA-8": {
+      "name": "Ms.  Kim  Schrier",
+      "party": "D",
+      "phone": "(202) 225-57761",
+      "state": "Washington",
+      "district": 8,
+      "office": "1110 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "WI-1": {
+      "name": "Mr.  Bryan  Steil",
+      "party": "R",
+      "phone": "(202) 225-53031",
+      "state": "Wisconsin",
+      "district": 1,
+      "office": "1526 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        },
+        {
+          "_": "Joint Library",
+          "title": "Member"
+        }
+      ]
+    },
+    "ME-2": {
+      "name": "Mr.  Jared F. Golden",
+      "party": "D",
+      "phone": "(202) 225-56306",
+      "state": "Maine",
+      "district": 2,
+      "office": "1710 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-4": {
+      "name": "Mr.  Jesus G. \"Chuy\" Garcia",
+      "party": "D",
+      "phone": "(202) 225-58203",
+      "state": "Illinois",
+      "district": 4,
+      "office": "1519 undefined",
+      "social": {},
+      "committees": {
+        "_": "Transportation",
+        "title": "Member"
+      }
+    },
+    "MN-2": {
+      "name": "Ms.  Angie  Craig",
+      "party": "D",
+      "phone": "(202) 225-52271",
+      "state": "Minnesota",
+      "district": 2,
+      "office": "2442 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-3": {
+      "name": "Mr.  Gregory F. Murphy",
+      "party": "R",
+      "phone": "(202) 225-53415",
+      "state": "North Carolina",
+      "district": 3,
+      "office": "407 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "House Administration",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "NJ-2": {
+      "name": "Mr.  Jefferson  Van Drew",
+      "party": "R",
+      "phone": "(202) 225-56572",
+      "state": "New Jersey",
+      "district": 2,
+      "office": "2447 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MD-7": {
+      "name": "Mr.  Kweisi  Mfume",
+      "party": "D",
+      "phone": "(202) 225-54741",
+      "state": "Maryland",
+      "district": 7,
+      "office": "2263 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "WI-7": {
+      "name": "Mr.  Thomas P. Tiffany",
+      "party": "R",
+      "phone": "(202) 225-53365",
+      "state": "Wisconsin",
+      "district": 7,
+      "office": "451 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-3": {
+      "name": "Mrs. Kat  Cammack",
+      "party": "R",
+      "phone": "(202) 225-55744",
+      "state": "Florida",
+      "district": 3,
+      "office": "2421 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-19": {
+      "name": "Mr.  Byron  Donalds",
+      "party": "R",
+      "phone": "(202) 225-52536",
+      "state": "Florida",
+      "district": 19,
+      "office": "1719 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-27": {
+      "name": "Ms.  Maria Elvira Salazar",
+      "party": "R",
+      "phone": "(202) 225-53931",
+      "state": "Florida",
+      "district": 27,
+      "office": "2162 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-5": {
+      "name": "Ms.  Nikema  Williams",
+      "party": "D",
+      "phone": "(202) 225-53801",
+      "state": "Georgia",
+      "district": 5,
+      "office": "1406 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "GA-9": {
+      "name": "Mr.  Andrew S. Clyde",
+      "party": "R",
+      "phone": "(202) 225-59893",
+      "state": "Georgia",
+      "district": 9,
+      "office": "445 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "IA-4": {
+      "name": "Mr.  Randy  Feenstra",
+      "party": "R",
+      "phone": "(202) 225-54426",
+      "state": "Iowa",
+      "district": 4,
+      "office": "1440 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-15": {
+      "name": "Mrs. Mary E. Miller",
+      "party": "R",
+      "phone": "(202) 225-55271",
+      "state": "Illinois",
+      "district": 15,
+      "office": "1740 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        }
+      ]
+    },
+    "IN-1": {
+      "name": "Mr.  Frank J. Mrvan",
+      "party": "D",
+      "phone": "(202) 225-52461",
+      "state": "Indiana",
+      "district": 1,
+      "office": "1607 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "IN-5": {
+      "name": "Mrs. Victoria  Spartz",
+      "party": "R",
+      "phone": "(202) 225-52276",
+      "state": "Indiana",
+      "district": 5,
+      "office": "1609 undefined",
+      "social": {},
+      "committees": {
+        "_": "the Judiciary",
+        "title": "Member"
+      }
+    },
+    "KS-1": {
+      "name": "Mr.  Tracey  Mann",
+      "party": "R",
+      "phone": "(202) 225-52715",
+      "state": "Kansas",
+      "district": 1,
+      "office": "344 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MA-4": {
+      "name": "Mr.  Jake  Auchincloss",
+      "party": "D",
+      "phone": "(202) 225-55931",
+      "state": "Massachusetts",
+      "district": 4,
+      "office": "1524 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MN-7": {
+      "name": "Mrs. Michelle  Fischbach",
+      "party": "R",
+      "phone": "(202) 225-52165",
+      "state": "Minnesota",
+      "district": 7,
+      "office": "1004 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Ethics",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-2": {
+      "name": "Ms.  Deborah K. Ross",
+      "party": "D",
+      "phone": "(202) 225-53032",
+      "state": "North Carolina",
+      "district": 2,
+      "office": "1221 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Ethics",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "NM-3": {
+      "name": "Ms.  Teresa  Leger Fernandez",
+      "party": "D",
+      "phone": "(202) 225-56190",
+      "state": "New Mexico",
+      "district": 3,
+      "office": "1510 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-2": {
+      "name": "Mr.  Andrew R. Garbarino",
+      "party": "R",
+      "phone": "(202) 225-57896",
+      "state": "New York",
+      "district": 2,
+      "office": "2344 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Ethics",
+          "title": "Member"
+        },
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-11": {
+      "name": "Ms.  Nicole  Malliotakis",
+      "party": "R",
+      "phone": "(202) 225-53371",
+      "state": "New York",
+      "district": 11,
+      "office": "351 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "NY-15": {
+      "name": "Mr.  Ritchie  Torres",
+      "party": "D",
+      "phone": "(202) 225-54361",
+      "state": "New York",
+      "district": 15,
+      "office": "1414 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "OK-5": {
+      "name": "Mrs. Stephanie I. Bice",
+      "party": "R",
+      "phone": "(202) 225-52132",
+      "state": "Oklahoma",
+      "district": 5,
+      "office": "2437 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "OR-2": {
+      "name": "Mr.  Cliff  Bentz",
+      "party": "R",
+      "phone": "(202) 225-56730",
+      "state": "Oregon",
+      "district": 2,
+      "office": "409 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "SC-1": {
+      "name": "Ms.  Nancy  Mace",
+      "party": "R",
+      "phone": "(202) 225-53176",
+      "state": "South Carolina",
+      "district": 1,
+      "office": "1728 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "TN-1": {
+      "name": "Mrs. Diana  Harshbarger",
+      "party": "R",
+      "phone": "(202) 225-56356",
+      "state": "Tennessee",
+      "district": 1,
+      "office": "167 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "TX-4": {
+      "name": "Mr.  Pat  Fallon",
+      "party": "R",
+      "phone": "(202) 225-56673",
+      "state": "Texas",
+      "district": 4,
+      "office": "2416 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-11": {
+      "name": "Mr.  August  Pfluger",
+      "party": "R",
+      "phone": "(202) 225-53605",
+      "state": "Texas",
+      "district": 11,
+      "office": "1124 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-13": {
+      "name": "Mr.  Ronny  Jackson",
+      "party": "R",
+      "phone": "(202) 225-53706",
+      "state": "Texas",
+      "district": 13,
+      "office": "446 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-17": {
+      "name": "Mr.  Pete  Sessions",
+      "party": "R",
+      "phone": "(202) 225-56105",
+      "state": "Texas",
+      "district": 17,
+      "office": "2204 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-22": {
+      "name": "Mr.  Troy E. Nehls",
+      "party": "R",
+      "phone": "(202) 225-55951",
+      "state": "Texas",
+      "district": 22,
+      "office": "1104 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-23": {
+      "name": "Mr.  Tony  Gonzales",
+      "party": "R",
+      "phone": "(202) 225-54511",
+      "state": "Texas",
+      "district": 23,
+      "office": "2244 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-24": {
+      "name": "Ms.  Beth  Van Duyne",
+      "party": "R",
+      "phone": "(202) 225-56605",
+      "state": "Texas",
+      "district": 24,
+      "office": "1725 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "UT-1": {
+      "name": "Mr.  Blake D. Moore",
+      "party": "R",
+      "phone": "(202) 225-50453",
+      "state": "Utah",
+      "district": 1,
+      "office": "1131 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "UT-4": {
+      "name": "Mr.  Burgess  Owens",
+      "party": "R",
+      "phone": "(202) 225-53011",
+      "state": "Utah",
+      "district": 4,
+      "office": "309 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "WA-10": {
+      "name": "Ms.  Marilyn  Strickland",
+      "party": "D",
+      "phone": "(202) 225-59740",
+      "state": "Washington",
+      "district": 10,
+      "office": "1708 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "WI-5": {
+      "name": "Mr.  Scott  Fitzgerald",
+      "party": "R",
+      "phone": "(202) 225-55101",
+      "state": "Wisconsin",
+      "district": 5,
+      "office": "1507 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "LA-5": {
+      "name": "Ms.  Julia  Letlow",
+      "party": "R",
+      "phone": "(202) 225-58490",
+      "state": "Louisiana",
+      "district": 5,
+      "office": "142 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        }
+      ]
+    },
+    "LA-2": {
+      "name": "Mr.  Troy A. Carter",
+      "party": "D",
+      "phone": "(202) 225-56636",
+      "state": "Louisiana",
+      "district": 2,
+      "office": "442 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NM-1": {
+      "name": "Ms.  Melanie A. Stansbury",
+      "party": "D",
+      "phone": "(202) 225-56316",
+      "state": "New Mexico",
+      "district": 1,
+      "office": "1421 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-6": {
+      "name": "Mr.  Jake  Ellzey",
+      "party": "R",
+      "phone": "(202) 225-52002",
+      "state": "Texas",
+      "district": 6,
+      "office": "1721 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-11": {
+      "name": "Ms.  Shontel M. Brown",
+      "party": "D",
+      "phone": "(202) 225-57032",
+      "state": "Ohio",
+      "district": 11,
+      "office": "449 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-15": {
+      "name": "Mr.  Mike  Carey",
+      "party": "R",
+      "phone": "(202) 225-52015",
+      "state": "Ohio",
+      "district": 15,
+      "office": "1433 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "House Administration",
+          "title": "Member"
+        },
+        {
+          "_": "Joint Library",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-20": {
+      "name": "Mrs. Sheila  Cherfilus-McCormick",
+      "party": "D",
+      "phone": "(202) 225-51313",
+      "state": "Florida",
+      "district": 20,
+      "office": "242 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "NE-1": {
+      "name": "Mr.  Mike  Flood",
+      "party": "R",
+      "phone": "(202) 225-54806",
+      "state": "Nebraska",
+      "district": 1,
+      "office": "343 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "MN-1": {
+      "name": "Mr.  Brad  Finstad",
+      "party": "R",
+      "phone": "(202) 225-52472",
+      "state": "Minnesota",
+      "district": 1,
+      "office": "1605 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "IN-2": {
+      "name": "Mr.  Rudy  Yakym III",
+      "party": "R",
+      "phone": "(202) 225-53915",
+      "state": "Indiana",
+      "district": 2,
+      "office": "349 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "AL-5": {
+      "name": "Mr.  Dale W. Strong",
+      "party": "R",
+      "phone": "(202) 225-54801",
+      "state": "Alabama",
+      "district": 5,
+      "office": "1337 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "AZ-1": {
+      "name": "Mr.  David  Schweikert",
+      "party": "R",
+      "phone": "(202) 225-52190",
+      "state": "Arizona",
+      "district": 1,
+      "office": "460 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "AZ-2": {
+      "name": "Mr.  Elijah  Crane",
+      "party": "R",
+      "phone": "(202) 225-53361",
+      "state": "Arizona",
+      "district": 2,
+      "office": "1229 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "AZ-4": {
+      "name": "Mr.  Greg  Stanton",
+      "party": "D",
+      "phone": "(202) 225-59888",
+      "state": "Arizona",
+      "district": 4,
+      "office": "207 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "AZ-6": {
+      "name": "Mr.  Juan  Ciscomani",
+      "party": "R",
+      "phone": "(202) 225-52542",
+      "state": "Arizona",
+      "district": 6,
+      "office": "1429 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "AZ-9": {
+      "name": "Mr.  Paul A. Gosar",
+      "party": "R",
+      "phone": "(202) 225-52315",
+      "state": "Arizona",
+      "district": 9,
+      "office": "2057 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-3": {
+      "name": "Mr.  Kevin  Kiley",
+      "party": "R",
+      "phone": "(202) 225-52523",
+      "state": "California",
+      "district": 3,
+      "office": "1032 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-4": {
+      "name": "Mr.  Mike  Thompson",
+      "party": "D",
+      "phone": "(202) 225-53311",
+      "state": "California",
+      "district": 4,
+      "office": "268 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "CA-5": {
+      "name": "Mr.  Tom  McClintock",
+      "party": "R",
+      "phone": "(202) 225-52511",
+      "state": "California",
+      "district": 5,
+      "office": "2256 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-6": {
+      "name": "Mr.  Ami  Bera",
+      "party": "D",
+      "phone": "(202) 225-55716",
+      "state": "California",
+      "district": 6,
+      "office": "172 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-7": {
+      "name": "Ms.  Doris O. Matsui",
+      "party": "D",
+      "phone": "(202) 225-57163",
+      "state": "California",
+      "district": 7,
+      "office": "2311 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "CA-8": {
+      "name": "Mr.  John  Garamendi",
+      "party": "D",
+      "phone": "(202) 225-51880",
+      "state": "California",
+      "district": 8,
+      "office": "2004 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-9": {
+      "name": "Mr.  Josh  Harder",
+      "party": "D",
+      "phone": "(202) 225-54540",
+      "state": "California",
+      "district": 9,
+      "office": "209 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "CA-10": {
+      "name": "Mr.  Mark  DeSaulnier",
+      "party": "D",
+      "phone": "(202) 225-52095",
+      "state": "California",
+      "district": 10,
+      "office": "503 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Ethics",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-11": {
+      "name": "Ms.  Nancy  Pelosi",
+      "party": "D",
+      "phone": "(202) 225-54965",
+      "state": "California",
+      "district": 11,
+      "office": "1236 undefined",
+      "social": {},
+      "committees": []
+    },
+    "CA-14": {
+      "name": "Mr.  Eric  Swalwell",
+      "party": "D",
+      "phone": "(202) 225-55065",
+      "state": "California",
+      "district": 14,
+      "office": "174 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-15": {
+      "name": "Mr.  Kevin  Mullin",
+      "party": "D",
+      "phone": "(202) 225-53531",
+      "state": "California",
+      "district": 15,
+      "office": "1404 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-18": {
+      "name": "Ms.  Zoe  Lofgren",
+      "party": "D",
+      "phone": "(202) 225-53072",
+      "state": "California",
+      "district": 18,
+      "office": "1401 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-19": {
+      "name": "Mr.  Jimmy  Panetta",
+      "party": "D",
+      "phone": "(202) 225-52861",
+      "state": "California",
+      "district": 19,
+      "office": "304 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-21": {
+      "name": "Mr.  Jim  Costa",
+      "party": "D",
+      "phone": "(202) 225-53341",
+      "state": "California",
+      "district": 21,
+      "office": "2081 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-22": {
+      "name": "Mr.  David G. Valadao",
+      "party": "R",
+      "phone": "(202) 225-54695",
+      "state": "California",
+      "district": 22,
+      "office": "2465 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-23": {
+      "name": "Mr.  Jay  Obernolte",
+      "party": "R",
+      "phone": "(202) 225-55861",
+      "state": "California",
+      "district": 23,
+      "office": "1029 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-25": {
+      "name": "Mr.  Raul  Ruiz",
+      "party": "D",
+      "phone": "(202) 225-55330",
+      "state": "California",
+      "district": 25,
+      "office": "2342 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "CA-28": {
+      "name": "Ms.  Judy  Chu",
+      "party": "D",
+      "phone": "(202) 225-55464",
+      "state": "California",
+      "district": 28,
+      "office": "2423 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-32": {
+      "name": "Mr.  Brad  Sherman",
+      "party": "D",
+      "phone": "(202) 225-55911",
+      "state": "California",
+      "district": 32,
+      "office": "2365 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-33": {
+      "name": "Mr.  Pete  Aguilar",
+      "party": "D",
+      "phone": "(202) 225-53201",
+      "state": "California",
+      "district": 33,
+      "office": "108 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "CA-36": {
+      "name": "Mr.  Ted  Lieu",
+      "party": "D",
+      "phone": "(202) 225-53976",
+      "state": "California",
+      "district": 36,
+      "office": "2454 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-37": {
+      "name": "Ms.  Sydney  Kamlager-Dove",
+      "party": "D",
+      "phone": "(202) 225-57084",
+      "state": "California",
+      "district": 37,
+      "office": "1419 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-39": {
+      "name": "Mr.  Mark  Takano",
+      "party": "D",
+      "phone": "(202) 225-52305",
+      "state": "California",
+      "district": 39,
+      "office": "2078 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-40": {
+      "name": "Mrs. Young  Kim",
+      "party": "R",
+      "phone": "(202) 225-54111",
+      "state": "California",
+      "district": 40,
+      "office": "1306 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-41": {
+      "name": "Mr.  Ken  Calvert",
+      "party": "R",
+      "phone": "(202) 225-51986",
+      "state": "California",
+      "district": 41,
+      "office": "2205 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "CA-42": {
+      "name": "Mr.  Robert  Garcia",
+      "party": "D",
+      "phone": "(202) 225-57924",
+      "state": "California",
+      "district": 42,
+      "office": "1305 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-48": {
+      "name": "Mr.  Darrell  Issa",
+      "party": "R",
+      "phone": "(202) 225-55672",
+      "state": "California",
+      "district": 48,
+      "office": "2108 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-50": {
+      "name": "Mr.  Scott H. Peters",
+      "party": "D",
+      "phone": "(202) 225-50508",
+      "state": "California",
+      "district": 50,
+      "office": "1201 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-51": {
+      "name": "Ms.  Sara  Jacobs",
+      "party": "D",
+      "phone": "(202) 225-52040",
+      "state": "California",
+      "district": 51,
+      "office": "1314 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-52": {
+      "name": "Mr.  Juan  Vargas",
+      "party": "D",
+      "phone": "(202) 225-58045",
+      "state": "California",
+      "district": 52,
+      "office": "2334 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "CO-7": {
+      "name": "Ms.  Brittany  Pettersen",
+      "party": "D",
+      "phone": "(202) 225-52645",
+      "state": "Colorado",
+      "district": 7,
+      "office": "1230 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "FL-4": {
+      "name": "Mr.  Aaron  Bean",
+      "party": "R",
+      "phone": "(202) 225-50123",
+      "state": "Florida",
+      "district": 4,
+      "office": "1239 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-5": {
+      "name": "Mr.  John H. Rutherford",
+      "party": "R",
+      "phone": "(202) 225-52501",
+      "state": "Florida",
+      "district": 5,
+      "office": "1711 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Ethics",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-7": {
+      "name": "Mr.  Cory  Mills",
+      "party": "R",
+      "phone": "(202) 225-54035",
+      "state": "Florida",
+      "district": 7,
+      "office": "1237 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-10": {
+      "name": "Mr.  Maxwell  Frost",
+      "party": "D",
+      "phone": "(202) 225-52176",
+      "state": "Florida",
+      "district": 10,
+      "office": "1224 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-13": {
+      "name": "Mrs. Anna Paulina  Luna",
+      "party": "R",
+      "phone": "(202) 225-55961",
+      "state": "Florida",
+      "district": 13,
+      "office": "1017 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-15": {
+      "name": "Ms.  Laurel M. Lee",
+      "party": "R",
+      "phone": "(202) 225-55626",
+      "state": "Florida",
+      "district": 15,
+      "office": "1118 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-21": {
+      "name": "Mr.  Brian J. Mast",
+      "party": "R",
+      "phone": "(202) 225-53026",
+      "state": "Florida",
+      "district": 21,
+      "office": "2182 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-22": {
+      "name": "Ms.  Lois  Frankel",
+      "party": "D",
+      "phone": "(202) 225-59890",
+      "state": "Florida",
+      "district": 22,
+      "office": "2305 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "FL-23": {
+      "name": "Mr.  Jared  Moskowitz",
+      "party": "D",
+      "phone": "(202) 225-53001",
+      "state": "Florida",
+      "district": 23,
+      "office": "1130 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-25": {
+      "name": "Ms.  Debbie  Wasserman Schultz",
+      "party": "D",
+      "phone": "(202) 225-57931",
+      "state": "Florida",
+      "district": 25,
+      "office": "270 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "FL-26": {
+      "name": "Mr.  Mario  Diaz-Balart",
+      "party": "R",
+      "phone": "(202) 225-54211",
+      "state": "Florida",
+      "district": 26,
+      "office": "374 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "FL-28": {
+      "name": "Mr.  Carlos A. Gimenez",
+      "party": "R",
+      "phone": "(202) 225-52778",
+      "state": "Florida",
+      "district": 28,
+      "office": "448 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-10": {
+      "name": "Mr.  Mike  Collins",
+      "party": "R",
+      "phone": "(202) 225-54101",
+      "state": "Georgia",
+      "district": 10,
+      "office": "1223 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "GU-0": {
+      "name": "Mr.  James C. Moylan",
+      "party": "R",
+      "phone": "(202) 225-51188",
+      "state": "Guam",
+      "district": 0,
+      "office": "1628 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "HI-2": {
+      "name": "Ms.  Jill N. Tokuda",
+      "party": "D",
+      "phone": "(202) 225-54906",
+      "state": "Hawaii",
+      "district": 2,
+      "office": "1005 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "IA-1": {
+      "name": "Mrs. Mariannette  Miller-Meeks",
+      "party": "R",
+      "phone": "(202) 225-56576",
+      "state": "Iowa",
+      "district": 1,
+      "office": "1034 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "IA-2": {
+      "name": "Mrs. Ashley  Hinson",
+      "party": "R",
+      "phone": "(202) 225-52911",
+      "state": "Iowa",
+      "district": 2,
+      "office": "1717 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "IA-3": {
+      "name": "Mr.  Zachary  Nunn",
+      "party": "R",
+      "phone": "(202) 225-55476",
+      "state": "Iowa",
+      "district": 3,
+      "office": "1232 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-1": {
+      "name": "Mr.  Jonathan L. Jackson",
+      "party": "D",
+      "phone": "(202) 225-54372",
+      "state": "Illinois",
+      "district": 1,
+      "office": "1641 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-3": {
+      "name": "Mrs. Delia C. Ramirez",
+      "party": "D",
+      "phone": "(202) 225-55701",
+      "state": "Illinois",
+      "district": 3,
+      "office": "1523 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-13": {
+      "name": "Ms.  Nikki  Budzinski",
+      "party": "D",
+      "phone": "(202) 225-52371",
+      "state": "Illinois",
+      "district": 13,
+      "office": "1009 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-16": {
+      "name": "Mr.  Darin  LaHood",
+      "party": "R",
+      "phone": "(202) 225-56201",
+      "state": "Illinois",
+      "district": 16,
+      "office": "1424 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "IL-17": {
+      "name": "Mr.  Eric  Sorensen",
+      "party": "D",
+      "phone": "(202) 225-55905",
+      "state": "Illinois",
+      "district": 17,
+      "office": "1205 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "IN-9": {
+      "name": "Mrs. Erin  Houchin",
+      "party": "R",
+      "phone": "(202) 225-55315",
+      "state": "Indiana",
+      "district": 9,
+      "office": "1632 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        }
+      ]
+    },
+    "KY-3": {
+      "name": "Mr.  Morgan  McGarvey",
+      "party": "D",
+      "phone": "(202) 225-55401",
+      "state": "Kentucky",
+      "district": 3,
+      "office": "1527 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "MD-4": {
+      "name": "Mr.  Glenn  Ivey",
+      "party": "D",
+      "phone": "(202) 225-58699",
+      "state": "Maryland",
+      "district": 4,
+      "office": "1529 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Ethics",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-2": {
+      "name": "Mr.  John R. Moolenaar",
+      "party": "R",
+      "phone": "(202) 225-53561",
+      "state": "Michigan",
+      "district": 2,
+      "office": "246 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-3": {
+      "name": "Ms.  Hillary J. Scholten",
+      "party": "D",
+      "phone": "(202) 225-53831",
+      "state": "Michigan",
+      "district": 3,
+      "office": "1317 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-4": {
+      "name": "Mr.  Bill  Huizenga",
+      "party": "R",
+      "phone": "(202) 225-54401",
+      "state": "Michigan",
+      "district": 4,
+      "office": "2232 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-5": {
+      "name": "Mr.  Tim  Walberg",
+      "party": "R",
+      "phone": "(202) 225-56276",
+      "state": "Michigan",
+      "district": 5,
+      "office": "2266 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-6": {
+      "name": "Mrs. Debbie  Dingell",
+      "party": "D",
+      "phone": "(202) 225-54071",
+      "state": "Michigan",
+      "district": 6,
+      "office": "102 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-9": {
+      "name": "Mrs. Lisa C. McClain",
+      "party": "R",
+      "phone": "(202) 225-52106",
+      "state": "Michigan",
+      "district": 9,
+      "office": "444 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-10": {
+      "name": "Mr.  John  James",
+      "party": "R",
+      "phone": "(202) 225-54961",
+      "state": "Michigan",
+      "district": 10,
+      "office": "1319 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-12": {
+      "name": "Ms.  Rashida  Tlaib",
+      "party": "D",
+      "phone": "(202) 225-55126",
+      "state": "Michigan",
+      "district": 12,
+      "office": "2438 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-13": {
+      "name": "Mr.  Shri  Thanedar",
+      "party": "D",
+      "phone": "(202) 225-55802",
+      "state": "Michigan",
+      "district": 13,
+      "office": "1039 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "MO-4": {
+      "name": "Mr.  Mark  Alford",
+      "party": "R",
+      "phone": "(202) 225-52876",
+      "state": "Missouri",
+      "district": 4,
+      "office": "1516 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "MO-7": {
+      "name": "Mr.  Eric  Burlison",
+      "party": "R",
+      "phone": "(202) 225-56536",
+      "state": "Missouri",
+      "district": 7,
+      "office": "1108 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MS-4": {
+      "name": "Mr.  Mike  Ezell",
+      "party": "R",
+      "phone": "(202) 225-55772",
+      "state": "Mississippi",
+      "district": 4,
+      "office": "443 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MT-1": {
+      "name": "Mr.  Ryan K. Zinke",
+      "party": "R",
+      "phone": "(202) 225-55628",
+      "state": "Montana",
+      "district": 1,
+      "office": "512 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-1": {
+      "name": "Mr.  Donald G. Davis",
+      "party": "D",
+      "phone": "(202) 225-53101",
+      "state": "North Carolina",
+      "district": 1,
+      "office": "1123 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-4": {
+      "name": "Mrs. Valerie P. Foushee",
+      "party": "D",
+      "phone": "(202) 225-51784",
+      "state": "North Carolina",
+      "district": 4,
+      "office": "1716 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-9": {
+      "name": "Mr.  Richard  Hudson",
+      "party": "R",
+      "phone": "(202) 225-53715",
+      "state": "North Carolina",
+      "district": 9,
+      "office": "2112 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "NC-11": {
+      "name": "Mr.  Chuck  Edwards",
+      "party": "R",
+      "phone": "(202) 225-56401",
+      "state": "North Carolina",
+      "district": 11,
+      "office": "1505 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NJ-7": {
+      "name": "Mr.  Thomas H. Kean Jr.",
+      "party": "R",
+      "phone": "(202) 225-55361",
+      "state": "New Jersey",
+      "district": 7,
+      "office": "251 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NJ-8": {
+      "name": "Mr.  Robert  Menendez",
+      "party": "D",
+      "phone": "(202) 225-57919",
+      "state": "New Jersey",
+      "district": 8,
+      "office": "1007 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NM-2": {
+      "name": "Mr.  Gabe  Vasquez",
+      "party": "D",
+      "phone": "(202) 225-52365",
+      "state": "New Mexico",
+      "district": 2,
+      "office": "1517 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-1": {
+      "name": "Mr.  Nick  LaLota",
+      "party": "R",
+      "phone": "(202) 225-53826",
+      "state": "New York",
+      "district": 1,
+      "office": "1530 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-10": {
+      "name": "Mr.  Daniel S. Goldman",
+      "party": "D",
+      "phone": "(202) 225-57944",
+      "state": "New York",
+      "district": 10,
+      "office": "245 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-12": {
+      "name": "Mr.  Jerrold  Nadler",
+      "party": "D",
+      "phone": "(202) 225-55635",
+      "state": "New York",
+      "district": 12,
+      "office": "2132 undefined",
+      "social": {},
+      "committees": {
+        "_": "the Judiciary",
+        "title": "Member"
+      }
+    },
+    "NY-17": {
+      "name": "Mr.  Michael  Lawler",
+      "party": "R",
+      "phone": "(202) 225-56506",
+      "state": "New York",
+      "district": 17,
+      "office": "1013 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-18": {
+      "name": "Mr.  Patrick  Ryan",
+      "party": "D",
+      "phone": "(202) 225-55614",
+      "state": "New York",
+      "district": 18,
+      "office": "1030 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-23": {
+      "name": "Mr.  Nicholas A. Langworthy",
+      "party": "R",
+      "phone": "(202) 225-53161",
+      "state": "New York",
+      "district": 23,
+      "office": "1630 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-24": {
+      "name": "Ms.  Claudia  Tenney",
+      "party": "R",
+      "phone": "(202) 225-53665",
+      "state": "New York",
+      "district": 24,
+      "office": "2349 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-1": {
+      "name": "Mr.  Greg  Landsman",
+      "party": "D",
+      "phone": "(202) 225-52216",
+      "state": "Ohio",
+      "district": 1,
+      "office": "1432 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-7": {
+      "name": "Mr.  Max L. Miller",
+      "party": "R",
+      "phone": "(202) 225-53876",
+      "state": "Ohio",
+      "district": 7,
+      "office": "143 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-13": {
+      "name": "Mrs. Emilia Strong Sykes",
+      "party": "D",
+      "phone": "(202) 225-56265",
+      "state": "Ohio",
+      "district": 13,
+      "office": "1217 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "OK-2": {
+      "name": "Mr.  Josh  Brecheen",
+      "party": "R",
+      "phone": "(202) 225-52701",
+      "state": "Oklahoma",
+      "district": 2,
+      "office": "1208 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "OR-4": {
+      "name": "Ms.  Val T. Hoyle",
+      "party": "D",
+      "phone": "(202) 225-56416",
+      "state": "Oregon",
+      "district": 4,
+      "office": "1620 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "OR-6": {
+      "name": "Ms.  Andrea  Salinas",
+      "party": "D",
+      "phone": "(202) 225-55643",
+      "state": "Oregon",
+      "district": 6,
+      "office": "109 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-12": {
+      "name": "Ms.  Summer L. Lee",
+      "party": "D",
+      "phone": "(202) 225-52135",
+      "state": "Pennsylvania",
+      "district": 12,
+      "office": "243 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-17": {
+      "name": "Mr.  Christopher R. Deluzio",
+      "party": "D",
+      "phone": "(202) 225-52301",
+      "state": "Pennsylvania",
+      "district": 17,
+      "office": "1222 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "RI-2": {
+      "name": "Mr.  Seth  Magaziner",
+      "party": "D",
+      "phone": "(202) 225-52735",
+      "state": "Rhode Island",
+      "district": 2,
+      "office": "1218 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "SC-7": {
+      "name": "Mr.  Russell  Fry",
+      "party": "R",
+      "phone": "(202) 225-59895",
+      "state": "South Carolina",
+      "district": 7,
+      "office": "1626 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "TN-5": {
+      "name": "Mr.  Andrew  Ogles",
+      "party": "R",
+      "phone": "(202) 225-54311",
+      "state": "Tennessee",
+      "district": 5,
+      "office": "151 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "TX-1": {
+      "name": "Mr.  Nathaniel  Moran",
+      "party": "R",
+      "phone": "(202) 225-53035",
+      "state": "Texas",
+      "district": 1,
+      "office": "1541 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-3": {
+      "name": "Mr.  Keith  Self",
+      "party": "R",
+      "phone": "(202) 225-54201",
+      "state": "Texas",
+      "district": 3,
+      "office": "1113 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-8": {
+      "name": "Mr.  Morgan  Luttrell",
+      "party": "R",
+      "phone": "(202) 225-54901",
+      "state": "Texas",
+      "district": 8,
+      "office": "1320 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-15": {
+      "name": "Ms.  Monica  De La Cruz",
+      "party": "R",
+      "phone": "(202) 225-59901",
+      "state": "Texas",
+      "district": 15,
+      "office": "1415 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-30": {
+      "name": "Ms.  Jasmine  Crockett",
+      "party": "D",
+      "phone": "(202) 225-58885",
+      "state": "Texas",
+      "district": 30,
+      "office": "1616 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-34": {
+      "name": "Mr.  Vicente  Gonzalez",
+      "party": "D",
+      "phone": "(202) 225-52531",
+      "state": "Texas",
+      "district": 34,
+      "office": "154 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "TX-35": {
+      "name": "Mr.  Greg  Casar",
+      "party": "D",
+      "phone": "(202) 225-55645",
+      "state": "Texas",
+      "district": 35,
+      "office": "1339 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-37": {
+      "name": "Mr.  Lloyd  Doggett",
+      "party": "D",
+      "phone": "(202) 225-54865",
+      "state": "Texas",
+      "district": 37,
+      "office": "2307 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Joint Taxation",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-38": {
+      "name": "Mr.  Wesley  Hunt",
+      "party": "R",
+      "phone": "(202) 225-55646",
+      "state": "Texas",
+      "district": 38,
+      "office": "1520 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "VA-2": {
+      "name": "Mrs. Jennifer A. Kiggans",
+      "party": "R",
+      "phone": "(202) 225-54215",
+      "state": "Virginia",
+      "district": 2,
+      "office": "1037 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "VT-0": {
+      "name": "Ms.  Becca  Balint",
+      "party": "D",
+      "phone": "(202) 225-54115",
+      "state": "Vermont",
+      "district": 0,
+      "office": "1408 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "WA-3": {
+      "name": "Ms.  Marie Gluesenkamp Perez",
+      "party": "D",
+      "phone": "(202) 225-53536",
+      "state": "Washington",
+      "district": 3,
+      "office": "1431 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "WI-3": {
+      "name": "Mr.  Derrick  Van Orden",
+      "party": "R",
+      "phone": "(202) 225-55506",
+      "state": "Wisconsin",
+      "district": 3,
+      "office": "1513 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "WV-1": {
+      "name": "Mrs. Carol D. Miller",
+      "party": "R",
+      "phone": "(202) 225-53452",
+      "state": "West Virginia",
+      "district": 1,
+      "office": "465 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "WY-0": {
+      "name": "Ms.  Harriet M. Hageman",
+      "party": "R",
+      "phone": "(202) 225-52311",
+      "state": "Wyoming",
+      "district": 0,
+      "office": "1531 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-9": {
+      "name": "Mr.  Al  Green",
+      "party": "D",
+      "phone": "(202) 225-57508",
+      "state": "Texas",
+      "district": 9,
+      "office": "2347 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "GA-14": {
+      "name": "Ms. Marjorie Taylor Greene",
+      "party": "R",
+      "phone": "(202) 225-55211",
+      "state": "Georgia",
+      "district": 14,
+      "office": "403 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-6": {
+      "name": "Mr.  Michael A.  Rulli",
+      "party": "R",
+      "phone": "(202) 225-55705",
+      "state": "Ohio",
+      "district": 6,
+      "office": "2082 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "CO-4": {
+      "name": "Ms. Lauren  Boebert",
+      "party": "R",
+      "phone": "(202) 225-54761",
+      "state": "Colorado",
+      "district": 4,
+      "office": "1713 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-31": {
+      "name": "Mr.  Gilbert Ray Cisneros Jr.",
+      "party": "D",
+      "phone": "(202) 225-55256",
+      "state": "California",
+      "district": 31,
+      "office": "2463 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MN-3": {
+      "name": "Ms.  Kelly  Morrison",
+      "party": "D",
+      "phone": "(202) 225-52871",
+      "state": "Minnesota",
+      "district": 3,
+      "office": "1205 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "MO-1": {
+      "name": "Mr.  Wesley  Bell",
+      "party": "D",
+      "phone": "(202) 225-54206",
+      "state": "Missouri",
+      "district": 1,
+      "office": "1429 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "MO-3": {
+      "name": "Mr.  Robert F. Onder Jr.",
+      "party": "R",
+      "phone": "(202) 225-52956",
+      "state": "Missouri",
+      "district": 3,
+      "office": "1113 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        }
+      ]
+    },
+    "MP-0": {
+      "name": "Ms. Kimberlyn  King-Hinds",
+      "party": "R",
+      "phone": "(202) 225-52646",
+      "state": "Northern Mariana Islands",
+      "district": 0,
+      "office": "425 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "VA-4": {
+      "name": "Ms. Jennifer L. McClellan",
+      "party": "D",
+      "phone": "(202) 225-56365",
+      "state": "Virginia",
+      "district": 4,
+      "office": "2417 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-18": {
+      "name": "Mr.  Scott  Franklin",
+      "party": "R",
+      "phone": "(202) 225-51252",
+      "state": "Florida",
+      "district": 18,
+      "office": "249 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "RI-1": {
+      "name": "Mr.  Gabe  Amo",
+      "party": "D",
+      "phone": "(202) 225-54911",
+      "state": "Rhode Island",
+      "district": 1,
+      "office": "2233 undefined",
+      "social": {},
+      "committees": []
+    },
+    "UT-2": {
+      "name": "Ms. Celeste  Maloy",
+      "party": "R",
+      "phone": "(202) 225-59730",
+      "state": "Utah",
+      "district": 2,
+      "office": "166 undefined",
+      "social": {},
+      "committees": []
+    },
+    "NY-3": {
+      "name": "Mr.  Thomas R. Suozzi",
+      "party": "D",
+      "phone": "(202) 225-53335",
+      "state": "New York",
+      "district": 3,
+      "office": "1117 undefined",
+      "social": {},
+      "committees": []
+    },
+    "NY-26": {
+      "name": "Mr.  Timothy M Kennedy",
+      "party": "D",
+      "phone": "(202) 225-53306",
+      "state": "New York",
+      "district": 26,
+      "office": "2269 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-20": {
+      "name": "Mr.  Vince  Fong",
+      "party": "R",
+      "phone": "(202) 225-52915",
+      "state": "California",
+      "district": 20,
+      "office": "2468 undefined",
+      "social": {},
+      "committees": []
+    },
+    "NJ-10": {
+      "name": "Mrs. LaMonica  McIver",
+      "party": "D",
+      "phone": "(202) 225-53436",
+      "state": "New Jersey",
+      "district": 10,
+      "office": "106 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-5": {
+      "name": "Ms.  Mary Gay  Scanlon",
+      "party": "D",
+      "phone": "(202) 225-52011",
+      "state": "Pennsylvania",
+      "district": 5,
+      "office": "1227 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Rules",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "WI-8": {
+      "name": "Mr. Tony  Wied",
+      "party": "R",
+      "phone": "(202) 225-55665",
+      "state": "Wisconsin",
+      "district": 8,
+      "office": "1211 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "AL-1": {
+      "name": "Mr.  Barry  Moore",
+      "party": "R",
+      "phone": "(202) 225-52901",
+      "state": "Alabama",
+      "district": 1,
+      "office": "1504 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "AL-2": {
+      "name": "Mr.  Shomari  Figures",
+      "party": "D",
+      "phone": "(202) 225-54931",
+      "state": "Alabama",
+      "district": 2,
+      "office": "225 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "CO-5": {
+      "name": "Mr.  Jeff  Crank",
+      "party": "R",
+      "phone": "(202) 225-54422",
+      "state": "Colorado",
+      "district": 5,
+      "office": "1029 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "CO-8": {
+      "name": "Mr.  Gabe  Evans",
+      "party": "R",
+      "phone": "(202) 225-55625",
+      "state": "Colorado",
+      "district": 8,
+      "office": "1229 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "DE-0": {
+      "name": "Ms.  Sarah  McBride",
+      "party": "D",
+      "phone": "(202) 225-54165",
+      "state": "Delaware",
+      "district": 0,
+      "office": "1306 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "FL-8": {
+      "name": "Mr.  Mike  Haridopolos",
+      "party": "R",
+      "phone": "(202) 225-53671",
+      "state": "Florida",
+      "district": 8,
+      "office": "1039 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Financial Services",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-3": {
+      "name": "Mr.  Brian  Jack",
+      "party": "R",
+      "phone": "(202) 225-55901",
+      "state": "Georgia",
+      "district": 3,
+      "office": "1320 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-6": {
+      "name": "Mrs. Lucy  McBath",
+      "party": "D",
+      "phone": "(202) 225-54501",
+      "state": "Georgia",
+      "district": 6,
+      "office": "2246 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "GA-7": {
+      "name": "Mr.  Richard  McCormick",
+      "party": "R",
+      "phone": "(202) 225-54272",
+      "state": "Georgia",
+      "district": 7,
+      "office": "1213 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "IN-3": {
+      "name": "Mr.  Marlin A. Stutzman",
+      "party": "R",
+      "phone": "(202) 225-54436",
+      "state": "Indiana",
+      "district": 3,
+      "office": "404 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "IN-6": {
+      "name": "Mr.  Jefferson  Shreve",
+      "party": "R",
+      "phone": "(202) 225-53021",
+      "state": "Indiana",
+      "district": 6,
+      "office": "224 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "IN-8": {
+      "name": "Mr.  Mark B. Messmer",
+      "party": "R",
+      "phone": "(202) 225-54636",
+      "state": "Indiana",
+      "district": 8,
+      "office": "1208 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "KS-2": {
+      "name": "Mr.  Derek  Schmidt",
+      "party": "R",
+      "phone": "(202) 225-56601",
+      "state": "Kansas",
+      "district": 2,
+      "office": "1223 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "LA-6": {
+      "name": "Mr.  Cleo  Fields",
+      "party": "D",
+      "phone": "(202) 225-53901",
+      "state": "Louisiana",
+      "district": 6,
+      "office": "2349 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "MD-2": {
+      "name": "Mr.  Johnny  Olszewski Jr.",
+      "party": "D",
+      "phone": "(202) 225-53061",
+      "state": "Maryland",
+      "district": 2,
+      "office": "1339 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "MD-3": {
+      "name": "Ms.  Sarah  Elfreth",
+      "party": "D",
+      "phone": "(202) 225-54016",
+      "state": "Maryland",
+      "district": 3,
+      "office": "1213 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "MD-6": {
+      "name": "Mrs. April  McClain Delaney",
+      "party": "D",
+      "phone": "(202) 225-52721",
+      "state": "Maryland",
+      "district": 6,
+      "office": "1130 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-7": {
+      "name": "Mr.  Tom  Barrett",
+      "party": "R",
+      "phone": "(202) 225-54872",
+      "state": "Michigan",
+      "district": 7,
+      "office": "1232 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        }
+      ]
+    },
+    "MI-8": {
+      "name": "Ms.  Kristen  McDonald Rivet",
+      "party": "D",
+      "phone": "(202) 225-53611",
+      "state": "Michigan",
+      "district": 8,
+      "office": "1408 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "CA-30": {
+      "name": "Ms.  Laura  Friedman",
+      "party": "D",
+      "phone": "(202) 225-54176",
+      "state": "California",
+      "district": 30,
+      "office": "1517 undefined",
+      "social": {},
+      "committees": {
+        "_": "the Judiciary",
+        "title": "Member"
+      }
+    },
+    "WV-2": {
+      "name": "Mr.  Riley M. Moore",
+      "party": "R",
+      "phone": "(202) 225-52711",
+      "state": "West Virginia",
+      "district": 2,
+      "office": "1337 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "MT-2": {
+      "name": "Mr.  Troy  Downing",
+      "party": "R",
+      "phone": "(202) 225-53211",
+      "state": "Montana",
+      "district": 2,
+      "office": "1529 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Veterans' Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-6": {
+      "name": "Mr.  Addison P. McDowell",
+      "party": "R",
+      "phone": "(202) 225-53065",
+      "state": "North Carolina",
+      "district": 6,
+      "office": "1032 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-8": {
+      "name": "Mr.  Mark  Harris",
+      "party": "R",
+      "phone": "(202) 225-51976",
+      "state": "North Carolina",
+      "district": 8,
+      "office": "126 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "NC-10": {
+      "name": "Mr.  Pat  Harrigan",
+      "party": "R",
+      "phone": "(202) 225-52576",
+      "state": "North Carolina",
+      "district": 10,
+      "office": "1233 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "NC-13": {
+      "name": "Mr.  Brad  Knott",
+      "party": "R",
+      "phone": "(202) 225-54531",
+      "state": "North Carolina",
+      "district": 13,
+      "office": "1239 undefined",
+      "social": {},
+      "committees": {
+        "_": "Financial Services",
+        "title": "Member"
+      }
+    },
+    "NC-14": {
+      "name": "Mr.  Tim  Moore",
+      "party": "R",
+      "phone": "(202) 225-55634",
+      "state": "North Carolina",
+      "district": 14,
+      "office": "1424 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "ND-0": {
+      "name": "Ms.  Julie  Fedorchak",
+      "party": "R",
+      "phone": "(202) 225-52611",
+      "state": "North Dakota",
+      "district": 0,
+      "office": "1607 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Oversight and Gov Reform",
+          "title": "Member"
+        }
+      ]
+    },
+    "NH-2": {
+      "name": "Ms.  Maggie  Goodlander",
+      "party": "D",
+      "phone": "(202) 225-55206",
+      "state": "New Hampshire",
+      "district": 2,
+      "office": "223 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "NJ-3": {
+      "name": "Mr.  Herbert C. Conaway Jr.",
+      "party": "D",
+      "phone": "(202) 225-54765",
+      "state": "New Jersey",
+      "district": 3,
+      "office": "1022 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Sel Comm Strategic Comp Us Chi",
+          "title": "Member"
+        }
+      ]
+    },
+    "NJ-9": {
+      "name": "Ms.  Nellie  Pou",
+      "party": "D",
+      "phone": "(202) 225-55751",
+      "state": "New Jersey",
+      "district": 9,
+      "office": "1007 undefined",
+      "social": {},
+      "committees": {
+        "_": "Ways and Means",
+        "title": "Member"
+      }
+    },
+    "NY-4": {
+      "name": "Ms.  Laura  Gillen",
+      "party": "D",
+      "phone": "(202) 225-55516",
+      "state": "New York",
+      "district": 4,
+      "office": "428 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Homeland Security",
+          "title": "Member"
+        },
+        {
+          "_": "House Administration",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-16": {
+      "name": "Mr.  George  Latimer",
+      "party": "D",
+      "phone": "(202) 225-52464",
+      "state": "New York",
+      "district": 16,
+      "office": "1507 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-19": {
+      "name": "Mr.  Josh  Riley",
+      "party": "D",
+      "phone": "(202) 225-55441",
+      "state": "New York",
+      "district": 19,
+      "office": "128 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Small Business",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "NY-22": {
+      "name": "Mr.  John W. Mannion",
+      "party": "D",
+      "phone": "(202) 225-53701",
+      "state": "New York",
+      "district": 22,
+      "office": "1516 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Science, Space, and Technology",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "OH-2": {
+      "name": "Mr.  David J. Taylor",
+      "party": "R",
+      "phone": "(202) 225-53164",
+      "state": "Ohio",
+      "district": 2,
+      "office": "325 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "OR-3": {
+      "name": "Ms.  Maxine  Dexter",
+      "party": "D",
+      "phone": "(202) 225-54811",
+      "state": "Oregon",
+      "district": 3,
+      "office": "1207 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "the Budget",
+          "title": "Member"
+        },
+        {
+          "_": "Ways and Means",
+          "title": "Member"
+        }
+      ]
+    },
+    "OR-5": {
+      "name": "Ms.  Janelle S. Bynum",
+      "party": "D",
+      "phone": "(202) 225-55711",
+      "state": "Oregon",
+      "district": 5,
+      "office": "1508 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-7": {
+      "name": "Mr.  Ryan  Mackenzie",
+      "party": "R",
+      "phone": "(202) 225-56411",
+      "state": "Pennsylvania",
+      "district": 7,
+      "office": "121 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "Ethics",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        }
+      ]
+    },
+    "PA-8": {
+      "name": "Mr.  Robert P. Bresnahan Jr.",
+      "party": "R",
+      "phone": "(202) 225-55546",
+      "state": "Pennsylvania",
+      "district": 8,
+      "office": "1133 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "PR-0": {
+      "name": "Mr.  Pablo Jose Hernandez",
+      "party": "D",
+      "phone": "(202) 225-52615",
+      "state": "Puerto Rico",
+      "district": 0,
+      "office": "1419 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "SC-3": {
+      "name": "Mrs. Sheri  Biggs",
+      "party": "R",
+      "phone": "(202) 225-55307",
+      "state": "South Carolina",
+      "district": 3,
+      "office": "1530 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "TX-12": {
+      "name": "Mr.  Craig A. Goldman",
+      "party": "R",
+      "phone": "(202) 225-55071",
+      "state": "Texas",
+      "district": 12,
+      "office": "1716 undefined",
+      "social": {},
+      "committees": {
+        "_": "Appropriations",
+        "title": "Member"
+      }
+    },
+    "TX-26": {
+      "name": "Mr.  Brandon  Gill",
+      "party": "R",
+      "phone": "(202) 225-57772",
+      "state": "Texas",
+      "district": 26,
+      "office": "1305 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Rules",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "TX-32": {
+      "name": "Ms.  Julie  Johnson",
+      "party": "D",
+      "phone": "(202) 225-52231",
+      "state": "Texas",
+      "district": 32,
+      "office": "221 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Transportation",
+          "title": "Member"
+        }
+      ]
+    },
+    "UT-3": {
+      "name": "Mr.  Mike  Kennedy",
+      "party": "R",
+      "phone": "(202) 225-57751",
+      "state": "Utah",
+      "district": 3,
+      "office": "1626 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Energy and Commerce",
+          "title": "Member"
+        },
+        {
+          "_": "Natural Resources",
+          "title": "Member"
+        }
+      ]
+    },
+    "VA-5": {
+      "name": "Mr.  John J. McGuire III",
+      "party": "R",
+      "phone": "(202) 225-54711",
+      "state": "Virginia",
+      "district": 5,
+      "office": "1013 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Education and Workforce",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "VA-7": {
+      "name": "Mr.  Eugene Simon Vindman",
+      "party": "D",
+      "phone": "(202) 225-52815",
+      "state": "Virginia",
+      "district": 7,
+      "office": "1005 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Agriculture",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    },
+    "VA-10": {
+      "name": "Mr.  Suhas  Subramanyam",
+      "party": "D",
+      "phone": "(202) 225-55136",
+      "state": "Virginia",
+      "district": 10,
+      "office": "1009 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Appropriations",
+          "title": "Member"
+        },
+        {
+          "_": "the Budget",
+          "title": "Member"
+        }
+      ]
+    },
+    "WA-5": {
+      "name": "Mr.  Michael  Baumgartner",
+      "party": "R",
+      "phone": "(202) 225-52006",
+      "state": "Washington",
+      "district": 5,
+      "office": "124 undefined",
+      "social": {},
+      "committees": {
+        "_": "Energy and Commerce",
+        "title": "Member"
+      }
+    },
+    "FL-1": {
+      "name": "Mr.  Jimmy  Patronis",
+      "party": "R",
+      "phone": "(202) 225-54136",
+      "state": "Florida",
+      "district": 1,
+      "office": "2021 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "the Judiciary",
+          "title": "Member"
+        }
+      ]
+    },
+    "FL-6": {
+      "name": "Mr.  Randy  Fine",
+      "party": "R",
+      "phone": "(202) 225-52706",
+      "state": "Florida",
+      "district": 6,
+      "office": "244 undefined",
+      "social": {},
+      "committees": [
+        {
+          "_": "Armed Services",
+          "title": "Member"
+        },
+        {
+          "_": "Foreign Affairs",
+          "title": "Member"
+        },
+        {
+          "_": "Intelligence (Permanent)",
+          "title": "Member"
+        }
+      ]
+    }
+  },
+  "timestamp": 1751992120534
+}

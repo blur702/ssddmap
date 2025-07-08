@@ -25,15 +25,11 @@ pool.query('SELECT NOW()', (err, res) => {
     }
 });
 
-// Serve static files from public directory
-app.use('/ssddmap', express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 app.use(express.json());
 
-// Create router for /ssddmap prefix
-const router = express.Router();
-
 // Get all available states
-router.get('/api/states', async (req, res) => {
+app.get('/api/states', async (req, res) => {
     try {
         const result = await pool.query(
             'SELECT state_code FROM states ORDER BY state_code'
@@ -46,7 +42,7 @@ router.get('/api/states', async (req, res) => {
 });
 
 // Get representative count per state
-router.get('/api/state-rep-counts', async (req, res) => {
+app.get('/api/state-rep-counts', async (req, res) => {
     try {
         const result = await pool.query(
             'SELECT state_code, representative_count FROM states'
@@ -63,7 +59,7 @@ router.get('/api/state-rep-counts', async (req, res) => {
 });
 
 // Get districts for a specific state
-router.get('/api/state/:stateCode', async (req, res) => {
+app.get('/api/state/:stateCode', async (req, res) => {
     try {
         const { stateCode } = req.params;
         
@@ -105,7 +101,7 @@ router.get('/api/state/:stateCode', async (req, res) => {
 });
 
 // Get GeoJSON for a specific district
-router.get('/api/district/:stateCode/:districtNumber', async (req, res) => {
+app.get('/api/district/:stateCode/:districtNumber', async (req, res) => {
     try {
         const { stateCode, districtNumber } = req.params;
         
@@ -169,7 +165,7 @@ router.get('/api/district/:stateCode/:districtNumber', async (req, res) => {
 });
 
 // Get all districts as GeoJSON (optimized with simplified geometries)
-router.get('/api/all-districts', async (req, res) => {
+app.get('/api/all-districts', async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT 
@@ -207,7 +203,7 @@ router.get('/api/all-districts', async (req, res) => {
 });
 
 // Get all House members
-router.get('/api/members', async (req, res) => {
+app.get('/api/members', async (req, res) => {
     try {
         const result = await pool.query(`
             SELECT 
@@ -256,7 +252,7 @@ router.get('/api/members', async (req, res) => {
 });
 
 // Get member by state and district
-router.get('/api/member/:stateCode/:districtNumber', async (req, res) => {
+app.get('/api/member/:stateCode/:districtNumber', async (req, res) => {
     try {
         const { stateCode, districtNumber } = req.params;
         
@@ -294,7 +290,7 @@ router.get('/api/member/:stateCode/:districtNumber', async (req, res) => {
 });
 
 // Find district by coordinates
-router.get('/api/find-district', async (req, res) => {
+app.get('/api/find-district', async (req, res) => {
     try {
         const { lat, lon } = req.query;
         if (!lat || !lon) {
@@ -354,190 +350,8 @@ router.get('/api/find-district', async (req, res) => {
     }
 });
 
-// Find location with district and county information, including distance to boundaries
-router.get('/api/find-location', async (req, res) => {
-    try {
-        const { lat, lon } = req.query;
-        if (!lat || !lon) {
-            return res.status(400).json({ error: 'Latitude and longitude are required' });
-        }
-        
-        const point = `ST_SetSRID(ST_MakePoint($1, $2), 4326)`;
-        const pointGeog = `ST_SetSRID(ST_MakePoint($1, $2), 4326)::geography`;
-        
-        // Find the district containing the point and calculate distance to its boundary
-        const districtResult = await pool.query(`
-            WITH point_location AS (
-                SELECT ${point} as geom, ${pointGeog} as geog
-            ),
-            containing_district AS (
-                SELECT 
-                    d.state_code,
-                    d.district_number,
-                    d.is_at_large,
-                    d.geometry,
-                    m.full_name as member_name,
-                    m.party,
-                    m.phone,
-                    m.website,
-                    m.contact_form_url,
-                    m.photo_url,
-                    s.state_name,
-                    m.office_room,
-                    m.office_building,
-                    m.id as member_id
-                FROM districts d
-                JOIN states s ON d.state_code = s.state_code
-                LEFT JOIN members m ON d.state_code = m.state_code AND d.district_number = m.district_number
-                CROSS JOIN point_location p
-                WHERE ST_Contains(d.geometry, p.geom)
-                LIMIT 1
-            ),
-            distance_calc AS (
-                SELECT 
-                    cd.*,
-                    CASE 
-                        WHEN cd.state_code IS NOT NULL THEN
-                            ST_Distance(p.geog, ST_Boundary(cd.geometry)::geography)
-                        ELSE NULL
-                    END as distance_to_boundary,
-                    CASE 
-                        WHEN cd.state_code IS NOT NULL THEN
-                            ST_AsGeoJSON(ST_ClosestPoint(ST_Boundary(cd.geometry), p.geom))::json
-                        ELSE NULL
-                    END as closest_boundary_point
-                FROM containing_district cd
-                CROSS JOIN point_location p
-            )
-            SELECT 
-                dc.*,
-                json_build_object(
-                    'facebook', (SELECT url FROM member_social_media WHERE member_id = dc.member_id AND platform = 'facebook'),
-                    'twitter', (SELECT url FROM member_social_media WHERE member_id = dc.member_id AND platform = 'twitter'),
-                    'youtube', (SELECT url FROM member_social_media WHERE member_id = dc.member_id AND platform = 'youtube'),
-                    'instagram', (SELECT url FROM member_social_media WHERE member_id = dc.member_id AND platform = 'instagram')
-                ) as social_media
-            FROM distance_calc dc
-        `, [parseFloat(lon), parseFloat(lat)]);
-        
-        // Find the nearest district if point is outside all districts
-        let nearestDistrict = null;
-        if (districtResult.rows.length === 0) {
-            const nearestResult = await pool.query(`
-                WITH point_location AS (
-                    SELECT ${point} as geom, ${pointGeog} as geog
-                ),
-                nearest_districts AS (
-                    SELECT 
-                        d.state_code,
-                        d.district_number,
-                        d.is_at_large,
-                        d.geometry,
-                        ST_Distance(p.geog, d.geometry::geography) as distance_to_district,
-                        ST_AsGeoJSON(ST_ClosestPoint(d.geometry, p.geom))::json as closest_point,
-                        m.full_name as member_name,
-                        m.party,
-                        s.state_name
-                    FROM districts d
-                    JOIN states s ON d.state_code = s.state_code
-                    LEFT JOIN members m ON d.state_code = m.state_code AND d.district_number = m.district_number
-                    CROSS JOIN point_location p
-                    ORDER BY ST_Distance(p.geog, d.geometry::geography)
-                    LIMIT 1
-                )
-                SELECT * FROM nearest_districts
-            `, [parseFloat(lon), parseFloat(lat)]);
-            
-            if (nearestResult.rows.length > 0) {
-                nearestDistrict = nearestResult.rows[0];
-            }
-        }
-        
-        // Find county information
-        const countyResult = await pool.query(`
-            SELECT 
-                c.county_name,
-                c.state_code,
-                c.county_fips
-            FROM counties c
-            WHERE ST_Contains(c.geometry, ST_SetSRID(ST_MakePoint($1, $2), 4326))
-            LIMIT 1
-        `, [parseFloat(lon), parseFloat(lat)]);
-        
-        // Prepare response
-        const response = {
-            location: { lat: parseFloat(lat), lon: parseFloat(lon) }
-        };
-        
-        if (districtResult.rows.length > 0) {
-            const district = districtResult.rows[0];
-            response.district = {
-                found: true,
-                state: district.state_code,
-                district: district.district_number.toString(),
-                isAtLarge: district.is_at_large,
-                distanceToBoundary: {
-                    meters: district.distance_to_boundary ? Math.round(district.distance_to_boundary) : 0,
-                    miles: district.distance_to_boundary ? Math.round(district.distance_to_boundary * 0.000621371 * 100) / 100 : 0
-                },
-                closestBoundaryPoint: district.closest_boundary_point,
-                member: district.member_name ? {
-                    name: district.member_name,
-                    party: district.party,
-                    phone: district.phone,
-                    website: district.website,
-                    contactForm: district.contact_form_url,
-                    photo: district.photo_url,
-                    state: district.state_name,
-                    office: `${district.office_room || ''} ${district.office_building || ''}`.trim(),
-                    social: district.social_media
-                } : null
-            };
-        } else {
-            response.district = {
-                found: false
-            };
-            
-            if (nearestDistrict) {
-                response.nearestDistrict = {
-                    state: nearestDistrict.state_code,
-                    district: nearestDistrict.district_number.toString(),
-                    isAtLarge: nearestDistrict.is_at_large,
-                    distance: {
-                        meters: Math.round(nearestDistrict.distance_to_district),
-                        miles: Math.round(nearestDistrict.distance_to_district * 0.000621371 * 100) / 100
-                    },
-                    closestPoint: nearestDistrict.closest_point,
-                    stateName: nearestDistrict.state_name,
-                    memberName: nearestDistrict.member_name,
-                    party: nearestDistrict.party
-                };
-            }
-        }
-        
-        if (countyResult.rows.length > 0) {
-            const county = countyResult.rows[0];
-            response.county = {
-                found: true,
-                name: county.county_name,
-                state: county.state_code,
-                geoid: county.county_fips
-            };
-        } else {
-            response.county = {
-                found: false
-            };
-        }
-        
-        res.json(response);
-    } catch (error) {
-        console.error('Find location error:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
-
 // Geocode addresses (same as original implementation)
-router.get('/api/geocode', async (req, res) => {
+app.get('/api/geocode', async (req, res) => {
     try {
         const { address } = req.query;
         if (!address) {
@@ -575,123 +389,8 @@ router.get('/api/geocode', async (req, res) => {
     }
 });
 
-// Census Geocoder API endpoint with caching
-router.get('/api/geocode-census', async (req, res) => {
-    try {
-        const { address } = req.query;
-        if (!address) {
-            return res.status(400).json({ error: 'Address parameter is required' });
-        }
-        
-        // Normalize address for cache key
-        const normalizedAddress = address.toLowerCase().trim();
-        
-        // Check cache first
-        const cacheResult = await pool.query(
-            'SELECT results FROM geocode_cache WHERE address = $1 AND geocoder = $2 AND created_at > NOW() - INTERVAL \'7 days\'',
-            [normalizedAddress, 'census']
-        );
-        
-        if (cacheResult.rows.length > 0) {
-            // Update accessed_at
-            await pool.query(
-                'UPDATE geocode_cache SET accessed_at = NOW() WHERE address = $1 AND geocoder = $2',
-                [normalizedAddress, 'census']
-            );
-            return res.json(cacheResult.rows[0].results);
-        }
-        
-        const fetch = require('node-fetch');
-        
-        // Parse the address to extract components
-        const addressParts = address.split(',').map(s => s.trim());
-        let street = '', city = '', state = '', zip = '';
-        
-        if (addressParts.length === 1) {
-            // Just a ZIP code or city/state
-            const parts = addressParts[0].split(' ');
-            if (/^\d{5}(-\d{4})?$/.test(parts[parts.length - 1])) {
-                zip = parts[parts.length - 1];
-            } else {
-                city = addressParts[0];
-            }
-        } else if (addressParts.length === 2) {
-            // City, State or Street, City State
-            city = addressParts[0];
-            const stateZip = addressParts[1].split(' ');
-            state = stateZip[0];
-            if (stateZip[1]) zip = stateZip[1];
-        } else if (addressParts.length >= 3) {
-            // Full address
-            street = addressParts[0];
-            city = addressParts[1];
-            const stateZip = addressParts[2].split(' ');
-            state = stateZip[0];
-            if (stateZip[1]) zip = stateZip[1];
-        }
-        
-        // Build Census Geocoder URL
-        const params = new URLSearchParams({
-            benchmark: 'Public_AR_Current',
-            format: 'json'
-        });
-        
-        if (street) params.append('street', street);
-        if (city) params.append('city', city);
-        if (state) params.append('state', state);
-        if (zip) params.append('zip', zip);
-        
-        const url = `https://geocoding.geo.census.gov/geocoder/locations/address?${params}`;
-        
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'Congressional-Districts-Map/1.0'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Census Geocoding service error');
-        }
-        
-        const data = await response.json();
-        
-        // Format results to match our standard format
-        const formattedResults = [];
-        
-        if (data.result && data.result.addressMatches && data.result.addressMatches.length > 0) {
-            data.result.addressMatches.forEach(match => {
-                formattedResults.push({
-                    display_name: match.matchedAddress,
-                    lat: parseFloat(match.coordinates.y),
-                    lon: parseFloat(match.coordinates.x),
-                    type: 'census',
-                    importance: 1.0,
-                    census_data: {
-                        tigerLineId: match.tigerLine?.tigerLineId,
-                        side: match.tigerLine?.side,
-                        geographies: match.geographies
-                    }
-                });
-            });
-        }
-        
-        // Store in cache if we got results
-        if (formattedResults.length > 0) {
-            await pool.query(
-                'INSERT INTO geocode_cache (address, geocoder, results) VALUES ($1, $2, $3) ON CONFLICT (address, geocoder) DO UPDATE SET results = $3, created_at = NOW(), accessed_at = NOW()',
-                [normalizedAddress, 'census', JSON.stringify(formattedResults)]
-            );
-        }
-        
-        res.json(formattedResults);
-    } catch (error) {
-        console.error('Census geocoding error:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
-
 // Cache status endpoint (simplified for DB version)
-router.get('/api/cache-status', async (req, res) => {
+app.get('/api/cache-status', async (req, res) => {
     try {
         const memberCount = await pool.query('SELECT COUNT(*) FROM members');
         const districtCount = await pool.query('SELECT COUNT(*) FROM districts');
@@ -720,7 +419,7 @@ router.get('/api/cache-status', async (req, res) => {
 });
 
 // Refresh members cache endpoint
-router.post('/api/refresh-members-cache', async (req, res) => {
+app.post('/api/refresh-members-cache', async (req, res) => {
     try {
         // In the DB version, this would trigger a re-import from the house.gov API
         // For now, just return success
@@ -739,7 +438,7 @@ router.post('/api/refresh-members-cache', async (req, res) => {
 });
 
 // County boundaries endpoint
-router.get('/api/counties/:stateCode', async (req, res) => {
+app.get('/api/counties/:stateCode', async (req, res) => {
     try {
         const { stateCode } = req.params;
         
@@ -774,7 +473,7 @@ router.get('/api/counties/:stateCode', async (req, res) => {
 });
 
 // Health check endpoint
-router.get('/api/health', async (req, res) => {
+app.get('/api/health', async (req, res) => {
     try {
         await pool.query('SELECT 1');
         res.json({ status: 'healthy', database: 'connected' });
@@ -782,107 +481,6 @@ router.get('/api/health', async (req, res) => {
         res.status(500).json({ status: 'unhealthy', database: 'disconnected', error: error.message });
     }
 });
-
-// Clean up old geocode cache entries
-router.post('/api/cleanup-geocode-cache', async (req, res) => {
-    try {
-        // Delete entries older than 30 days that haven't been accessed in 14 days
-        const result = await pool.query(
-            'DELETE FROM geocode_cache WHERE created_at < NOW() - INTERVAL \'30 days\' OR accessed_at < NOW() - INTERVAL \'14 days\''
-        );
-        
-        res.json({ 
-            success: true, 
-            message: `Cleaned up ${result.rowCount} old cache entries`
-        });
-    } catch (error) {
-        console.error('Error cleaning geocode cache:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Address lookup endpoint for ZIP+4 and comparison methods
-router.get('/api/address-lookup-zip4', async (req, res) => {
-    try {
-        const { street, city, state, zip, method } = req.query;
-        
-        if (!street || !city || !state) {
-            return res.status(400).json({ error: 'Street, city, and state are required' });
-        }
-        
-        const address = { street, city, state, zip };
-        
-        if (method === 'both') {
-            // Compare both methods
-            const fetch = require('node-fetch');
-            
-            // Method 1: Census Geocoder
-            let censusResult = { success: false };
-            try {
-                const addressStr = [street, city, state, zip].filter(Boolean).join(', ');
-                const censusResponse = await fetch(`http://localhost:${PORT}/ssddmap/api/geocode-census?address=${encodeURIComponent(addressStr)}`);
-                const censusGeocode = await censusResponse.json();
-                
-                if (censusGeocode && censusGeocode.length > 0) {
-                    const coords = censusGeocode[0];
-                    const locationResponse = await fetch(`http://localhost:${PORT}/ssddmap/api/find-location?lat=${coords.lat}&lon=${coords.lon}`);
-                    const locationData = await locationResponse.json();
-                    
-                    if (locationData.district && locationData.district.found) {
-                        censusResult = {
-                            success: true,
-                            district: locationData.district,
-                            county: locationData.county,
-                            location: locationData.location
-                        };
-                    }
-                }
-            } catch (error) {
-                console.error('Census method error:', error);
-            }
-            
-            // Method 2: Mock ZIP+4 result (would normally use USPS/Smarty)
-            // In production, this would call the actual ZIP+4 lookup service
-            const zip4Result = {
-                success: false,
-                error: 'ZIP+4 lookup requires USPS API configuration'
-            };
-            
-            // Compare results
-            const comparison = {
-                match: false,
-                confidence: 0
-            };
-            
-            if (censusResult.success && zip4Result.success) {
-                const match = censusResult.district.state === zip4Result.district.state &&
-                             censusResult.district.district === zip4Result.district.district;
-                comparison.match = match;
-                comparison.confidence = match ? 100 : 50;
-            } else if (censusResult.success || zip4Result.success) {
-                comparison.confidence = 75;
-            }
-            
-            res.json({
-                censusMethod: censusResult,
-                zip4Method: zip4Result,
-                comparison
-            });
-        } else {
-            // Single method lookup - for now just return error for non-census methods
-            res.json({
-                success: false,
-                error: 'Only census method is currently implemented. Please select "Census Geocoder (Free)" option.'
-            });
-        }
-    } catch (error) {
-        console.error('Address lookup error:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Mount router at /ssddmap
-app.use('/ssddmap', router);
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
