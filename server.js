@@ -17,6 +17,10 @@ const PORT = process.env.PORT || 3000;
 const addressService = new AddressService(config);
 
 app.use(express.static('public'));
+app.use(express.json());
+
+// Store OAuth tokens in memory (in production, use a proper session store)
+const oauthTokens = {};
 
 // Cache for House member data
 let membersCache = null;
@@ -1136,6 +1140,104 @@ function calculateConfidence(zip4Result, censusResult) {
     
     return confidence;
 }
+
+// USPS OAuth callback endpoint
+app.get('/callback', async (req, res) => {
+    const { code, state } = req.query;
+    
+    if (!code) {
+        return res.status(400).send('Authorization code missing');
+    }
+    
+    try {
+        // Exchange authorization code for access token
+        const tokenResponse = await fetch('https://developers.usps.com/oauth/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                grant_type: 'authorization_code',
+                code: code,
+                client_id: process.env.USPS_CLIENT_ID,
+                client_secret: process.env.USPS_CLIENT_SECRET,
+                redirect_uri: `http://localhost:${PORT}/callback`
+            })
+        });
+        
+        const tokenData = await tokenResponse.json();
+        
+        if (tokenData.access_token) {
+            // Store token (in production, use proper session management)
+            oauthTokens.usps = {
+                access_token: tokenData.access_token,
+                refresh_token: tokenData.refresh_token,
+                expires_at: Date.now() + (tokenData.expires_in * 1000)
+            };
+            
+            res.send(`
+                <html>
+                <body>
+                    <h2>USPS OAuth Setup Complete!</h2>
+                    <p>Access token received. You can close this window.</p>
+                    <script>
+                        setTimeout(() => window.close(), 3000);
+                    </script>
+                </body>
+                </html>
+            `);
+        } else {
+            res.status(400).send('Failed to obtain access token');
+        }
+    } catch (error) {
+        console.error('OAuth callback error:', error);
+        res.status(500).send('OAuth authentication failed');
+    }
+});
+
+// Endpoint to initiate USPS OAuth flow
+app.get('/api/usps-auth', (req, res) => {
+    const authUrl = `https://developers.usps.com/oauth/authorize?` + 
+        `client_id=${process.env.USPS_CLIENT_ID}&` +
+        `response_type=code&` +
+        `redirect_uri=${encodeURIComponent(`http://localhost:${PORT}/callback`)}&` +
+        `scope=addresses`;
+    
+    res.json({ authUrl });
+});
+
+// Check API configuration status
+app.get('/api/config-status', (req, res) => {
+    res.json({
+        usps: {
+            configured: !!(process.env.USPS_CLIENT_ID && process.env.USPS_CLIENT_SECRET),
+            hasToken: !!oauthTokens.usps,
+            tokenValid: oauthTokens.usps ? oauthTokens.usps.expires_at > Date.now() : false
+        },
+        smarty: {
+            configured: !!(process.env.SMARTY_AUTH_ID && process.env.SMARTY_AUTH_TOKEN)
+        },
+        defaultMethod: config.defaultLookupMethod
+    });
+});
+
+// Save API configuration (in memory for now, in production use secure storage)
+app.post('/api/save-config', express.json(), (req, res) => {
+    const { uspsClientId, uspsClientSecret, smartyAuthId, smartyAuthToken } = req.body;
+    
+    // In production, these should be saved securely
+    if (uspsClientId) process.env.USPS_CLIENT_ID = uspsClientId;
+    if (uspsClientSecret) process.env.USPS_CLIENT_SECRET = uspsClientSecret;
+    if (smartyAuthId) process.env.SMARTY_AUTH_ID = smartyAuthId;
+    if (smartyAuthToken) process.env.SMARTY_AUTH_TOKEN = smartyAuthToken;
+    
+    // Update config object
+    config.usps.userId = process.env.USPS_USER_ID || '';
+    config.smarty.authId = process.env.SMARTY_AUTH_ID || '';
+    config.smarty.authToken = process.env.SMARTY_AUTH_TOKEN || '';
+    
+    res.json({ success: true });
+});
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

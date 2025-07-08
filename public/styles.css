@@ -985,3 +985,100 @@ html {
 .batch-results-summary .btn {
     margin-top: 10px;
 }
+
+/* Configuration UI */
+.status-indicator {
+    font-size: 12px;
+    margin-left: 4px;
+}
+
+.btn-small {
+    padding: 4px 12px;
+    font-size: 12px;
+    background: #374151;
+    border: 1px solid #4b5563;
+}
+
+.btn-small:hover {
+    background: #4b5563;
+}
+
+.config-section {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #374151;
+}
+
+.config-section:last-of-type {
+    border-bottom: none;
+}
+
+.config-note {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 16px;
+}
+
+.config-note a {
+    color: #60a5fa;
+    text-decoration: none;
+}
+
+.config-note a:hover {
+    text-decoration: underline;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #d1d5db;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 12px;
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 4px;
+    color: #f3f4f6;
+    font-size: 14px;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #60a5fa;
+}
+
+.test-result {
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: none;
+}
+
+.test-result.success {
+    background: #065f46;
+    color: #6ee7b7;
+    border: 1px solid #047857;
+    display: block;
+}
+
+.test-result.error {
+    background: #7f1d1d;
+    color: #fca5a5;
+    border: 1px solid #991b1b;
+    display: block;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}

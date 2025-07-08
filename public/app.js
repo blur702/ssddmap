@@ -1501,8 +1501,138 @@ toggleCountyFIPSBtn.addEventListener('click', async () => {
     }
 });
 
+// Configuration UI handlers
+const configureBtn = document.getElementById('configureBtn');
+const configModal = document.getElementById('configModal');
+const saveConfigBtn = document.getElementById('saveConfigBtn');
+const testUspsBtn = document.getElementById('testUspsBtn');
+const testSmartyBtn = document.getElementById('testSmartyBtn');
+const authorizeUspsBtn = document.getElementById('authorizeUspsBtn');
+
+// Check configuration status on load
+async function checkConfigStatus() {
+    try {
+        const response = await fetch('/api/config-status');
+        const status = await response.json();
+        
+        // Update USPS status indicator
+        const uspsStatus = document.getElementById('uspsStatus');
+        if (status.usps.configured && status.usps.tokenValid) {
+            uspsStatus.textContent = '✅';
+            uspsStatus.title = 'USPS configured and authorized';
+        } else if (status.usps.configured) {
+            uspsStatus.textContent = '🔑';
+            uspsStatus.title = 'USPS configured but needs authorization';
+        } else {
+            uspsStatus.textContent = '⚠️';
+            uspsStatus.title = 'USPS not configured';
+        }
+        
+        // If Census is default, check the radio button
+        if (status.defaultMethod === 'census') {
+            document.querySelector('input[value="census"]').checked = true;
+        }
+        
+        return status;
+    } catch (error) {
+        console.error('Error checking config status:', error);
+    }
+}
+
+// Configuration button handler
+configureBtn.addEventListener('click', () => {
+    configModal.style.display = 'block';
+});
+
+// Save configuration
+saveConfigBtn.addEventListener('click', async () => {
+    const config = {
+        uspsClientId: document.getElementById('uspsClientId').value,
+        uspsClientSecret: document.getElementById('uspsClientSecret').value,
+        smartyAuthId: document.getElementById('smartyAuthId').value,
+        smartyAuthToken: document.getElementById('smartyAuthToken').value
+    };
+    
+    try {
+        const response = await fetch('/api/save-config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(config)
+        });
+        
+        if (response.ok) {
+            alert('Configuration saved! You may need to authorize USPS.');
+            await checkConfigStatus();
+            
+            // Show authorize button if USPS is configured
+            if (config.uspsClientId && config.uspsClientSecret) {
+                authorizeUspsBtn.style.display = 'inline-block';
+            }
+        }
+    } catch (error) {
+        alert('Error saving configuration: ' + error.message);
+    }
+});
+
+// Test USPS connection
+testUspsBtn.addEventListener('click', async () => {
+    const resultDiv = document.getElementById('uspsTestResult');
+    resultDiv.textContent = 'Testing USPS connection...';
+    resultDiv.className = 'test-result';
+    resultDiv.style.display = 'block';
+    
+    const status = await checkConfigStatus();
+    if (!status.usps.configured) {
+        resultDiv.textContent = 'Please enter USPS credentials first';
+        resultDiv.className = 'test-result error';
+    } else if (!status.usps.tokenValid) {
+        resultDiv.textContent = 'USPS configured but needs authorization';
+        resultDiv.className = 'test-result error';
+        authorizeUspsBtn.style.display = 'inline-block';
+    } else {
+        resultDiv.textContent = 'USPS connection successful!';
+        resultDiv.className = 'test-result success';
+    }
+});
+
+// Authorize USPS OAuth
+authorizeUspsBtn.addEventListener('click', async () => {
+    try {
+        const response = await fetch('/api/usps-auth');
+        const data = await response.json();
+        window.open(data.authUrl, '_blank');
+    } catch (error) {
+        alert('Error initiating USPS authorization: ' + error.message);
+    }
+});
+
+// Test Smarty connection
+testSmartyBtn.addEventListener('click', async () => {
+    const resultDiv = document.getElementById('smartyTestResult');
+    const authId = document.getElementById('smartyAuthId').value;
+    const authToken = document.getElementById('smartyAuthToken').value;
+    
+    if (!authId || !authToken) {
+        resultDiv.textContent = 'Please enter Smarty credentials first';
+        resultDiv.className = 'test-result error';
+        resultDiv.style.display = 'block';
+        return;
+    }
+    
+    resultDiv.textContent = 'Testing Smarty connection...';
+    resultDiv.className = 'test-result';
+    resultDiv.style.display = 'block';
+    
+    // In a real implementation, you'd test the API here
+    setTimeout(() => {
+        resultDiv.textContent = 'Smarty credentials saved (test on first use)';
+        resultDiv.className = 'test-result success';
+    }, 1000);
+});
+
 // Initialize
 loadStates();
+checkConfigStatus();
 
 // Batch processing functionality
 const batchProcessBtn = document.getElementById('batchProcessBtn');

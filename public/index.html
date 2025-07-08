@@ -61,12 +61,15 @@
                         </label>
                         <label class="method-option">
                             <input type="radio" name="lookupMethod" value="zip4">
-                            <span>ZIP+4 (USPS)</span>
+                            <span>ZIP+4 (USPS) <span id="uspsStatus" class="status-indicator">⚠️</span></span>
                         </label>
                         <label class="method-option">
                             <input type="radio" name="lookupMethod" value="both">
                             <span>Compare Both</span>
                         </label>
+                        <button id="configureBtn" class="btn btn-small" style="margin-top: 8px;">
+                            ⚙️ Configure APIs
+                        </button>
                     </div>
                     <div class="search-container">
                         <input type="text" id="addressInput" placeholder="Enter address, city, state, ZIP..." />
@@ -140,6 +143,56 @@
         <div class="loading-content">
             <div class="spinner"></div>
             <span>Loading...</span>
+        </div>
+    </div>
+    
+    <!-- Configuration Modal -->
+    <div id="configModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="document.getElementById('configModal').style.display='none'">&times;</span>
+            <h3>API Configuration</h3>
+            
+            <div class="config-section">
+                <h4>USPS Web Tools API</h4>
+                <p class="config-note">Required for ZIP+4 address verification. Register at <a href="https://developers.usps.com/" target="_blank">developers.usps.com</a></p>
+                
+                <div class="form-group">
+                    <label for="uspsClientId">Client ID</label>
+                    <input type="text" id="uspsClientId" placeholder="Your USPS Client ID">
+                </div>
+                
+                <div class="form-group">
+                    <label for="uspsClientSecret">Client Secret</label>
+                    <input type="password" id="uspsClientSecret" placeholder="Your USPS Client Secret">
+                </div>
+                
+                <button id="testUspsBtn" class="btn btn-secondary">Test USPS Connection</button>
+                <button id="authorizeUspsBtn" class="btn btn-secondary" style="display: none;">Authorize USPS</button>
+                <div id="uspsTestResult" class="test-result"></div>
+            </div>
+            
+            <div class="config-section">
+                <h4>Smarty API (Alternative)</h4>
+                <p class="config-note">Commercial service with free tier. Register at <a href="https://www.smarty.com/" target="_blank">smarty.com</a></p>
+                
+                <div class="form-group">
+                    <label for="smartyAuthId">Auth ID</label>
+                    <input type="text" id="smartyAuthId" placeholder="Your Smarty Auth ID">
+                </div>
+                
+                <div class="form-group">
+                    <label for="smartyAuthToken">Auth Token</label>
+                    <input type="password" id="smartyAuthToken" placeholder="Your Smarty Auth Token">
+                </div>
+                
+                <button id="testSmartyBtn" class="btn btn-secondary">Test Smarty Connection</button>
+                <div id="smartyTestResult" class="test-result"></div>
+            </div>
+            
+            <div class="modal-actions">
+                <button id="saveConfigBtn" class="btn btn-primary">Save Configuration</button>
+                <button onclick="document.getElementById('configModal').style.display='none'" class="btn btn-secondary">Cancel</button>
+            </div>
         </div>
     </div>
     
