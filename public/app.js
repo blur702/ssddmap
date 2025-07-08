@@ -519,41 +519,183 @@ map.on('click', (e) => {
     }
 });
 
-// Address search functionality
+// Get selected lookup method
+function getSelectedLookupMethod() {
+    const selected = document.querySelector('input[name="lookupMethod"]:checked');
+    return selected ? selected.value : 'census';
+}
+
+// Address search functionality with method selection
 async function searchAddress(query) {
     if (!query || query.length < 3) {
         searchResults.innerHTML = '';
         return;
     }
     
+    const method = getSelectedLookupMethod();
+    
     try {
-        const response = await fetch(`/api/geocode?address=${encodeURIComponent(query)}`);
-        const results = await response.json();
-        
-        if (results.length === 0) {
-            searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
-            return;
-        }
-        
-        searchResults.innerHTML = results.map(result => `
-            <div class="search-result-item" data-lat="${result.lat}" data-lon="${result.lon}">
-                <div class="address">${result.display_name}</div>
-            </div>
-        `).join('');
-        
-        // Add click handlers
-        searchResults.querySelectorAll('.search-result-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const lat = parseFloat(item.dataset.lat);
-                const lon = parseFloat(item.dataset.lon);
-                showAddressOnMap(lat, lon, item.querySelector('.address').textContent);
-                searchResults.innerHTML = '';
-                addressInput.value = '';
+        if (method === 'census') {
+            // Use existing geocoding method
+            const response = await fetch(`/api/geocode?address=${encodeURIComponent(query)}`);
+            const results = await response.json();
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+                return;
+            }
+            
+            searchResults.innerHTML = results.map(result => `
+                <div class="search-result-item" data-lat="${result.lat}" data-lon="${result.lon}">
+                    <div class="address">${result.display_name}</div>
+                </div>
+            `).join('');
+            
+            // Add click handlers
+            searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const lat = parseFloat(item.dataset.lat);
+                    const lon = parseFloat(item.dataset.lon);
+                    showAddressOnMap(lat, lon, item.querySelector('.address').textContent);
+                    searchResults.innerHTML = '';
+                    addressInput.value = '';
+                });
             });
-        });
+        } else {
+            // Use ZIP+4 method
+            const addressParts = parseAddress(query);
+            if (!addressParts) {
+                searchResults.innerHTML = '<div class="search-result-item">Please enter a complete address</div>';
+                return;
+            }
+            
+            setLoading(true);
+            const response = await fetch(`/api/address-lookup-zip4?${new URLSearchParams({
+                street: addressParts.street,
+                city: addressParts.city,
+                state: addressParts.state,
+                zip: addressParts.zip || '',
+                method: method
+            })}`);
+            
+            const result = await response.json();
+            
+            if (method === 'both') {
+                // Show comparison results
+                showComparisonResults(result);
+            } else if (result.success) {
+                // Show single result
+                showZip4Result(result);
+            } else {
+                searchResults.innerHTML = `<div class="search-result-item">Error: ${result.error || 'Address not found'}</div>`;
+            }
+        }
     } catch (error) {
-        console.error('Geocoding error:', error);
+        console.error('Search error:', error);
         searchResults.innerHTML = '<div class="search-result-item">Error searching address</div>';
+    } finally {
+        setLoading(false);
+    }
+}
+
+// Parse address string
+function parseAddress(addressStr) {
+    const parts = addressStr.split(',').map(s => s.trim());
+    if (parts.length < 3) return null;
+    
+    const street = parts[0];
+    const city = parts[1];
+    const stateZip = parts[2].split(' ');
+    const state = stateZip[0];
+    const zip = stateZip[1] || '';
+    
+    return { street, city, state, zip };
+}
+
+// Show ZIP+4 lookup result
+function showZip4Result(result) {
+    const districtCode = `${result.district.state}-${result.district.district}`;
+    
+    searchResults.innerHTML = `
+        <div class="search-result-item">
+            <div class="address">${result.standardized ? 
+                `${result.standardized.street}, ${result.standardized.city}, ${result.standardized.state} ${result.standardized.zip5}-${result.standardized.zip4}` : 
+                'Standardized address'}</div>
+            <div class="district">Congressional District: <strong>${districtCode}</strong></div>
+            ${result.district.countyFips ? `<div>County FIPS: ${result.district.countyFips}</div>` : ''}
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 5px;">
+                Source: ${result.source || result.method || 'ZIP+4 lookup'}
+            </div>
+        </div>
+    `;
+    
+    // If we have coordinates, show on map
+    if (result.standardized?.lat && result.standardized?.lon) {
+        setTimeout(() => {
+            showAddressOnMap(result.standardized.lat, result.standardized.lon, 
+                            result.standardized.street);
+        }, 100);
+    }
+}
+
+// Show comparison results
+function showComparisonResults(result) {
+    const { zip4Method, censusMethod, comparison } = result;
+    
+    let confidenceClass = 'confidence-low';
+    if (comparison.confidence >= 90) confidenceClass = 'confidence-high';
+    else if (comparison.confidence >= 70) confidenceClass = 'confidence-medium';
+    
+    const comparisonHTML = `
+        <div class="comparison-results">
+            <div class="comparison-header">
+                <h4>Address Lookup Comparison</h4>
+                <span class="confidence-badge ${confidenceClass}">
+                    ${comparison.match ? 'MATCH' : 'MISMATCH'} - ${comparison.confidence}% Confidence
+                </span>
+            </div>
+            
+            <div class="method-results">
+                <div class="method-result">
+                    <h5>ZIP+4 Method</h5>
+                    ${zip4Method.success ? `
+                        <p class="district-code">${zip4Method.district.state}-${zip4Method.district.district}</p>
+                        <p>County FIPS: ${zip4Method.district.countyFips || 'N/A'}</p>
+                        <p>ZIP+4: ${zip4Method.standardized?.zip5}-${zip4Method.standardized?.zip4}</p>
+                    ` : `
+                        <p style="color: var(--vote-no);">Failed: ${zip4Method.error || 'Unknown error'}</p>
+                    `}
+                </div>
+                
+                <div class="method-result">
+                    <h5>Geographic Method</h5>
+                    ${censusMethod.district?.found ? `
+                        <p class="district-code">${censusMethod.district.state}-${censusMethod.district.district}</p>
+                        <p>County: ${censusMethod.county?.name || 'N/A'}, ${censusMethod.county?.state || ''}</p>
+                        <p>County FIPS: ${censusMethod.county?.geoid || 'N/A'}</p>
+                    ` : `
+                        <p style="color: var(--vote-no);">No district found</p>
+                    `}
+                </div>
+            </div>
+            
+            ${!comparison.match ? `
+                <div style="margin-top: 15px; padding: 10px; background: var(--bg-hover); border-radius: 6px;">
+                    <p style="color: var(--vote-no); font-weight: 600;">⚠️ Methods returned different districts</p>
+                    <p style="font-size: 12px; margin-top: 5px;">This may indicate an address near a district boundary or a data discrepancy.</p>
+                </div>
+            ` : ''}
+        </div>
+    `;
+    
+    searchResults.innerHTML = comparisonHTML;
+    
+    // Show on map if we have coordinates
+    if (zip4Method.standardized?.lat && zip4Method.standardized?.lon) {
+        setTimeout(() => {
+            showAddressOnMap(zip4Method.standardized.lat, zip4Method.standardized.lon, 
+                            zip4Method.standardized.street);
+        }, 100);
     }
 }
 
@@ -1361,3 +1503,206 @@ toggleCountyFIPSBtn.addEventListener('click', async () => {
 
 // Initialize
 loadStates();
+
+// Batch processing functionality
+const batchProcessBtn = document.getElementById('batchProcessBtn');
+const batchModal = document.getElementById('batchModal');
+const closeModal = document.querySelector('.close');
+const uploadCsvBtn = document.getElementById('uploadCsvBtn');
+const processBatchBtn = document.getElementById('processBatchBtn');
+const csvFileInput = document.getElementById('csvFile');
+const batchAddressesTextarea = document.getElementById('batchAddresses');
+const batchProgress = document.getElementById('batchProgress');
+const progressFill = document.querySelector('.progress-fill');
+const progressText = document.querySelector('.progress-text');
+
+// Open batch modal
+batchProcessBtn.addEventListener('click', () => {
+    batchModal.style.display = 'flex';
+    batchAddressesTextarea.value = '';
+    batchProgress.style.display = 'none';
+});
+
+// Close modal
+closeModal.addEventListener('click', () => {
+    batchModal.style.display = 'none';
+});
+
+// Close modal when clicking outside
+window.addEventListener('click', (event) => {
+    if (event.target === batchModal) {
+        batchModal.style.display = 'none';
+    }
+});
+
+// Upload CSV button click
+uploadCsvBtn.addEventListener('click', () => {
+    csvFileInput.click();
+});
+
+// Handle CSV file selection
+csvFileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const csv = e.target.result;
+            // Parse CSV and extract addresses
+            const lines = csv.split('\n').filter(line => line.trim());
+            const addresses = [];
+            
+            // Simple CSV parsing - assumes first column is address or combines multiple columns
+            lines.forEach((line, index) => {
+                if (index === 0 && line.toLowerCase().includes('address')) {
+                    // Skip header if it contains 'address'
+                    return;
+                }
+                
+                // Handle quoted values and commas within quotes
+                const parts = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+                if (parts.length > 0) {
+                    // If multiple columns, try to combine them as address parts
+                    const address = parts.map(p => p.replace(/^"|"$/g, '')).join(', ');
+                    if (address.trim()) {
+                        addresses.push(address.trim());
+                    }
+                }
+            });
+            
+            // Add addresses to textarea
+            batchAddressesTextarea.value = addresses.join('\n');
+        };
+        reader.readAsText(file);
+    }
+});
+
+// Process batch addresses
+processBatchBtn.addEventListener('click', async () => {
+    const addressText = batchAddressesTextarea.value.trim();
+    if (!addressText) {
+        alert('Please enter addresses to process');
+        return;
+    }
+    
+    // Parse addresses from textarea
+    const addresses = addressText.split('\n')
+        .map(addr => addr.trim())
+        .filter(addr => addr.length > 0);
+    
+    if (addresses.length === 0) {
+        alert('No valid addresses found');
+        return;
+    }
+    
+    // Get selected lookup method
+    const method = getSelectedLookupMethod();
+    
+    // Show progress
+    batchProgress.style.display = 'block';
+    progressFill.style.width = '0%';
+    progressText.textContent = `Processing 0 of ${addresses.length} addresses...`;
+    
+    // Disable buttons during processing
+    processBatchBtn.disabled = true;
+    uploadCsvBtn.disabled = true;
+    
+    try {
+        // Create batch request
+        const batchId = Date.now().toString();
+        const response = await fetch('/api/batch-process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                batchId,
+                addresses,
+                method
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to process batch');
+        }
+        
+        const results = await response.json();
+        
+        // Update progress to 100%
+        progressFill.style.width = '100%';
+        progressText.textContent = `Completed! Processed ${results.processed} addresses.`;
+        
+        // Show results after a short delay
+        setTimeout(() => {
+            showBatchResults(results);
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Batch processing error:', error);
+        alert('Error processing batch: ' + error.message);
+    } finally {
+        // Re-enable buttons
+        processBatchBtn.disabled = false;
+        uploadCsvBtn.disabled = false;
+    }
+});
+
+// Show batch results
+function showBatchResults(results) {
+    // Close batch modal
+    batchModal.style.display = 'none';
+    
+    // Create results summary
+    let summaryHtml = `
+        <div class="batch-results-summary">
+            <h4>Batch Processing Results</h4>
+            <p>Batch ID: ${results.batchId}</p>
+            <p>Total Processed: ${results.processed}</p>
+            <p>Success: ${results.success}</p>
+            <p>Failed: ${results.failed}</p>
+    `;
+    
+    if (results.method === 'both') {
+        summaryHtml += `
+            <p>Matches: ${results.matches}</p>
+            <p>Mismatches: ${results.mismatches}</p>
+        `;
+    }
+    
+    summaryHtml += `
+            <div style="margin-top: 15px;">
+                <button class="btn btn-primary" onclick="downloadBatchResults('${results.batchId}')">
+                    Download CSV Report
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Update district info panel with results
+    districtInfo.innerHTML = summaryHtml;
+    
+    // Show the info panel
+    document.getElementById('info').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Download batch results as CSV
+window.downloadBatchResults = async (batchId) => {
+    try {
+        const response = await fetch(`/api/batch-results/${batchId}/download`);
+        if (!response.ok) {
+            throw new Error('Failed to download results');
+        }
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `batch_results_${batchId}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Download error:', error);
+        alert('Error downloading results: ' + error.message);
+    }
+};

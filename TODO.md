@@ -1,11 +1,87 @@
 # TODO - Next Steps for SSDD Map
 
+## 🚨 CRITICAL - ZIP+4 Configuration Required
+
+### API Setup & Testing
+- [ ] **Obtain USPS Web Tools API User ID** 
+  - Register at https://www.usps.com/business/web-tools-apis/
+  - Free service, requires registration
+  - Needed for address standardization and ZIP+4 lookup
+- [ ] **Obtain Smarty API credentials**
+  - Sign up at https://www.smarty.com/
+  - Free tier: 250 lookups/month
+  - Needed for ZIP+4 to congressional district mapping
+- [ ] **Test API integrations with real credentials**
+  - Verify USPS address standardization works
+  - Verify Smarty district lookup returns correct data
+  - Test error handling for invalid addresses
+- [ ] **Consider alternative APIs**
+  - Google Civic Information API (free tier available)
+  - Geocod.io (2,500 free lookups/day)
+  - Implement fallback mechanism between services
+
+### ZIP+4 Database Population
+- [ ] **Obtain ZIP+4 to congressional district mapping data**
+  - Option 1: Purchase commercial database ($1,000-5,000/year)
+  - Option 2: Use Smarty API to build cache over time
+  - Option 3: Research alternative public data sources
+  - Option 4: Contact USPS for special government access
+- [ ] **Create data import tools**
+  - Script to bulk import ZIP+4 mappings
+  - Validation to ensure data accuracy
+  - Update mechanism for quarterly changes
+- [ ] **Database optimization**
+  - Add proper indexes for performance
+  - Implement data compression
+  - Add backup/restore functionality
+
+### Testing & Validation
+- [ ] **Comprehensive testing with real data**
+  - Test single address lookups with both methods
+  - Test batch processing with 100+ addresses
+  - Verify CSV upload/download functionality
+  - Test comparison accuracy between Census and ZIP+4
+- [ ] **Performance testing**
+  - Load test batch endpoint with 1000+ addresses
+  - Test API rate limit handling
+  - Optimize database queries for speed
+- [ ] **Edge case testing**
+  - PO Boxes and non-standard addresses
+  - Military addresses (APO/FPO)
+  - New construction without ZIP+4
+  - Address parsing variations
+
 ## For Next Claude Code Instance
 
 ### 🐛 Bug Fixes
 1. **Fix tooltip typo**: Multiple instances of `bindTooltip` should be `bindTooltip` in app.js
 2. **County layer performance**: Consider implementing viewport-based rendering for counties to improve performance
 3. **Memory management**: Add cleanup for map layers when switching views
+4. **Database initialization**: Fix SQLite table creation error on first run
+
+### 🔧 ZIP+4 Feature Completion
+1. **Add .env file support**
+   - Install dotenv package
+   - Create .env.example file
+   - Update configuration to use process.env
+   - Add .env to .gitignore
+
+2. **Improve error handling**
+   - User-friendly messages when APIs are not configured
+   - Graceful fallback to Census method
+   - Clear instructions for configuration in UI
+
+3. **Add configuration UI**
+   - Settings page for API key entry
+   - Test connection buttons
+   - Method preference selection
+   - Save settings to local storage
+
+4. **Enhance batch processing**
+   - Add batch processing history
+   - Allow batch result filtering/searching
+   - Implement batch comparison reports
+   - Add email notification option for large batches
 
 ### ✨ Feature Enhancements
 
@@ -154,5 +230,9 @@
 - ✅ State representation visualization
 - ✅ Dark theme UI
 - ✅ GitHub repository set up
+- ✅ ZIP+4 integration structure implemented
+- ⚠️ ZIP+4 features require API configuration
+- ⚠️ ZIP+4 database needs population with real data
+- ⚠️ Batch processing needs real-world testing
 
-The application is functional but has room for significant enhancement in terms of features, performance, and user experience.
+The application is functional but the ZIP+4 features require API credentials and data to be fully operational.

@@ -7,9 +7,14 @@ const fetch = require('node-fetch');
 const xml2js = require('xml2js');
 const turf = require('@turf/turf');
 const STATE_BOUNDARIES = require('./stateData');
+const config = require('./config');
+const AddressService = require('./services/addressService');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Initialize address service
+const addressService = new AddressService(config);
 
 app.use(express.static('public'));
 
@@ -861,6 +866,276 @@ app.get('/api/bill-votes/:billId', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+// Endpoint for ZIP+4 based district lookup
+app.get('/api/address-lookup-zip4', async (req, res) => {
+    try {
+        const { street, city, state, zip, method } = req.query;
+        
+        if (!street || !city || !state) {
+            return res.status(400).json({ error: 'Street, city, and state are required' });
+        }
+        
+        const address = { street, city, state, zip };
+        const lookupMethod = method || config.defaultLookupMethod;
+        
+        // If comparing both methods
+        if (lookupMethod === 'both') {
+            const [zip4Result, censusResult] = await Promise.all([
+                addressService.lookupDistrict(address, 'smarty'),
+                (async () => {
+                    // Use existing geocoding and district lookup
+                    const geoResponse = await fetch(`http://localhost:${PORT}/api/geocode?address=${encodeURIComponent(`${street}, ${city}, ${state}`)}`);
+                    const geoData = await geoResponse.json();
+                    
+                    if (geoData && geoData.length > 0) {
+                        const { lat, lon } = geoData[0];
+                        const locationResponse = await fetch(`http://localhost:${PORT}/api/find-location?lat=${lat}&lon=${lon}`);
+                        return await locationResponse.json();
+                    }
+                    return { success: false, error: 'Geocoding failed' };
+                })()
+            ]);
+            
+            return res.json({
+                zip4Method: zip4Result,
+                censusMethod: censusResult,
+                comparison: {
+                    match: zip4Result.success && censusResult.district?.found && 
+                           zip4Result.district?.state === censusResult.district?.state &&
+                           zip4Result.district?.district === censusResult.district?.district,
+                    confidence: calculateConfidence(zip4Result, censusResult)
+                }
+            });
+        }
+        
+        // Single method lookup
+        const result = await addressService.lookupDistrict(address, lookupMethod);
+        res.json(result);
+        
+    } catch (error) {
+        console.error('Address lookup error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Endpoint for batch address processing
+app.post('/api/batch-process', express.json({ limit: '10mb' }), async (req, res) => {
+    try {
+        const { addresses, method } = req.body;
+        const batchId = `batch_${Date.now()}`;
+        
+        if (!addresses || !Array.isArray(addresses) || addresses.length === 0) {
+            return res.status(400).json({ error: 'No addresses provided' });
+        }
+        
+        const results = [];
+        const errors = [];
+        
+        // Process each address
+        for (let i = 0; i < addresses.length; i++) {
+            try {
+                const address = addresses[i];
+                const addressParts = parseAddressString(address);
+                
+                if (!addressParts) {
+                    errors.push({ address, error: 'Invalid address format' });
+                    continue;
+                }
+                
+                // Lookup using specified method
+                const lookupMethod = method || config.defaultLookupMethod;
+                
+                if (lookupMethod === 'both') {
+                    // Compare both methods
+                    const [zip4Result, censusResult] = await Promise.all([
+                        addressService.lookupDistrict(addressParts, 'smarty'),
+                        (async () => {
+                            const geoResponse = await fetch(`http://localhost:${PORT}/api/geocode?address=${encodeURIComponent(address)}`);
+                            const geoData = await geoResponse.json();
+                            
+                            if (geoData && geoData.length > 0) {
+                                const { lat, lon } = geoData[0];
+                                const locationResponse = await fetch(`http://localhost:${PORT}/api/find-location?lat=${lat}&lon=${lon}`);
+                                return await locationResponse.json();
+                            }
+                            return { success: false };
+                        })()
+                    ]);
+                    
+                    const match = zip4Result.success && censusResult.district?.found &&
+                                 zip4Result.district?.state === censusResult.district?.state &&
+                                 zip4Result.district?.district === censusResult.district?.district;
+                    
+                    results.push({
+                        address,
+                        zip5: zip4Result.standardized?.zip5,
+                        zip4: zip4Result.standardized?.zip4,
+                        state_code: zip4Result.district?.state,
+                        district_number: zip4Result.district?.district,
+                        county_fips: zip4Result.district?.countyFips,
+                        census_district: censusResult.district?.district,
+                        match_status: match ? 'MATCH' : 'MISMATCH',
+                        confidence: calculateConfidence(zip4Result, censusResult),
+                        details: {
+                            zip4Method: zip4Result,
+                            censusMethod: censusResult
+                        }
+                    });
+                } else {
+                    // Single method
+                    const result = await addressService.lookupDistrict(addressParts, lookupMethod);
+                    
+                    if (result.success) {
+                        results.push({
+                            address,
+                            state_code: result.district?.state,
+                            district_number: result.district?.district,
+                            county_fips: result.district?.countyFips,
+                            method: lookupMethod,
+                            details: result
+                        });
+                    } else {
+                        errors.push({ address, error: result.error });
+                    }
+                }
+                
+                // Send progress update
+                if (i % 10 === 0) {
+                    console.log(`Processed ${i + 1}/${addresses.length} addresses`);
+                }
+            } catch (err) {
+                errors.push({ address: addresses[i], error: err.message });
+            }
+        }
+        
+        // Save batch results to database
+        if (results.length > 0) {
+            await addressService.db.saveBatchResults(batchId, results);
+        }
+        
+        // Calculate match statistics for comparison method
+        let matches = 0;
+        let mismatches = 0;
+        
+        if (method === 'both') {
+            results.forEach(r => {
+                if (r.match_status === 'MATCH') matches++;
+                else if (r.match_status === 'MISMATCH') mismatches++;
+            });
+        }
+        
+        res.json({
+            batchId,
+            processed: addresses.length,
+            success: results.length,
+            failed: errors.length,
+            matches,
+            mismatches,
+            method,
+            results,
+            errors,
+            downloadUrl: `/api/batch-results/${batchId}/download`
+        });
+        
+    } catch (error) {
+        console.error('Batch processing error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Endpoint to download batch results as CSV
+app.get('/api/batch-results/:batchId/download', async (req, res) => {
+    try {
+        const { batchId } = req.params;
+        const results = await addressService.db.getBatchResults(batchId);
+        
+        if (!results || results.length === 0) {
+            return res.status(404).json({ error: 'Batch not found' });
+        }
+        
+        // Generate CSV
+        const csv = generateCSV(results);
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="districts_${batchId}.csv"`);
+        res.send(csv);
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Helper function to parse address string
+function parseAddressString(addressStr) {
+    // Simple parser - could be improved with a proper address parsing library
+    const parts = addressStr.split(',').map(s => s.trim());
+    
+    if (parts.length < 3) return null;
+    
+    const street = parts[0];
+    const city = parts[1];
+    const stateZip = parts[2].split(' ');
+    const state = stateZip[0];
+    const zip = stateZip[1] || '';
+    
+    return { street, city, state, zip };
+}
+
+// Helper function to generate CSV
+function generateCSV(results) {
+    const headers = [
+        'Address',
+        'State',
+        'Congressional District',
+        'County FIPS',
+        'ZIP+4',
+        'Match Status',
+        'Confidence',
+        'Method'
+    ];
+    
+    const rows = results.map(r => [
+        r.address,
+        r.state_code || '',
+        r.district_number || '',
+        r.county_fips || '',
+        r.zip4 ? `${r.zip5}-${r.zip4}` : r.zip5 || '',
+        r.match_status || '',
+        r.confidence || '',
+        r.method || 'comparison'
+    ]);
+    
+    const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    return csvContent;
+}
+
+// Helper function to calculate confidence in the match
+function calculateConfidence(zip4Result, censusResult) {
+    if (!zip4Result.success || !censusResult.district?.found) {
+        return 0;
+    }
+    
+    // Base confidence
+    let confidence = 50;
+    
+    // If districts match, high confidence
+    if (zip4Result.district?.state === censusResult.district?.state &&
+        zip4Result.district?.district === censusResult.district?.district) {
+        confidence = 95;
+    }
+    
+    // If counties match too, even higher confidence
+    if (zip4Result.district?.countyFips === censusResult.county?.geoid) {
+        confidence = 99;
+    }
+    
+    return confidence;
+}
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

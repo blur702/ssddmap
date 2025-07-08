@@ -2,6 +2,10 @@
 
 An interactive web application for visualizing US Congressional Districts, county boundaries, and legislative voting patterns. Built with Node.js, Express, and Leaflet.js.
 
+## ⚠️ Configuration Required for ZIP+4 Features
+
+The ZIP+4 lookup functionality requires API credentials that are not included. See [CONFIGURATION_GUIDE.md](./CONFIGURATION_GUIDE.md) for setup instructions. The application will function without these credentials using the Census geographic lookup method.
+
 ## Features
 
 ### 🗺️ Congressional District Mapping
@@ -18,9 +22,17 @@ An interactive web application for visualizing US Congressional Districts, count
 
 ### 📍 Address Search & Geocoding
 - Search any US address to find its congressional district
-- Powered by OpenStreetMap Nominatim geocoding
-- Automatic district and county detection using point-in-polygon analysis
+- **Multiple lookup methods**:
+  - **Geographic (Census)**: Uses OpenStreetMap geocoding + Census boundaries
+  - **ZIP+4 (USPS)**: Uses USPS standardization + ZIP+4 to district mapping (requires configuration)
+  - **Compare Both**: Runs both methods and shows comparison
+- Automatic district and county detection
 - Visual markers showing searched locations
+- **Batch processing**: Process multiple addresses at once
+  - Upload CSV files or paste addresses
+  - Progress tracking for large batches
+  - Export results as CSV
+  - Comparison reports between methods
 
 ### 🗳️ County Analysis
 - 3,234 US county boundaries from 2020 Census data
@@ -48,6 +60,8 @@ An interactive web application for visualizing US Congressional Districts, count
 
 ### Backend (Node.js/Express)
 - **server.js**: Main Express server with RESTful API endpoints
+- **services/addressService.js**: Handles USPS and Smarty API integrations
+- **services/databaseService.js**: SQLite database for ZIP+4 mappings
 - KML to GeoJSON conversion using @mapbox/togeojson
 - Efficient caching of district and county geometries
 - Point-in-polygon detection using Turf.js
@@ -78,6 +92,9 @@ An interactive web application for visualizing US Congressional Districts, count
 - `GET /api/county-politics` - Get county political control analysis
 - `GET /api/state-rep-counts` - Get representative counts by state
 - `GET /api/bill-votes/:billId` - Get voting data for specific legislation
+- `GET /api/address-lookup-zip4` - ZIP+4 based district lookup
+- `POST /api/batch-process` - Process multiple addresses in batch
+- `GET /api/batch-results/:batchId/download` - Download batch results as CSV
 
 ## Installation & Setup
 
@@ -92,12 +109,20 @@ cd ssddmap
 npm install
 ```
 
-3. Start the server:
+3. (Optional) Configure ZIP+4 features:
+```bash
+# See CONFIGURATION_GUIDE.md for detailed instructions
+export USPS_USER_ID="your_usps_id"
+export SMARTY_AUTH_ID="your_smarty_id"
+export SMARTY_AUTH_TOKEN="your_smarty_token"
+```
+
+4. Start the server:
 ```bash
 npm start
 ```
 
-4. Open http://localhost:3000 in your browser
+5. Open http://localhost:3000 in your browser
 
 ## Usage Guide
 

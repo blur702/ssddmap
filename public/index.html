@@ -54,8 +54,22 @@
                 
                 <div class="address-search">
                     <label for="addressInput">Search Address</label>
+                    <div class="lookup-method">
+                        <label class="method-option">
+                            <input type="radio" name="lookupMethod" value="census" checked>
+                            <span>Geographic (Census)</span>
+                        </label>
+                        <label class="method-option">
+                            <input type="radio" name="lookupMethod" value="zip4">
+                            <span>ZIP+4 (USPS)</span>
+                        </label>
+                        <label class="method-option">
+                            <input type="radio" name="lookupMethod" value="both">
+                            <span>Compare Both</span>
+                        </label>
+                    </div>
                     <div class="search-container">
-                        <input type="text" id="addressInput" placeholder="Enter address, city, or ZIP code..." />
+                        <input type="text" id="addressInput" placeholder="Enter address, city, state, ZIP..." />
                         <button id="searchBtn" class="search-btn" title="Search">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="11" cy="11" r="8"></circle>
@@ -64,6 +78,34 @@
                         </button>
                     </div>
                     <div id="searchResults" class="search-results"></div>
+                </div>
+                
+                <div class="section-divider"></div>
+                
+                <div class="batch-section">
+                    <h3>Batch Address Processing</h3>
+                    <button id="batchProcessBtn" class="btn btn-secondary">
+                        <span>Batch Process Addresses</span>
+                    </button>
+                    <div id="batchModal" class="modal" style="display: none;">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h3>Batch Address Processing</h3>
+                            <p>Paste addresses (one per line) or upload CSV:</p>
+                            <textarea id="batchAddresses" placeholder="123 Main St, City, State&#10;456 Oak Ave, City, State&#10;..."></textarea>
+                            <div class="batch-controls">
+                                <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                                <button id="uploadCsvBtn" class="btn btn-secondary">Upload CSV</button>
+                                <button id="processBatchBtn" class="btn btn-primary">Process Addresses</button>
+                            </div>
+                            <div id="batchProgress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <p class="progress-text">Processing...</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="state-selector">
