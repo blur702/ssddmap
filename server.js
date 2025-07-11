@@ -2,6 +2,7 @@ const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
 const turf = require('@turf/turf');
+const fetch = require('node-fetch');
 require('dotenv').config();
 
 const app = express();
@@ -544,7 +545,6 @@ router.get('/api/geocode', async (req, res) => {
             return res.status(400).json({ error: 'Address parameter is required' });
         }
         
-        const fetch = require('node-fetch');
         const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&countrycodes=us&limit=5`;
         
         const response = await fetch(url, {
@@ -601,7 +601,6 @@ router.get('/api/geocode-census', async (req, res) => {
             return res.json(cacheResult.rows[0].results);
         }
         
-        const fetch = require('node-fetch');
         
         // Parse the address to extract components
         const addressParts = address.split(',').map(s => s.trim());
@@ -616,11 +615,26 @@ router.get('/api/geocode-census', async (req, res) => {
                 city = addressParts[0];
             }
         } else if (addressParts.length === 2) {
-            // City, State or Street, City State
-            city = addressParts[0];
-            const stateZip = addressParts[1].split(' ');
-            state = stateZip[0];
-            if (stateZip[1]) zip = stateZip[1];
+            // Could be "City, State" or "Street, City State"
+            const secondPart = addressParts[1].trim();
+            const stateZipMatch = secondPart.match(/^([A-Z]{2})\s*(\d{5}(?:-\d{4})?)?$/i);
+            
+            if (stateZipMatch) {
+                // Second part is "State ZIP" format
+                city = addressParts[0];
+                state = stateZipMatch[1];
+                if (stateZipMatch[2]) zip = stateZipMatch[2];
+            } else {
+                // Assume it's "Street, City State"
+                street = addressParts[0];
+                const cityStateParts = secondPart.split(' ');
+                if (cityStateParts.length >= 2) {
+                    city = cityStateParts.slice(0, -1).join(' ');
+                    state = cityStateParts[cityStateParts.length - 1];
+                } else {
+                    city = secondPart;
+                }
+            }
         } else if (addressParts.length >= 3) {
             // Full address
             street = addressParts[0];
@@ -628,6 +642,47 @@ router.get('/api/geocode-census', async (req, res) => {
             const stateZip = addressParts[2].split(' ');
             state = stateZip[0];
             if (stateZip[1]) zip = stateZip[1];
+        }
+        
+        // Determine if we have enough information for Census API
+        // Census API requires either:
+        // 1. Street address with city/state or ZIP
+        // 2. Just a ZIP code (for ZIP code centroid lookup)
+        
+        if (!street && !zip) {
+            // Can't use Census API without street address or ZIP
+            // Fall back to OSM Nominatim for city/state searches
+            const osmUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&countrycodes=us&limit=5`;
+            
+            const osmResponse = await fetch(osmUrl, {
+                headers: {
+                    'User-Agent': 'Congressional-Districts-Map/1.0'
+                }
+            });
+            
+            if (!osmResponse.ok) {
+                throw new Error('Geocoding service error');
+            }
+            
+            const osmResults = await osmResponse.json();
+            
+            const formattedResults = osmResults.map(result => ({
+                display_name: result.display_name,
+                lat: parseFloat(result.lat),
+                lon: parseFloat(result.lon),
+                type: 'osm',
+                importance: result.importance
+            }));
+            
+            // Cache the results
+            if (formattedResults.length > 0) {
+                await pool.query(
+                    'INSERT INTO geocode_cache (address, geocoder, results) VALUES ($1, $2, $3) ON CONFLICT (address, geocoder) DO UPDATE SET results = $3, created_at = NOW(), accessed_at = NOW()',
+                    [normalizedAddress, 'census', JSON.stringify(formattedResults)]
+                );
+            }
+            
+            return res.json(formattedResults);
         }
         
         // Build Census Geocoder URL
@@ -650,7 +705,43 @@ router.get('/api/geocode-census', async (req, res) => {
         });
         
         if (!response.ok) {
-            throw new Error('Census Geocoding service error');
+            console.error('Census API error:', response.status, response.statusText);
+            const errorText = await response.text();
+            console.error('Census API response:', errorText);
+            
+            // If Census API fails, fall back to OSM Nominatim
+            console.log('Falling back to OSM Nominatim due to Census API error');
+            const osmUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&countrycodes=us&limit=5`;
+            
+            const osmResponse = await fetch(osmUrl, {
+                headers: {
+                    'User-Agent': 'Congressional-Districts-Map/1.0'
+                }
+            });
+            
+            if (!osmResponse.ok) {
+                throw new Error('Both geocoding services failed');
+            }
+            
+            const osmResults = await osmResponse.json();
+            
+            const formattedResults = osmResults.map(result => ({
+                display_name: result.display_name,
+                lat: parseFloat(result.lat),
+                lon: parseFloat(result.lon),
+                type: 'osm',
+                importance: result.importance
+            }));
+            
+            // Cache the results
+            if (formattedResults.length > 0) {
+                await pool.query(
+                    'INSERT INTO geocode_cache (address, geocoder, results) VALUES ($1, $2, $3) ON CONFLICT (address, geocoder) DO UPDATE SET results = $3, created_at = NOW(), accessed_at = NOW()',
+                    [normalizedAddress, 'census', JSON.stringify(formattedResults)]
+                );
+            }
+            
+            return res.json(formattedResults);
         }
         
         const data = await response.json();
@@ -814,8 +905,7 @@ router.get('/api/address-lookup-zip4', async (req, res) => {
         
         if (method === 'both') {
             // Compare both methods
-            const fetch = require('node-fetch');
-            
+                
             // Method 1: Census Geocoder
             let censusResult = { success: false };
             try {
