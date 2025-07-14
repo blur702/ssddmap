@@ -8,145 +8,89 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="container">
-        <div id="sidebar">
-            <div class="sidebar-header">
-                <h1>US Congressional Districts</h1>
-                <p class="subtitle">Interactive map with current House representatives</p>
-            </div>
-            
-            <div class="controls">
-                <div class="map-style-selector">
-                    <label for="mapStyle">Map Style</label>
-                    <select id="mapStyle">
-                        <option value="voyager" selected>Voyager</option>
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                        <option value="satellite">Satellite</option>
-                        <option value="terrain">Terrain</option>
-                    </select>
-                </div>
-                
-                <button id="viewUSA" class="btn btn-primary">
-                    <span>View Full USA Map</span>
-                </button>
-                
-                <button id="toggleCounties" class="btn btn-secondary">
-                    <span>Show Counties</span>
-                </button>
-                
-                <button id="toggleCountyPolitics" class="btn btn-secondary">
-                    <span>Show County Politics</span>
-                </button>
-                
-                <button id="toggleCountyFIPS" class="btn btn-secondary">
-                    <span>Show County FIPS</span>
-                </button>
-                
-                <button id="toggleRepView" class="btn btn-secondary">
-                    <span>Show by Representation</span>
-                </button>
-                
-                <div class="section-divider"></div>
-                
-                <div class="address-search">
-                    <label for="addressInput">Search Address</label>
-                    <div class="lookup-method">
-                        <label class="method-option">
-                            <input type="radio" name="lookupMethod" value="census" checked>
-                            <span>Census Geocoder (Free)</span>
-                        </label>
-                        <label class="method-option">
-                            <input type="radio" name="lookupMethod" value="zip4">
-                            <span>ZIP+4 (USPS) <span id="uspsStatus" class="status-indicator">⚠️</span></span>
-                        </label>
-                        <label class="method-option">
-                            <input type="radio" name="lookupMethod" value="both">
-                            <span>Compare Both</span>
-                        </label>
-                        <button id="configureBtn" class="btn btn-small" style="margin-top: 8px;">
-                            ⚙️ Configure APIs
-                        </button>
-                    </div>
-                    <div class="autosuggest-toggle" style="margin: 10px 0;">
-                        <label class="toggle-option">
-                            <input type="checkbox" id="autosuggestToggle" checked>
-                            <span>Enable address suggestions</span>
-                        </label>
-                    </div>
-                    <div class="search-container">
-                        <input type="text" id="addressInput" placeholder="Enter address, city, state, ZIP..." />
-                        <button id="searchBtn" class="search-btn" title="Search">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <path d="m21 21-4.35-4.35"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div id="searchResults" class="search-results"></div>
-                </div>
-                
-                <div class="section-divider"></div>
-                
-                <div class="cache-section">
-                    <h3>Data Management</h3>
-                    <div class="cache-info">
-                        <p>House member data is cached for 24 hours</p>
-                        <p id="cacheStatus" class="cache-status">Loading cache status...</p>
-                        <button id="refreshCacheBtn" class="btn btn-secondary">
-                            <span>Refresh Member Data</span>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="section-divider"></div>
-                
-                <div class="batch-section">
-                    <h3>Batch Address Processing</h3>
-                    <button id="batchProcessBtn" class="btn btn-secondary">
-                        <span>Batch Process Addresses</span>
-                    </button>
-                    <div id="batchModal" class="modal" style="display: none;">
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <h3>Batch Address Processing</h3>
-                            <p>Paste addresses (one per line) or upload CSV:</p>
-                            <textarea id="batchAddresses" placeholder="123 Main St, City, State&#10;456 Oak Ave, City, State&#10;..."></textarea>
-                            <div class="batch-controls">
-                                <input type="file" id="csvFile" accept=".csv" style="display: none;">
-                                <button id="uploadCsvBtn" class="btn btn-secondary">Upload CSV</button>
-                                <button id="processBatchBtn" class="btn btn-primary">Process Addresses</button>
-                            </div>
-                            <div id="batchProgress" style="display: none;">
-                                <div class="progress-bar">
-                                    <div class="progress-fill"></div>
-                                </div>
-                                <p class="progress-text">Processing...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="state-selector">
-                    <label for="stateSelect">Select State</label>
-                    <select id="stateSelect">
-                        <option value="">Choose a state...</option>
-                    </select>
-                </div>
-                
-                <div id="districtList" class="district-list">
-                    <!-- Districts will be populated here -->
-                </div>
-            </div>
-            
-            <div id="info" class="info-panel">
-                <h3>District Information</h3>
-                <div id="districtInfo">
-                    <p>Select a district to view details</p>
-                </div>
-            </div>
+    <!-- Top Toolbar -->
+    <header id="toolbar">
+        <div class="toolbar-section toolbar-left">
+            <h1 class="app-title">Congressional Districts</h1>
         </div>
         
+        <div class="toolbar-section toolbar-center">
+            <!-- Address Search -->
+            <div class="search-box">
+                <form autocomplete="off" onsubmit="return false;">
+                    <input type="text" id="addressInput" name="search-location" 
+                           placeholder="Search address, city, state, ZIP..." 
+                           autocomplete="new-password" autocorrect="off" 
+                           autocapitalize="off" spellcheck="false" />
+                    <button id="searchBtn" class="search-btn" title="Search">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                </form>
+                <div id="searchResults" class="search-results"></div>
+            </div>
+            
+            <!-- State Selector -->
+            <select id="stateSelect" class="toolbar-select">
+                <option value="">All States</option>
+            </select>
+            
+            <!-- Map Style -->
+            <select id="mapStyle" class="toolbar-select">
+                <option value="voyager" selected>Voyager</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+                <option value="satellite">Satellite</option>
+                <option value="terrain">Terrain</option>
+            </select>
+        </div>
+        
+        <div class="toolbar-section toolbar-right">
+            <!-- Toggle Switches -->
+            <div class="toggle-group">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autosuggestToggle" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Auto-suggest</span>
+                </label>
+                
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggleRepView">
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Rep View</span>
+                </label>
+            </div>
+            
+            <!-- Icon Buttons -->
+            <div class="icon-buttons">
+                <button id="viewUSA" class="icon-btn" title="View Full USA">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M2 11h20M11 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </button>
+                
+                <button id="dataManageBtn" class="icon-btn" title="Data Management">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </button>
+                
+                <button id="configBtn" class="icon-btn" title="API Configuration">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1m20.485-6.485l-4.243 4.243M7.758 7.758L3.515 3.515m0 17.97l4.243-4.243m8.484 0l4.243 4.243"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content Area -->
+    <div id="main-container">
+        <!-- Map -->
         <div id="map">
             <div id="legend" class="map-legend" style="display: none;">
                 <h4>Representatives per State</h4>
@@ -172,8 +116,23 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Right Sidebar for District Info -->
+        <aside id="info-sidebar" class="info-sidebar">
+            <div class="sidebar-header">
+                <h3>District Information</h3>
+                <button id="closeSidebar" class="close-btn">&times;</button>
+            </div>
+            <div id="districtInfo" class="district-info-content">
+                <p class="placeholder">Select a district to view details</p>
+            </div>
+            <div id="districtList" class="district-list">
+                <!-- Districts will be populated here -->
+            </div>
+        </aside>
     </div>
     
+    <!-- Loading Overlay -->
     <div id="loading" class="loading">
         <div class="loading-content">
             <div class="spinner"></div>
@@ -181,57 +140,132 @@
         </div>
     </div>
     
-    <!-- Configuration Modal -->
-    <div id="configModal" class="modal" style="display: none;">
+    <!-- Data Management Modal -->
+    <div id="dataModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="document.getElementById('configModal').style.display='none'">&times;</span>
-            <h3>API Configuration</h3>
-            
-            <div class="config-section">
-                <h4>USPS Web Tools API</h4>
-                <p class="config-note">Required for ZIP+4 address verification. Register at <a href="https://developers.usps.com/" target="_blank">developers.usps.com</a></p>
-                
-                <div class="form-group">
-                    <label for="uspsClientId">Client ID</label>
-                    <input type="text" id="uspsClientId" placeholder="Your USPS Client ID">
-                </div>
-                
-                <div class="form-group">
-                    <label for="uspsClientSecret">Client Secret</label>
-                    <input type="password" id="uspsClientSecret" placeholder="Your USPS Client Secret">
-                </div>
-                
-                <button id="testUspsBtn" class="btn btn-secondary">Test USPS Connection</button>
-                <button id="authorizeUspsBtn" class="btn btn-secondary" style="display: none;">Authorize USPS</button>
-                <div id="uspsTestResult" class="test-result"></div>
+            <div class="modal-header">
+                <h3>Data Management</h3>
+                <span class="close">&times;</span>
             </div>
-            
-            <div class="config-section">
-                <h4>Smarty API (Alternative)</h4>
-                <p class="config-note">Commercial service with free tier. Register at <a href="https://www.smarty.com/" target="_blank">smarty.com</a></p>
-                
-                <div class="form-group">
-                    <label for="smartyAuthId">Auth ID</label>
-                    <input type="text" id="smartyAuthId" placeholder="Your Smarty Auth ID">
+            <div class="modal-body">
+                <div class="data-info">
+                    <p>House member data is cached for 24 hours to improve performance.</p>
+                    <p id="cacheStatus" class="cache-status">Loading cache status...</p>
                 </div>
-                
-                <div class="form-group">
-                    <label for="smartyAuthToken">Auth Token</label>
-                    <input type="password" id="smartyAuthToken" placeholder="Your Smarty Auth Token">
+                <div class="modal-actions">
+                    <button id="refreshCacheBtn" class="btn btn-primary">
+                        <span>Refresh Member Data</span>
+                    </button>
                 </div>
-                
-                <button id="testSmartyBtn" class="btn btn-secondary">Test Smarty Connection</button>
-                <div id="smartyTestResult" class="test-result"></div>
-            </div>
-            
-            <div class="modal-actions">
-                <button id="saveConfigBtn" class="btn btn-primary">Save Configuration</button>
-                <button onclick="document.getElementById('configModal').style.display='none'" class="btn btn-secondary">Cancel</button>
             </div>
         </div>
     </div>
     
+    <!-- API Configuration Modal -->
+    <div id="configModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>API Configuration</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <!-- Lookup Method Selection -->
+                <div class="config-section">
+                    <h4>Address Lookup Method</h4>
+                    <div class="lookup-methods">
+                        <label class="method-card">
+                            <input type="radio" name="lookupMethod" value="census" checked>
+                            <div class="method-content">
+                                <span class="method-title">Census Geocoder</span>
+                                <span class="method-status">Free</span>
+                            </div>
+                        </label>
+                        <label class="method-card">
+                            <input type="radio" name="lookupMethod" value="zip4">
+                            <div class="method-content">
+                                <span class="method-title">ZIP+4 (USPS)</span>
+                                <span id="uspsStatus" class="method-status status-warning">⚠️ Not configured</span>
+                            </div>
+                        </label>
+                        <label class="method-card">
+                            <input type="radio" name="lookupMethod" value="both">
+                            <div class="method-content">
+                                <span class="method-title">Compare Both</span>
+                                <span class="method-status">Accuracy check</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="config-section">
+                    <h4>USPS Web Tools API</h4>
+                    <p class="config-note">Required for ZIP+4 address verification. Register at <a href="https://developers.usps.com/" target="_blank">developers.usps.com</a></p>
+                    
+                    <div class="form-group">
+                        <label for="uspsClientId">Client ID</label>
+                        <input type="text" id="uspsClientId" placeholder="Your USPS Client ID">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="uspsClientSecret">Client Secret</label>
+                        <input type="password" id="uspsClientSecret" placeholder="Your USPS Client Secret">
+                    </div>
+                    
+                    <button id="testUspsBtn" class="btn btn-secondary">Test USPS Connection</button>
+                    <button id="authorizeUspsBtn" class="btn btn-secondary" style="display: none;">Authorize USPS</button>
+                    <div id="uspsTestResult" class="test-result"></div>
+                </div>
+                
+                <div class="config-section">
+                    <h4>Smarty API (Alternative)</h4>
+                    <p class="config-note">Commercial service with free tier. Register at <a href="https://www.smarty.com/" target="_blank">smarty.com</a></p>
+                    
+                    <div class="form-group">
+                        <label for="smartyAuthId">Auth ID</label>
+                        <input type="text" id="smartyAuthId" placeholder="Your Smarty Auth ID">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="smartyAuthToken">Auth Token</label>
+                        <input type="password" id="smartyAuthToken" placeholder="Your Smarty Auth Token">
+                    </div>
+                    
+                    <button id="testSmartyBtn" class="btn btn-secondary">Test Smarty Connection</button>
+                    <div id="smartyTestResult" class="test-result"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveConfigBtn" class="btn btn-primary">Save Configuration</button>
+                <button class="btn btn-secondary close">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hidden Batch Modal (keeping functionality) -->
+    <div id="batchModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Batch Address Processing</h3>
+            <p>Paste addresses (one per line) or upload CSV:</p>
+            <textarea id="batchAddresses" placeholder="123 Main St, City, State&#10;456 Oak Ave, City, State&#10;..."></textarea>
+            <div class="batch-controls">
+                <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                <button id="uploadCsvBtn" class="btn btn-secondary">Upload CSV</button>
+                <button id="processBatchBtn" class="btn btn-primary">Process Addresses</button>
+            </div>
+            <div id="batchProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <p class="progress-text">Processing...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load Leaflet -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="app.js"></script>
+    
+    <!-- Load modular JavaScript as ES6 modules -->
+    <script type="module" src="js/app-modular.js"></script>
 </body>
 </html>
