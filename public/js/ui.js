@@ -39,6 +39,7 @@ export class UIManager {
         this.elements.closeSidebar = document.getElementById('closeSidebar');
         this.elements.districtInfo = document.getElementById('districtInfo');
         this.elements.districtList = document.getElementById('districtList');
+        this.elements.districtSelector = document.getElementById('districtSelector');
         
         // Modal elements
         this.elements.dataModal = document.getElementById('dataModal');
@@ -281,18 +282,35 @@ export class UIManager {
             return;
         }
         
+        const isVacant = !info.representative || !info.representative.name;
+        const partyClass = info.representative?.party ? info.representative.party.toLowerCase() : 'vacant';
+        
         const html = `
             <div class="district-details">
-                <h4>${info.state} - District ${info.district}</h4>
-                ${info.representative ? `
-                    <div class="rep-info">
+                <div class="district-header-main">
+                    <div class="district-title-main">
+                        <h4>${info.state}-${info.district}</h4>
+                        <span class="party-indicator ${partyClass} large">${info.representative?.party || 'V'}</span>
+                    </div>
+                </div>
+                
+                ${isVacant ? 
+                    '<div class="vacant-message">This seat is currently vacant.</div>' : 
+                    `<div class="rep-info-full">
                         <img src="${info.representative.photo}" alt="${info.representative.name}" class="rep-photo">
                         <div class="rep-details">
                             <h5>${info.representative.name}</h5>
-                            <p class="party ${info.representative.party}">${info.representative.party === 'D' ? 'Democrat' : 'Republican'}</p>
-                            ${info.representative.website ? `<a href="${info.representative.website}" target="_blank">Official Website</a>` : ''}
+                            <p class="party ${info.representative.party}">
+                                ${info.representative.party === 'D' ? 'Democrat' : 
+                                  info.representative.party === 'R' ? 'Republican' : 'Independent'}
+                            </p>
+                            ${info.representative.phone ? `<p><strong>Phone:</strong> ${info.representative.phone}</p>` : ''}
+                            ${info.representative.office ? `<p><strong>Office:</strong> ${info.representative.office}</p>` : ''}
+                            ${info.representative.website ? 
+                                `<p><a href="${info.representative.website}" target="_blank" class="website-link">Official Website</a></p>` : ''}
                         </div>
                     </div>
+                    
                     ${info.representative.committees && info.representative.committees.length > 0 ? `
                         <div class="committees-section">
                             <h6>Committee Assignments</h6>
@@ -306,7 +324,7 @@ export class UIManager {
                             </ul>
                         </div>
                     ` : ''}
-                ` : '<p>No representative information available</p>'}
+                `}
                 
                 ${info.population ? `<p><strong>Population:</strong> ${info.population.toLocaleString()}</p>` : ''}
                 ${info.area ? `<p><strong>Area:</strong> ${info.area} sq mi</p>` : ''}
@@ -323,9 +341,10 @@ export class UIManager {
      * @param {Array} districts - Array of district objects with member info
      */
     updateStateDistrictList(state, districts) {
-        if (!this.elements.districtList) return;
+        if (!this.elements.districtSelector || !this.elements.districtList) return;
         
         if (!districts || districts.length === 0) {
+            this.elements.districtSelector.innerHTML = '';
             this.elements.districtList.innerHTML = '';
             return;
         }
@@ -337,111 +356,42 @@ export class UIManager {
             return aNum - bNum;
         });
         
-        // Calculate party summary
-        const partySummary = {
-            D: 0,
-            R: 0,
-            I: 0,
-            vacant: 0
-        };
-        
-        districts.forEach(district => {
-            if (!district.member || !district.member.name) {
-                partySummary.vacant++;
-            } else {
-                const party = district.member.party || 'vacant';
-                if (party === 'D') partySummary.D++;
-                else if (party === 'R') partySummary.R++;
-                else if (party === 'I') partySummary.I++;
-                else partySummary.vacant++;
-            }
-        });
-        
-        const html = `
-            <div class="state-districts-header">
-                <h4>${state} Congressional Districts</h4>
-                <p class="district-count">${districts.length} districts</p>
-                <div class="party-summary">
-                    <div class="summary-item democrat">
-                        <span class="party-indicator d"></span>
-                        <span class="count">${partySummary.D}</span>
-                        <span class="label">Democrats</span>
-                    </div>
-                    <div class="summary-item republican">
-                        <span class="party-indicator r"></span>
-                        <span class="count">${partySummary.R}</span>
-                        <span class="label">Republicans</span>
-                    </div>
-                    ${partySummary.I > 0 ? `
-                    <div class="summary-item independent">
-                        <span class="party-indicator i"></span>
-                        <span class="count">${partySummary.I}</span>
-                        <span class="label">Independents</span>
-                    </div>
-                    ` : ''}
-                    ${partySummary.vacant > 0 ? `
-                    <div class="summary-item vacant">
-                        <span class="party-indicator vacant"></span>
-                        <span class="count">${partySummary.vacant}</span>
-                        <span class="label">Vacant</span>
-                    </div>
-                    ` : ''}
-                </div>
-            </div>
-            <div class="districts-accordion">
-                ${districts.map((district, index) => {
-                    const member = district.member;
-                    const districtKey = `${state}-${district.district}`;
-                    const isVacant = !member || !member.name;
-                    const partyClass = member?.party ? member.party.toLowerCase() : 'vacant';
-                    
-                    return `
-                        <div class="district-item ${partyClass}" data-district="${districtKey}">
-                            <div class="district-header" onclick="window.congressApp.toggleDistrictAccordion('${districtKey}')">
-                                <div class="district-title">
-                                    <span class="district-number">${state}-${district.district}</span>
-                                    <span class="party-indicator ${partyClass}">${member?.party || 'V'}</span>
-                                </div>
-                                <div class="district-rep">
-                                    ${isVacant ? 'Vacant' : member.name}
-                                </div>
-                                <span class="accordion-arrow">▼</span>
-                            </div>
-                            <div class="district-content" id="content-${districtKey}" style="display: none;">
-                                ${isVacant ? '<p class="vacant-message">This seat is currently vacant.</p>' : `
-                                    <div class="rep-detail-info">
-                                        <img src="${member.photo}" alt="${member.name}" class="rep-photo-small">
-                                        <div class="rep-details">
-                                            <p class="party ${member.party}">${member.party === 'D' ? 'Democrat' : member.party === 'R' ? 'Republican' : 'Independent'}</p>
-                                            ${member.phone ? `<p><strong>Phone:</strong> ${member.phone}</p>` : ''}
-                                            ${member.office ? `<p><strong>Office:</strong> ${member.office}</p>` : ''}
-                                            ${member.website ? `<p><a href="${member.website}" target="_blank">Official Website</a></p>` : ''}
-                                        </div>
-                                    </div>
-                                    ${member.committees && member.committees.length > 0 ? `
-                                        <div class="committees-mini">
-                                            <h6>Committees:</h6>
-                                            <ul>
-                                                ${member.committees.slice(0, 3).map(committee => `
-                                                    <li>${committee.name}${committee.role !== 'Member' ? ` (${committee.role})` : ''}</li>
-                                                `).join('')}
-                                                ${member.committees.length > 3 ? `<li class="more-committees">...and ${member.committees.length - 3} more</li>` : ''}
-                                            </ul>
-                                        </div>
-                                    ` : ''}
-                                `}
-                                <button class="view-on-map-btn" onclick="window.congressApp.selectDistrict('${state}', '${district.district}')">
-                                    View on Map
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('')}
+        // Create dropdown HTML with party icons
+        const dropdownHtml = `
+            <div class="districts-select-wrapper">
+                <select id="districtSelect" class="district-select" onchange="window.congressApp.selectDistrictFromDropdown(this.value)">
+                    <option value="">Select a district...</option>
+                    ${districts.map((district, index) => {
+                        const member = district.member;
+                        const districtKey = `${state}-${district.district}`;
+                        const isVacant = !member || !member.name;
+                        const partyIndicator = member?.party || 'V';
+                        const partyClass = member?.party ? member.party.toLowerCase() : 'vacant';
+                        const repName = isVacant ? 'Vacant' : member.name;
+                        
+                        // Party emoji icons
+                        let partyIcon = '';
+                        if (partyIndicator === 'D') partyIcon = '🫏';
+                        else if (partyIndicator === 'R') partyIcon = '🐘';
+                        else if (partyIndicator === 'I') partyIcon = 'Ⓘ';
+                        else partyIcon = '•';
+                        
+                        // Using data attributes for styling
+                        return `
+                            <option value="${districtKey}" data-party="${partyIndicator}" class="district-option ${partyClass}">
+                                ${partyIcon} ${state}-${district.district} • ${repName}
+                            </option>
+                        `;
+                    }).join('')}
+                </select>
             </div>
         `;
         
-        this.elements.districtList.innerHTML = html;
-        this.elements.districtList.style.display = 'block';
+        this.elements.districtSelector.innerHTML = dropdownHtml;
+        
+        // Hide the district list (no longer showing summary)
+        this.elements.districtList.innerHTML = '';
+        this.elements.districtList.style.display = 'none';
         
         // Show the sidebar if not already visible
         this.showSidebar();
