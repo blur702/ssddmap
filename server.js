@@ -1104,7 +1104,7 @@ router.get('/api/address-lookup-zip4', async (req, res) => {
 // Comprehensive address validation
 router.post('/api/validate-address', async (req, res) => {
     try {
-        const { address } = req.body;
+        const { address, methods } = req.body;
         
         if (!address || typeof address !== 'string' || !address.trim()) {
             return res.status(400).json({ error: 'Valid address is required' });
@@ -1113,8 +1113,15 @@ router.post('/api/validate-address', async (req, res) => {
         const trimmedAddress = address.trim();
         console.log('Validation request for:', trimmedAddress);
         
-        const results = await validationService.validateAddress(trimmedAddress);
-        res.json(results);
+        // If specific methods requested, validate with only those
+        if (methods && Array.isArray(methods) && methods.length > 0) {
+            const results = await validationService.validateAddressWithMethods(trimmedAddress, methods);
+            res.json(results);
+        } else {
+            // Otherwise use all available methods
+            const results = await validationService.validateAddress(trimmedAddress);
+            res.json(results);
+        }
 
     } catch (error) {
         console.error('Address validation error:', error);
@@ -1201,7 +1208,7 @@ router.get('/api/usps-states', async (req, res) => {
 // Test USPS connection
 router.get('/api/test-usps', async (req, res) => {
     try {
-        const result = await uspsService.testConnection();
+        const result = await validationService.testValidator('usps');
         res.json(result);
     } catch (error) {
         console.error('USPS test error:', error);
@@ -1212,19 +1219,7 @@ router.get('/api/test-usps', async (req, res) => {
 // Get validation service configuration status
 router.get('/api/validation-status', async (req, res) => {
     try {
-        const status = {
-            usps: {
-                configured: uspsService.isConfigured(),
-                tokenValid: uspsService.isTokenValid()
-            },
-            google: {
-                configured: !!(process.env.GOOGLE_MAPS_API_KEY)
-            },
-            census: {
-                configured: true // Always available
-            }
-        };
-        
+        const status = validationService.getStatus();
         res.json(status);
     } catch (error) {
         console.error('Status check error:', error);

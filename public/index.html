@@ -62,11 +62,6 @@
                     <span class="toggle-label">Rep View</span>
                 </label>
                 
-                <label class="toggle-switch">
-                    <input type="checkbox" id="toggleValidationMode">
-                    <span class="toggle-slider"></span>
-                    <span class="toggle-label">Validation Mode</span>
-                </label>
             </div>
             
             <!-- Icon Buttons -->
@@ -143,15 +138,6 @@
                 <p class="placeholder">Select a district to view details</p>
             </div>
             
-            <!-- Address Validation Panel -->
-            <div id="validationPanel" class="validation-panel" style="display: none;">
-                <h4>Address Validation</h4>
-                <div class="validation-input">
-                    <input type="text" id="validationAddress" placeholder="Enter address to validate..." />
-                    <button id="validateBtn" class="btn btn-primary">Validate</button>
-                </div>
-                <div id="validationResults" class="validation-results"></div>
-            </div>
             <div id="districtList" class="district-list" style="display: none;">
                 <!-- Hidden - no longer used -->
             </div>
@@ -267,18 +253,18 @@
         </div>
     </div>
     
-    <!-- Address Input Modal (House PRF Style) -->
+    <!-- Address Validation Modal (Enhanced) -->
     <div id="addressModal" class="modal">
-        <div class="modal-content address-modal">
+        <div class="modal-content address-modal-enhanced">
             <div class="modal-header">
-                <h2>Find Your Congressional District</h2>
+                <h2>Address Validation & District Lookup</h2>
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
                 <form id="addressForm" class="address-form">
                     <div class="form-section">
-                        <h3>Enter Your Address</h3>
-                        <p class="form-description">Please provide your full address to determine your congressional district.</p>
+                        <h3>Enter Address</h3>
+                        <p class="form-description">Validate your address using multiple services and find your congressional district.</p>
                         
                         <div class="form-row">
                             <div class="form-group full-width">
@@ -316,16 +302,102 @@
                                        placeholder="20500" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code">
                             </div>
                         </div>
+                        
+                        <!-- API Selection Toggles -->
+                        <div class="api-toggles-section">
+                            <h4>Validation Services</h4>
+                            <div class="api-toggle-group">
+                                <label class="api-toggle">
+                                    <input type="checkbox" id="toggleUSPS" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span class="api-label">
+                                        <span class="api-name">USPS API</span>
+                                        <span class="api-status" id="uspsApiStatus">Ready</span>
+                                    </span>
+                                </label>
+                                
+                                <label class="api-toggle">
+                                    <input type="checkbox" id="toggleCensus" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span class="api-label">
+                                        <span class="api-name">Census Geocoder</span>
+                                        <span class="api-status ready" id="censusApiStatus">Ready</span>
+                                    </span>
+                                </label>
+                                
+                                <label class="api-toggle">
+                                    <input type="checkbox" id="toggleGoogle">
+                                    <span class="toggle-slider"></span>
+                                    <span class="api-label">
+                                        <span class="api-name">Google Maps</span>
+                                        <span class="api-status" id="googleApiStatus">Not Configured</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" id="cancelAddressBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="findDistrictBtn">Find My District</button>
+                        <button type="submit" class="btn btn-primary" id="validateAddressBtn">
+                            <span class="btn-text">Validate Address</span>
+                            <span class="btn-loading" style="display: none;">
+                                <span class="mini-spinner"></span>
+                                Validating...
+                            </span>
+                        </button>
                     </div>
                 </form>
                 
-                <div id="addressValidationResults" class="validation-results-modal" style="display: none;">
-                    <!-- Validation results will appear here -->
+                <!-- Multi-column Results Section -->
+                <div id="validationResultsContainer" class="validation-results-container" style="display: none;">
+                    <div class="results-header">
+                        <h3>Validation Results</h3>
+                        <button type="button" class="btn btn-sm btn-secondary" id="clearResultsBtn">Clear Results</button>
+                    </div>
+                    
+                    <div class="results-columns">
+                        <!-- USPS Results Column -->
+                        <div class="result-column" id="uspsResultColumn" style="display: none;">
+                            <div class="result-header usps">
+                                <h4>USPS Validation</h4>
+                                <span class="result-status" id="uspsResultStatus"></span>
+                            </div>
+                            <div class="result-content" id="uspsResultContent">
+                                <!-- USPS results will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Census Results Column -->
+                        <div class="result-column" id="censusResultColumn" style="display: none;">
+                            <div class="result-header census">
+                                <h4>Census Geocoder</h4>
+                                <span class="result-status" id="censusResultStatus"></span>
+                            </div>
+                            <div class="result-content" id="censusResultContent">
+                                <!-- Census results will be inserted here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Google Results Column -->
+                        <div class="result-column" id="googleResultColumn" style="display: none;">
+                            <div class="result-header google">
+                                <h4>Google Maps</h4>
+                                <span class="result-status" id="googleResultStatus"></span>
+                            </div>
+                            <div class="result-content" id="googleResultContent">
+                                <!-- Google results will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Comparison Summary -->
+                    <div class="comparison-summary" id="comparisonSummary" style="display: none;">
+                        <h4>District Comparison</h4>
+                        <div class="comparison-content" id="comparisonContent">
+                            <!-- Comparison analysis will be inserted here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

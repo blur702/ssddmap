@@ -6,7 +6,7 @@ import { SearchManager } from './search.js';
 import { UIManager } from './ui.js';
 import { DataManager } from './data.js';
 import { ValidationManager } from './validation.js';
-import { AddressModal } from './addressModal.js';
+import { AddressModalEnhanced } from './addressModalEnhanced.js';
 
 class CongressionalDistrictsApp {
     constructor() {
@@ -46,8 +46,9 @@ class CongressionalDistrictsApp {
             // Initialize validation
             this.validation.initialize(this.map, this.ui);
             
-            // Initialize address modal
-            this.addressModal = new AddressModal(this.map, this.ui);
+            // Initialize enhanced address modal
+            this.addressModal = new AddressModalEnhanced(this.map, this.ui);
+            window.addressModal = this.addressModal; // Make accessible globally
             
             // Setup event handlers
             this.setupEventHandlers();
