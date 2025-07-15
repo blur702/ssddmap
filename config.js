@@ -2,10 +2,15 @@ module.exports = {
     // Lookup method: 'census', 'zip4', 'smarty', or 'both'
     defaultLookupMethod: process.env.LOOKUP_METHOD || 'census',
     
-    // USPS Web Tools API (free, requires registration)
+    // USPS OAuth API v3 (requires registration at developers.usps.com)
     usps: {
-        userId: process.env.USPS_USER_ID || '',
-        apiUrl: 'http://production.shippingapis.com/ShippingAPI.dll'
+        clientId: process.env.USPS_CLIENT_ID || '',
+        clientSecret: process.env.USPS_CLIENT_SECRET || '',
+        baseUrl: process.env.USPS_BASE_URL || 'https://api.usps.com',
+        tokenUrl: 'https://api.usps.com/oauth2/v3/token',
+        crid: process.env.USPS_CRID || '',
+        outboundMid: process.env.USPS_OUTBOUND_MID || '',
+        returnMid: process.env.USPS_RETURN_MID || ''
     },
     
     // Smarty (formerly SmartyStreets) - commercial service

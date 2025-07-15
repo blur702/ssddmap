@@ -1,25 +1,58 @@
-// Define bounds for USA and territories
-// This includes continental US, Alaska, Hawaii, Puerto Rico, US Virgin Islands, Guam
-const usaBounds = L.latLngBounds(
-    L.latLng(17, -172),  // Southwest corner (includes Hawaii and Pacific territories)
-    L.latLng(72, -65)    // Northeast corner (includes Alaska and Atlantic territories)
-);
+console.log('SSDD Map Application starting...');
 
-// Initialize map with smooth zoom animations and USA bounds
-const map = L.map('map', {
+// Global variables that need to be accessible throughout the app
+let map;
+let currentBaseLayer = null;
+let currentLabelLayer = null;
+let countyLayer = null;
+let districtLayers = {};
+let houseMembers = {};
+let selectedDistrictLayer = null;
+let selectedCountyLayer = null;
+let cachedCounties = {};
+let loadingCounties = false;
+let currentMarker = null;
+let isRepView = false;
+let countyTooltip = null;
+let autosuggestEnabled = true;
+let searchResults = [];
+let selectedResultIndex = -1;
+
+// Wait for DOM to be fully loaded before initializing
+if (document.readyState === 'loading') {
+    console.log('DOM not ready, waiting...');
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    console.log('DOM ready, initializing...');
+    initializeApp();
+}
+
+function initializeApp() {
+    console.log('Initializing app...');
+    
+    // Check if required elements exist
+    const requiredElements = ['map', 'toolbar', 'loading'];
+    const missingElements = requiredElements.filter(id => !document.getElementById(id));
+    if (missingElements.length > 0) {
+        console.error('Missing required elements:', missingElements);
+        return;
+    }
+    
+    // Initialize map with smooth zoom animations
+    map = L.map('map', {
     zoomAnimation: true,
     zoomAnimationThreshold: 4,
     fadeAnimation: true,
     markerZoomAnimation: true,
-    maxBounds: usaBounds,
-    maxBoundsViscosity: 0.7, // Softer bounds to prevent harsh snapping
-    minZoom: 3,
+    minZoom: 2,
     maxZoom: 12
-}).setView([37.0902, -95.7129], 4); // Center of continental USA (Kansas)
+}).setView([39.8283, -98.5795], 4); // Center of continental USA
 
 // Create custom panes for proper layering
 map.createPane('districts');
 map.getPane('districts').style.zIndex = 200; // Below labels (which are at 650)
+map.createPane('countyLabels');
+map.getPane('countyLabels').style.zIndex = 300; // Above districts but below map labels
 
 // Map style configurations
 const mapStyles = {
@@ -50,9 +83,7 @@ const mapStyles = {
     }
 };
 
-// Current map layers
-let currentBaseLayer = null;
-let currentLabelLayer = null;
+// Map style configurations moved to global scope and defined inside initializeApp
 
 // Function to set map style
 function setMapStyle(style) {
@@ -80,11 +111,29 @@ function setMapStyle(style) {
     }).addTo(map);
 }
 
-// Initialize with light theme to match the new bright design
-setMapStyle('voyager');
+    // Initialize with light theme to match the new bright design
+    setMapStyle('voyager');
+    
+    // Initialize all UI handlers and start the app
+    initializeUIHandlers();
+    loadDistricts();
+    
+    // Hide loading overlay
+    const loadingElement = document.getElementById('loading');
+    if (loadingElement) {
+        loadingElement.classList.remove('show');
+    }
+    
+    console.log('App initialization complete');
+    
+    // Continue with the rest of initialization
+    initializeRestOfApp();
+}
 
-// Global variables
-let currentLayer = null;
+// Function to initialize the rest of the app
+function initializeRestOfApp() {
+    // Global variables
+    let currentLayer = null;
 let allDistrictsLayer = null;
 let stateDistrictsLayer = null;
 let stateOutlineLayer = null;
@@ -95,6 +144,7 @@ let distanceLine = null;
 let boundaryMarker = null;
 let searchTimeout = null;
 let countyLayer = null;
+let countyLabelMarkers = [];
 let showCounties = false;
 let showRepresentationView = false;
 let stateRepCounts = null;
@@ -113,14 +163,19 @@ const addressInput = document.getElementById('addressInput');
 const searchBtn = document.getElementById('searchBtn');
 const autosuggestToggle = document.getElementById('autosuggestToggle');
 const searchResults = document.getElementById('searchResults');
-const toggleCountiesBtn = document.getElementById('toggleCounties');
+// const toggleCountiesBtn = document.getElementById('toggleCounties'); // Removed from UI
 const toggleRepViewBtn = document.getElementById('toggleRepView');
 const legendEl = document.getElementById('legend');
-const toggleCountyPoliticsBtn = document.getElementById('toggleCountyPolitics');
-const toggleCountyFIPSBtn = document.getElementById('toggleCountyFIPS');
+// const toggleCountyPoliticsBtn = document.getElementById('toggleCountyPolitics'); // Removed from UI
+// const toggleCountyFIPSBtn = document.getElementById('toggleCountyFIPS'); // Removed from UI
 const refreshCacheBtn = document.getElementById('refreshCacheBtn');
 const cacheStatusEl = document.getElementById('cacheStatus');
 const mapStyleSelect = document.getElementById('mapStyle');
+const dataManageBtn = document.getElementById('dataManageBtn');
+const dataModal = document.getElementById('dataModal');
+const configBtn = document.getElementById('configBtn');
+const infoSidebar = document.getElementById('info-sidebar');
+const closeSidebar = document.getElementById('closeSidebar');
 
 // Show/hide loading indicator
 function setLoading(show) {
@@ -659,15 +714,19 @@ function getStateColor(state) {
 }
 
 // Event listeners
-stateSelect.addEventListener('change', (e) => {
-    if (e.target.value) {
-        loadStateDistricts(e.target.value);
-    }
-});
+if (stateSelect) {
+    stateSelect.addEventListener('change', (e) => {
+        if (e.target.value) {
+            loadStateDistricts(e.target.value);
+        }
+    });
+}
 
-viewUSABtn.addEventListener('click', () => {
-    loadUSAMap();
-});
+if (viewUSABtn) {
+    viewUSABtn.addEventListener('click', () => {
+        loadUSAMap();
+    });
+}
 
 // Update district info panel with member details
 function updateDistrictInfo(stateCode, districtNumber, member, isAtLarge = false) {
@@ -714,6 +773,8 @@ function updateDistrictInfo(stateCode, districtNumber, member, isAtLarge = false
     }
     
     districtInfo.innerHTML = infoHTML;
+    // Show the sidebar when district info is displayed
+    infoSidebar.classList.add('active');
 }
 
 // Add map click handler to return to USA view when clicking on empty space
@@ -1201,25 +1262,29 @@ async function findDistrictForLocation(lat, lon) {
 }
 
 // Event listeners for search
-searchBtn.addEventListener('click', () => {
-    searchAddress(addressInput.value);
-});
-
-addressInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') {
+if (searchBtn) {
+    searchBtn.addEventListener('click', () => {
         searchAddress(addressInput.value);
-    } else if (autosuggestToggle && autosuggestToggle.checked) {
-        // Only autosuggest if toggle is checked
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
+    });
+}
+
+if (addressInput) {
+    addressInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
             searchAddress(addressInput.value);
-        }, 500);
-    } else {
-        // Clear results if autosuggest is disabled
-        clearTimeout(searchTimeout);
-        searchResults.innerHTML = '';
-    }
-});
+        } else if (autosuggestToggle && autosuggestToggle.checked) {
+            // Only autosuggest if toggle is checked
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchAddress(addressInput.value);
+            }, 500);
+        } else {
+            // Clear results if autosuggest is disabled
+            clearTimeout(searchTimeout);
+            searchResults.innerHTML = '';
+        }
+    });
+}
 
 // Clear search results when clicking outside
 document.addEventListener('click', (e) => {
@@ -1247,6 +1312,10 @@ async function loadCountyBoundaries() {
         const response = await fetch('/ssddmap/api/county-boundaries');
         const data = await response.json();
         
+        // Clear existing county labels
+        countyLabelMarkers.forEach(marker => map.removeLayer(marker));
+        countyLabelMarkers = [];
+        
         // Create county layer with subtle styling
         countyLayer = L.geoJSON(data, {
             pane: 'districts',
@@ -1260,7 +1329,45 @@ async function loadCountyBoundaries() {
             },
             onEachFeature: (feature, layer) => {
                 const props = feature.properties;
-                layer.bindTooltip(`${props.name} County`, {
+                
+                // Create a permanent label for each county
+                const center = layer.getBounds().getCenter();
+                const countyName = props.NAME;
+                
+                // Create a divIcon for the county name
+                const labelIcon = L.divIcon({
+                    className: 'county-name-label',
+                    html: `<div class="county-name-text" style="
+                        font-size: 11px; 
+                        font-weight: 600; 
+                        color: #4a5568; 
+                        text-shadow: 
+                            -1px -1px 1px rgba(255,255,255,0.8),
+                            1px -1px 1px rgba(255,255,255,0.8),
+                            -1px 1px 1px rgba(255,255,255,0.8),
+                            1px 1px 1px rgba(255,255,255,0.8),
+                            0 0 3px rgba(255,255,255,0.9);
+                        white-space: nowrap;
+                        pointer-events: none;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        opacity: 0.8;
+                    ">${countyName}</div>`,
+                    iconSize: null,
+                    iconAnchor: [0, 0]
+                });
+                
+                // Create the label marker
+                const labelMarker = L.marker(center, {
+                    icon: labelIcon,
+                    pane: 'countyLabels',
+                    interactive: false
+                });
+                
+                countyLabelMarkers.push(labelMarker);
+                
+                // Bind tooltip for additional info on hover
+                layer.bindTooltip(`${props.NAME} County, ${props.STUSPS}`, {
                     permanent: false,
                     direction: 'center',
                     className: 'county-tooltip'
@@ -1270,6 +1377,8 @@ async function loadCountyBoundaries() {
         
         if (showCounties) {
             countyLayer.addTo(map);
+            // Add all county labels
+            countyLabelMarkers.forEach(marker => marker.addTo(map));
         }
         
     } catch (error) {
@@ -1279,25 +1388,29 @@ async function loadCountyBoundaries() {
     }
 }
 
-// Toggle county boundaries
-toggleCountiesBtn.addEventListener('click', async () => {
-    showCounties = !showCounties;
-    toggleCountiesBtn.classList.toggle('active', showCounties);
-    
-    if (showCounties) {
-        toggleCountiesBtn.querySelector('span').textContent = 'Hide Counties';
-        if (!countyLayer) {
-            await loadCountyBoundaries();
-        } else {
-            countyLayer.addTo(map);
-        }
-    } else {
-        toggleCountiesBtn.querySelector('span').textContent = 'Show Counties';
-        if (countyLayer) {
-            map.removeLayer(countyLayer);
-        }
-    }
-});
+// Toggle county boundaries - REMOVED FROM UI BUT KEPT FOR FUTURE USE
+// toggleCountiesBtn.addEventListener('click', async () => {
+//     showCounties = !showCounties;
+//     toggleCountiesBtn.classList.toggle('active', showCounties);
+//     
+//     if (showCounties) {
+//         toggleCountiesBtn.querySelector('span').textContent = 'Hide Counties';
+//         if (!countyLayer) {
+//             await loadCountyBoundaries();
+//         } else {
+//             countyLayer.addTo(map);
+//             // Also add county labels
+//             countyLabelMarkers.forEach(marker => marker.addTo(map));
+//         }
+//     } else {
+//         toggleCountiesBtn.querySelector('span').textContent = 'Show Counties';
+//         if (countyLayer) {
+//             map.removeLayer(countyLayer);
+//         }
+//         // Remove county labels
+//         countyLabelMarkers.forEach(marker => map.removeLayer(marker));
+//     }
+// });
 
 // Get color based on number of representatives
 function getRepresentationColor(repCount) {
@@ -1372,7 +1485,8 @@ function applyRepresentationColors() {
     });
 }
 
-// Toggle representation view
+// Toggle representation view - OLD handler, replaced with change event for toggle switch
+/*
 toggleRepViewBtn.addEventListener('click', async () => {
     showRepresentationView = !showRepresentationView;
     toggleRepViewBtn.classList.toggle('active', showRepresentationView);
@@ -1415,6 +1529,7 @@ toggleRepViewBtn.addEventListener('click', async () => {
         }
     }
 });
+*/
 
 
 
@@ -1439,8 +1554,8 @@ function applyCountyPoliticalColors() {
     
     countyLayer.eachLayer(layer => {
         if (layer.feature && layer.feature.properties) {
-            const state = layer.feature.properties.state;
-            const countyName = layer.feature.properties.name;
+            const state = layer.feature.properties.STUSPS;
+            const countyName = layer.feature.properties.NAME;
             const countyKey = `${state}-${countyName}`;
             const countyData = countyPoliticsData.counties[countyKey];
             
@@ -1543,69 +1658,60 @@ function createCountyPoliticsLegend() {
     });
 }
 
-// Toggle county politics view
-toggleCountyPoliticsBtn.addEventListener('click', async () => {
-    showCountyPolitics = !showCountyPolitics;
-    toggleCountyPoliticsBtn.classList.toggle('active', showCountyPolitics);
-    
-    if (showCountyPolitics) {
-        toggleCountyPoliticsBtn.querySelector('span').textContent = 'Hide County Politics';
-        
+// Toggle county politics view - REMOVED FROM UI BUT KEPT FOR FUTURE USE
+// toggleCountyPoliticsBtn.addEventListener('click', async () => {
+//     showCountyPolitics = !showCountyPolitics;
+//    toggleCountyPoliticsBtn.classList.toggle('active', showCountyPolitics);
+//    
+//    if (showCountyPolitics) {
+//        toggleCountyPoliticsBtn.querySelector('span').textContent = 'Hide County Politics';
+//        
         // Turn off other views
-        if (showRepresentationView) {
-            showRepresentationView = false;
-            toggleRepViewBtn.classList.remove('active');
-            toggleRepViewBtn.querySelector('span').textContent = 'Show by Representation';
-        }
-        if (showVoteView) {
-            showVoteView = false;
-            toggleVoteViewBtn.classList.remove('active');
-            toggleVoteViewBtn.querySelector('span').textContent = 'Show Voting Pattern';
-        }
-        
-        // Make sure counties are visible
-        if (!showCounties) {
-            showCounties = true;
-            toggleCountiesBtn.classList.add('active');
-            toggleCountiesBtn.querySelector('span').textContent = 'Hide Counties';
-            if (!countyLayer) {
-                await loadCountyBoundaries();
-            } else {
-                countyLayer.addTo(map);
-            }
-        }
-        
+//        if (showRepresentationView) {
+//            showRepresentationView = false;
+//            toggleRepViewBtn.classList.remove('active');
+//            toggleRepViewBtn.querySelector('span').textContent = 'Show by Representation';
+//        }
+//        if (showVoteView) {
+//            showVoteView = false;
+//            toggleVoteViewBtn.classList.remove('active');
+//            toggleVoteViewBtn.querySelector('span').textContent = 'Show Voting Pattern';
+//        }
+//        
+        // County display has been removed from UI
+        // County politics data will be shown in a different way
+//        
         // Load politics data if not already loaded
-        if (!countyPoliticsData) {
-            await loadCountyPolitics();
-        }
-        
+//        if (!countyPoliticsData) {
+//            await loadCountyPolitics();
+//        }
+//        
         // Apply colors and show legend
-        applyCountyPoliticalColors();
-        createCountyPoliticsLegend();
-        legendEl.style.display = 'block';
-    } else {
-        toggleCountyPoliticsBtn.querySelector('span').textContent = 'Show County Politics';
-        legendEl.style.display = 'none';
-        
+//        applyCountyPoliticalColors();
+//        createCountyPoliticsLegend();
+//        legendEl.style.display = 'block';
+//    } else {
+//        toggleCountyPoliticsBtn.querySelector('span').textContent = 'Show County Politics';
+//        legendEl.style.display = 'none';
+//        
         // Remove FIPS labels if they exist
-        removeFIPSLabels();
-        
+//        removeFIPSLabels();
+//        
         // Reset county colors
-        if (countyLayer) {
-            countyLayer.eachLayer(layer => {
-                layer.setStyle({
-                    fillColor: 'transparent',
-                    fillOpacity: 0,
-                    color: '#666666',
-                    weight: 0.5,
-                    opacity: 0.6,
-                    dashArray: '2, 4'
-                });
-            });
-        }
-    }
-});
+//        if (countyLayer) {
+//            countyLayer.eachLayer(layer => {
+//                layer.setStyle({
+//                    fillColor: 'transparent',
+//                    fillOpacity: 0,
+//                    color: '#666666',
+//                    weight: 0.5,
+//                    opacity: 0.6,
+//                    dashArray: '2, 4'
+//                });
+//            });
+//        }
+//    }
+//});
 
 // Apply FIPS code display to counties
 function applyCountyFIPSDisplay() {
@@ -1614,9 +1720,9 @@ function applyCountyFIPSDisplay() {
     countyLayer.eachLayer(layer => {
         if (layer.feature && layer.feature.properties) {
             const props = layer.feature.properties;
-            const fipsCode = props.geoid || 'N/A';
-            const countyName = props.name;
-            const state = props.state;
+            const fipsCode = props.GEOID || 'N/A';
+            const countyName = props.NAME;
+            const state = props.STUSPS;
             
             // Style for FIPS display - light background with visible text
             layer.setStyle({
@@ -1682,77 +1788,80 @@ function createFIPSLegend() {
     legendScale.appendChild(legendDiv);
 }
 
-// Toggle county FIPS view
-toggleCountyFIPSBtn.addEventListener('click', async () => {
-    showCountyFIPS = !showCountyFIPS;
-    toggleCountyFIPSBtn.classList.toggle('active', showCountyFIPS);
-    
-    if (showCountyFIPS) {
-        toggleCountyFIPSBtn.querySelector('span').textContent = 'Hide County FIPS';
-        
-        // Turn off other views
-        if (showRepresentationView) {
-            showRepresentationView = false;
-            toggleRepViewBtn.classList.remove('active');
-            toggleRepViewBtn.querySelector('span').textContent = 'Show by Representation';
-        }
-        if (showVoteView) {
-            showVoteView = false;
-            toggleVoteViewBtn.classList.remove('active');
-            toggleVoteViewBtn.querySelector('span').textContent = 'Show Voting Pattern';
-        }
-        if (showCountyPolitics) {
-            showCountyPolitics = false;
-            toggleCountyPoliticsBtn.classList.remove('active');
-            toggleCountyPoliticsBtn.querySelector('span').textContent = 'Show County Politics';
-        }
-        
-        // Make sure counties are visible
-        if (!showCounties) {
-            showCounties = true;
-            toggleCountiesBtn.classList.add('active');
-            toggleCountiesBtn.querySelector('span').textContent = 'Hide Counties';
-            if (!countyLayer) {
-                await loadCountyBoundaries();
-            } else {
-                countyLayer.addTo(map);
-            }
-        }
-        
-        // Apply FIPS display and show legend
-        applyCountyFIPSDisplay();
-        createFIPSLegend();
-        legendEl.style.display = 'block';
-    } else {
-        toggleCountyFIPSBtn.querySelector('span').textContent = 'Show County FIPS';
-        legendEl.style.display = 'none';
-        
-        // Remove FIPS labels
-        removeFIPSLabels();
-        
-        // Reset county colors
-        if (countyLayer) {
-            countyLayer.eachLayer(layer => {
-                layer.setStyle({
-                    fillColor: 'transparent',
-                    fillOpacity: 0,
-                    color: '#666666',
-                    weight: 0.5,
-                    opacity: 0.6,
-                    dashArray: '2, 4'
-                });
-            });
-        }
-    }
-});
+// Toggle county FIPS view - REMOVED FROM UI BUT KEPT FOR FUTURE USE
+// toggleCountyFIPSBtn.addEventListener('click', async () => {
+//     showCountyFIPS = !showCountyFIPS;
+//     toggleCountyFIPSBtn.classList.toggle('active', showCountyFIPS);
+//     
+//     if (showCountyFIPS) {
+//         toggleCountyFIPSBtn.querySelector('span').textContent = 'Hide County FIPS';
+//         
+//         // Turn off other views
+//         if (showRepresentationView) {
+//             showRepresentationView = false;
+//             toggleRepViewBtn.classList.remove('active');
+//             toggleRepViewBtn.querySelector('span').textContent = 'Show by Representation';
+//         }
+//         if (showVoteView) {
+//             showVoteView = false;
+//             toggleVoteViewBtn.classList.remove('active');
+//             toggleVoteViewBtn.querySelector('span').textContent = 'Show Voting Pattern';
+//         }
+//         if (showCountyPolitics) {
+//             showCountyPolitics = false;
+//             toggleCountyPoliticsBtn.classList.remove('active');
+//             toggleCountyPoliticsBtn.querySelector('span').textContent = 'Show County Politics';
+//         }
+//         
+//         // Make sure counties are visible
+//         if (!showCounties) {
+//             showCounties = true;
+//             toggleCountiesBtn.classList.add('active');
+//             toggleCountiesBtn.querySelector('span').textContent = 'Hide Counties';
+//             if (!countyLayer) {
+//                 await loadCountyBoundaries();
+//             } else {
+//                 countyLayer.addTo(map);
+//             }
+//         }
+//         
+//         // Apply FIPS display and show legend
+//         applyCountyFIPSDisplay();
+//         createFIPSLegend();
+//         legendEl.style.display = 'block';
+//     } else {
+//         toggleCountyFIPSBtn.querySelector('span').textContent = 'Show County FIPS';
+//         legendEl.style.display = 'none';
+//         
+//         // Remove FIPS labels
+//         removeFIPSLabels();
+//         
+//         // Reset county colors
+//         if (countyLayer) {
+//             countyLayer.eachLayer(layer => {
+//                 layer.setStyle({
+//                     fillColor: 'transparent',
+//                     fillOpacity: 0,
+//                     color: '#666666',
+//                     weight: 0.5,
+//                     opacity: 0.6,
+//                     dashArray: '2, 4'
+//                 });
+//             });
+//         }
+//     }
+// });
 
 // Configuration UI handlers
-const configureBtn = document.getElementById('configureBtn');
-const configModal = document.getElementById('configModal');
-const saveConfigBtn = document.getElementById('saveConfigBtn');
-const testUspsBtn = document.getElementById('testUspsBtn');
-const testSmartyBtn = document.getElementById('testSmartyBtn');
-const authorizeUspsBtn = document.getElementById('authorizeUspsBtn');
+// const configureBtn = document.getElementById('configureBtn'); // Old button removed
+let configModal, saveConfigBtn, testUspsBtn, testSmartyBtn, authorizeUspsBtn;
+
+function initializeConfigHandlers() {
+    configModal = document.getElementById('configModal');
+    saveConfigBtn = document.getElementById('saveConfigBtn');
+    testUspsBtn = document.getElementById('testUspsBtn');
+    testSmartyBtn = document.getElementById('testSmartyBtn');
+    authorizeUspsBtn = document.getElementById('authorizeUspsBtn');
 
 // Check configuration status on load
 async function checkConfigStatus() {
@@ -1785,12 +1894,14 @@ async function checkConfigStatus() {
 }
 
 // Configuration button handler
-configureBtn.addEventListener('click', () => {
-    configModal.style.display = 'block';
-});
+// Old configure button handler - now handled by configBtn in toolbar
+// configureBtn.addEventListener('click', () => {
+//     configModal.style.display = 'block';
+// });
 
-// Save configuration
-saveConfigBtn.addEventListener('click', async () => {
+    // Save configuration
+    if (saveConfigBtn) {
+        saveConfigBtn.addEventListener('click', async () => {
     const config = {
         uspsClientId: document.getElementById('uspsClientId').value,
         uspsClientSecret: document.getElementById('uspsClientSecret').value,
@@ -1818,9 +1929,11 @@ saveConfigBtn.addEventListener('click', async () => {
         alert('Error saving configuration: ' + error.message);
     }
 });
+}
 
-// Test USPS connection
-testUspsBtn.addEventListener('click', async () => {
+    // Test USPS connection
+    if (testUspsBtn) {
+        testUspsBtn.addEventListener('click', async () => {
     const resultDiv = document.getElementById('uspsTestResult');
     resultDiv.textContent = 'Testing USPS connection...';
     resultDiv.className = 'test-result';
@@ -1839,9 +1952,11 @@ testUspsBtn.addEventListener('click', async () => {
         resultDiv.className = 'test-result success';
     }
 });
+}
 
-// Authorize USPS OAuth
-authorizeUspsBtn.addEventListener('click', async () => {
+    // Authorize USPS OAuth
+    if (authorizeUspsBtn) {
+        authorizeUspsBtn.addEventListener('click', async () => {
     try {
         const response = await fetch('/ssddmap/api/usps-auth');
         const data = await response.json();
@@ -1850,9 +1965,11 @@ authorizeUspsBtn.addEventListener('click', async () => {
         alert('Error initiating USPS authorization: ' + error.message);
     }
 });
+}
 
-// Test Smarty connection
-testSmartyBtn.addEventListener('click', async () => {
+    // Test Smarty connection
+    if (testSmartyBtn) {
+        testSmartyBtn.addEventListener('click', async () => {
     const resultDiv = document.getElementById('smartyTestResult');
     const authId = document.getElementById('smartyAuthId').value;
     const authToken = document.getElementById('smartyAuthToken').value;
@@ -1874,6 +1991,7 @@ testSmartyBtn.addEventListener('click', async () => {
         resultDiv.className = 'test-result success';
     }, 1000);
 });
+}
 
 // Check cache status
 async function checkCacheStatus() {
@@ -1957,15 +2075,66 @@ async function refreshCache() {
 }
 
 // Add event listener for refresh button
-refreshCacheBtn.addEventListener('click', refreshCache);
+if (refreshCacheBtn) {
+    refreshCacheBtn.addEventListener('click', refreshCache);
+}
 
 // Add event listener for map style selector
-mapStyleSelect.addEventListener('change', (e) => {
-    setMapStyle(e.target.value);
-});
+if (mapStyleSelect) {
+    mapStyleSelect.addEventListener('change', (e) => {
+        setMapStyle(e.target.value);
+    });
+}
+
+// Add event listeners for new UI elements
+if (dataManageBtn) {
+    dataManageBtn.addEventListener('click', () => {
+        dataModal.style.display = 'flex';
+    });
+}
+
+if (configBtn) {
+    configBtn.addEventListener('click', () => {
+        configModal.style.display = 'flex';
+    });
+}
+
+if (closeSidebar) {
+    closeSidebar.addEventListener('click', () => {
+        infoSidebar.classList.remove('active');
+    });
+}
+
+// Handle toggle switch for representation view
+if (toggleRepViewBtn) {
+    toggleRepViewBtn.addEventListener('change', async () => {
+        showRepresentationView = toggleRepViewBtn.checked;
+    
+        if (showRepresentationView) {
+            legendEl.style.display = 'block';
+            await loadRepresentationView();
+        } else {
+            legendEl.style.display = 'none';
+            if (selectedState) {
+                await loadDistricts(selectedState);
+            } else {
+                await loadUSAMap();
+            }
+        }
+    });
+}
 
 // Initialize
 async function initialize() {
+    // Clear the address input field to prevent browser autofill
+    if (addressInput) {
+        addressInput.value = '';
+        // Force clear after a small delay to catch delayed autofill
+        setTimeout(() => {
+            addressInput.value = '';
+        }, 100);
+    }
+    
     loadStates();
     checkConfigStatus();
     checkCacheStatus();
@@ -1975,8 +2144,14 @@ async function initialize() {
     loadUSAMap();
 }
 
-// Start initialization
-initialize();
+// Start initialization with error handling
+initialize().catch(error => {
+    console.error('Initialization error:', error);
+    // Hide loading on error
+    if (loadingEl) {
+        loadingEl.classList.remove('show');
+    }
+});
 
 // Check cache status every 5 minutes
 setInterval(checkCacheStatus, 300000);
@@ -1993,22 +2168,42 @@ const batchProgress = document.getElementById('batchProgress');
 const progressFill = document.querySelector('.progress-fill');
 const progressText = document.querySelector('.progress-text');
 
-// Open batch modal
-batchProcessBtn.addEventListener('click', () => {
-    batchModal.style.display = 'flex';
-    batchAddressesTextarea.value = '';
-    batchProgress.style.display = 'none';
-});
+// Open batch modal (keeping functionality but button removed from UI)
+if (batchProcessBtn) {
+    batchProcessBtn.addEventListener('click', () => {
+        batchModal.style.display = 'flex';
+        batchAddressesTextarea.value = '';
+        batchProgress.style.display = 'none';
+    });
+}
 
 // Close modal
-closeModal.addEventListener('click', () => {
-    batchModal.style.display = 'none';
+if (closeModal) {
+    closeModal.addEventListener('click', () => {
+        batchModal.style.display = 'none';
+    });
+}
+
+// Close data and config modals with X button
+document.querySelectorAll('.modal .close').forEach(closeBtn => {
+    closeBtn.addEventListener('click', (e) => {
+        const modal = e.target.closest('.modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    });
 });
 
-// Close modal when clicking outside
+// Close modals when clicking outside
 window.addEventListener('click', (event) => {
     if (event.target === batchModal) {
         batchModal.style.display = 'none';
+    }
+    if (event.target === dataModal) {
+        dataModal.style.display = 'none';
+    }
+    if (event.target === configModal) {
+        configModal.style.display = 'none';
     }
 });
 
@@ -2157,8 +2352,10 @@ function showBatchResults(results) {
     // Update district info panel with results
     districtInfo.innerHTML = summaryHtml;
     
-    // Show the info panel
-    document.getElementById('info').scrollIntoView({ behavior: 'smooth' });
+    // Show the info sidebar
+    if (infoSidebar) {
+        infoSidebar.classList.add('active');
+    }
 }
 
 // Download batch results as CSV
@@ -2221,4 +2418,5 @@ window.showDistrictZipCodes = function(state, district) {
     
     // Scroll to the info panel
     districtInfo.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
+}
+} // End of initializeRestOfApp function

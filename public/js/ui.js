@@ -304,6 +304,7 @@ export class UIManager {
                                 ${info.representative.party === 'D' ? 'Democrat' : 
                                   info.representative.party === 'R' ? 'Republican' : 'Independent'}
                             </p>
+                            ${info.representative.bioguideId ? `<p><strong>Bioguide ID:</strong> ${info.representative.bioguideId}</p>` : ''}
                             ${info.representative.phone ? `<p><strong>Phone:</strong> ${info.representative.phone}</p>` : ''}
                             ${info.representative.office ? `<p><strong>Office:</strong> ${info.representative.office}</p>` : ''}
                             ${info.representative.website ? 

@@ -1,173 +1,326 @@
 # US Congressional Districts Map (SSDD Map)
 
-An interactive web application for visualizing US Congressional Districts, county boundaries, and legislative voting patterns. Built with Node.js, Express, and Leaflet.js.
+An interactive web application for visualizing US Congressional Districts with comprehensive address validation, congressional district lookup, and legislative analysis features. Built with Node.js, Express, PostgreSQL, and Leaflet.js.
 
-## ⚠️ Configuration Required for ZIP+4 Features
+## 🌟 Key Features
 
-The ZIP+4 lookup functionality requires API credentials that are not included. See [CONFIGURATION_GUIDE.md](./CONFIGURATION_GUIDE.md) for setup instructions. The application will function without these credentials using the Census geographic lookup method.
+### 🗺️ Interactive Congressional District Mapping
+- **All 435 US Congressional Districts** with current 118th Congress boundaries
+- **At-large state handling** for Alaska, Delaware, North Dakota, South Dakota, Vermont, Wyoming
+- **Real-time member information** from official House XML feed
+- **District navigation** with smooth zoom animations and party affiliation indicators
+- **Multiple map styles**: Voyager, Light, Dark, Satellite, Terrain
 
-## Features
+### 📍 Advanced Address Validation & Lookup
+- **USPS OAuth API v3 Integration** for address standardization and ZIP+4 lookup
+- **Multi-method validation**:
+  - **USPS Standardization**: Address correction + ZIP+4 → District mapping
+  - **Census Geocoding**: Address → Coordinates → District (via PostGIS)
+  - **Google Maps** (optional): Enhanced geocoding with formatted addresses
+- **Address correction suggestions** with user-friendly approval workflow
+- **Batch processing** for multiple addresses with CSV import/export
+- **Comparison analysis** between geocoding and ZIP+4 methods
+- **Boundary proximity detection** for addresses near district edges
 
-### 🗺️ Congressional District Mapping
-- Interactive map of all 435 US Congressional Districts
-- Special handling for 6 at-large states (Alaska, Delaware, North Dakota, South Dakota, Vermont, Wyoming)
-- Real-time member information from the official House XML feed
-- District-by-district navigation with smooth zoom animations
+### 🏛️ Representative Information System
+- **Live member data** from https://member-info.house.gov/members.xml
+- **Party affiliation display** with visual indicators (🐘 Republican, 🫏 Democrat, Ⓘ Independent)
+- **Contact information** including office, phone, website, and social media
+- **Member photos** when available
+- **Voting patterns** for legislative tracking
 
-### 🏛️ Representative Information
-- Current House member data integrated from https://member-info.house.gov/members.xml
-- Party affiliation display (Republican, Democrat, Independent)
-- Contact information including office, phone, website, and social media
-- Member photos when available
-
-### 📍 Address Search & Geocoding
-- Search any US address to find its congressional district
-- **Multiple lookup methods**:
-  - **Geographic (Census)**: Uses OpenStreetMap geocoding + Census boundaries
-  - **ZIP+4 (USPS)**: Uses USPS standardization + ZIP+4 to district mapping (requires configuration)
-  - **Compare Both**: Runs both methods and shows comparison
-- Automatic district and county detection
-- Visual markers showing searched locations
-- **Batch processing**: Process multiple addresses at once
-  - Upload CSV files or paste addresses
-  - Progress tracking for large batches
-  - Export results as CSV
-  - Comparison reports between methods
-
-### 🗳️ County Analysis
-- 3,234 US county boundaries from 2020 Census data
-- **County Political Control**: Shows which party's congressional districts cover each county
+### 🗳️ County Analysis & Political Control
+- **3,234 US county boundaries** from 2020 Census data
+- **Political control visualization**:
   - Red: Republican-controlled counties
-  - Blue: Democratic-controlled counties  
+  - Blue: Democratic-controlled counties
   - Purple: Counties split between parties
-- **FIPS Code Display**: Shows Federal Information Processing Standards codes for each county
-- County statistics and breakdown by party control
+- **FIPS code display** for federal identification
+- **County statistics** and party breakdown
 
-### 📊 Data Visualizations
-- **State Representation View**: Colors states by number of representatives (1-52)
-- **Legislation Voting Patterns**: Track how representatives voted on bills
-  - Currently includes H.R. 1 - "One Big Beautiful Bill Act"
-  - Green for YES votes, Red for NO votes
-- Interactive legends for all visualization modes
+### 📊 Data Visualization & Analysis
+- **State representation view** colored by representative count (1-52)
+- **Legislative voting patterns** with vote tracking
+- **Interactive legends** for all visualization modes
+- **Comparison reports** between validation methods
+- **Distance calculations** to district boundaries
 
-### 🎨 Modern UI/UX
-- Dark theme with smooth animations
-- Responsive design for desktop and mobile
-- Real-time loading indicators
-- Intuitive navigation between states and districts
+## 🏗️ Technical Architecture
 
-## Technical Architecture
+### Backend Infrastructure
+- **Node.js/Express** server with RESTful API
+- **PostgreSQL** with PostGIS for spatial data
+- **OAuth 2.0** integration for USPS API
+- **Modular service architecture**:
+  - `USPSOAuthService`: USPS API integration and token management
+  - `ValidationService`: Multi-method address validation
+  - `DatabaseService`: PostgreSQL operations
+  - `AddressService`: Geocoding and standardization
 
-### Backend (Node.js/Express)
-- **server.js**: Main Express server with RESTful API endpoints
-- **services/addressService.js**: Handles USPS and Smarty API integrations
-- **services/databaseService.js**: SQLite database for ZIP+4 mappings
-- KML to GeoJSON conversion using @mapbox/togeojson
-- Efficient caching of district and county geometries
-- Point-in-polygon detection using Turf.js
+### Frontend Technology
+- **Vanilla JavaScript** ES6 modules
+- **Leaflet.js** for interactive mapping
+- **Responsive design** with dark theme
+- **Real-time validation** with user feedback
+- **Progressive loading** for large datasets
 
-### Frontend (Vanilla JavaScript)
-- **public/app.js**: Core application logic
-- **public/styles.css**: Dark theme styling with CSS variables
-- **public/index.html**: Application structure
-- Leaflet.js for interactive mapping
-- CartoDB dark tiles for base map
+### Data Sources & APIs
+- **Congressional districts**: KML files converted to PostGIS geometries
+- **County boundaries**: 2020 Census cb_2020_us_county_500k dataset
+- **Member information**: Live XML feed from house.gov
+- **Address validation**: USPS OAuth API v3
+- **Geocoding**: Census Geocoder, Google Maps API (optional)
 
-### Data Sources
-- Congressional district boundaries: KML files for each district
-- County boundaries: cb_2020_us_county_500k.kml from US Census
-- Member information: Live XML feed from house.gov
-- Geocoding: OpenStreetMap Nominatim API
+## 🚀 Installation & Setup
 
-## API Endpoints
+### Prerequisites
+- Node.js 18+ and npm
+- PostgreSQL 12+ with PostGIS extension
+- USPS Developer Account (for address validation)
 
-- `GET /api/states` - List all states with districts
-- `GET /api/state/:stateCode` - Get districts for a specific state
-- `GET /api/district/:state/:district` - Get specific district GeoJSON and member info
-- `GET /api/all-districts` - Get all districts as GeoJSON
-- `GET /api/members` - Get all House member data
-- `GET /api/geocode?address=` - Geocode an address
-- `GET /api/find-location?lat=&lon=` - Find district and county for coordinates
-- `GET /api/county-boundaries` - Get all county boundaries
-- `GET /api/county-politics` - Get county political control analysis
-- `GET /api/state-rep-counts` - Get representative counts by state
-- `GET /api/bill-votes/:billId` - Get voting data for specific legislation
-- `GET /api/address-lookup-zip4` - ZIP+4 based district lookup
-- `POST /api/batch-process` - Process multiple addresses in batch
-- `GET /api/batch-results/:batchId/download` - Download batch results as CSV
-
-## Installation & Setup
-
-1. Clone the repository:
+### Quick Start
 ```bash
-git clone git@github.com:blur702/ssddmap.git
+# 1. Clone repository
+git clone https://github.com/kevinalthaus/ssddmap.git
 cd ssddmap
-```
 
-2. Install dependencies:
-```bash
+# 2. Install dependencies
 npm install
-```
 
-3. (Optional) Configure ZIP+4 features:
-```bash
-# See CONFIGURATION_GUIDE.md for detailed instructions
-export USPS_USER_ID="your_usps_id"
-export SMARTY_AUTH_ID="your_smarty_id"
-export SMARTY_AUTH_TOKEN="your_smarty_token"
-```
+# 3. Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
 
-4. Start the server:
-```bash
+# 4. Initialize database
+npm run db:setup
+
+# 5. Start development server
 npm start
+
+# 6. Open application
+open http://localhost:3001/ssddmap
 ```
 
-5. Open http://localhost:3000 in your browser
+### Environment Configuration
+```bash
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=ssddmap
+DB_USER=ssddmap_user
+DB_PASSWORD=your_password
 
-## Usage Guide
+# USPS OAuth Configuration
+USPS_CLIENT_ID=your_consumer_key
+USPS_CLIENT_SECRET=your_consumer_secret
+USPS_BASE_URL=https://apis.usps.com
+USPS_CRID=your_customer_registration_id
+USPS_OUTBOUND_MID=your_outbound_mailer_id
+USPS_RETURN_MID=your_return_mailer_id
 
-### Viewing Districts
-1. Click "View Full USA Map" to see all districts
-2. Select a state from the dropdown to zoom to that state
-3. Click any district to view detailed information
-4. Use the address search to find specific locations
+# Optional APIs
+GOOGLE_MAPS_API_KEY=your_google_api_key
+SMARTY_AUTH_ID=your_smarty_auth_id
+SMARTY_AUTH_TOKEN=your_smarty_auth_token
+```
 
-### Analyzing Counties
-1. Click "Show Counties" to display county boundaries
-2. Use "Show County Politics" to see party control
-3. Use "Show County FIPS" to display FIPS codes
-4. Hover over counties for detailed information
+## 📋 API Documentation
 
-### Tracking Legislation
-1. Select a bill from the Legislation Tracking dropdown
-2. Click "Show Voting Pattern" to see how representatives voted
-3. Districts will be colored by vote (Green=Yes, Red=No)
+### Address Validation Endpoints
+```
+POST /ssddmap/api/validate-address
+Body: { "address": "123 Main St, City, State ZIP" }
+Returns: Comprehensive validation results from multiple methods
 
-## Performance Optimizations
+GET /ssddmap/api/test-usps
+Returns: USPS API connection status and configuration
 
-- Server-side geometry caching for fast lookups
-- Lazy loading of district data
-- Efficient point-in-polygon algorithms
-- Batched API requests for better performance
+POST /ssddmap/api/batch-validate
+Body: { "addresses": ["address1", "address2", ...] }
+Returns: Batch validation results with progress tracking
+```
 
-## Browser Compatibility
+### District & Geography Endpoints
+```
+GET /ssddmap/api/states
+Returns: List of all states with district counts
 
-- Chrome/Edge: Full support
-- Firefox: Full support
-- Safari: Full support
-- Mobile browsers: Responsive design with touch support
+GET /ssddmap/api/state/:stateCode
+Returns: Districts for specific state
 
-## Data Accuracy
+GET /ssddmap/api/district/:state/:district
+Returns: District geometry and member information
 
-- Congressional districts: Current 118th Congress boundaries
-- County boundaries: 2020 Census data
-- Member information: Live data from house.gov
-- Voting data: Approximated based on party lines for demonstration
+GET /ssddmap/api/find-location?lat=&lon=
+Returns: District and county for coordinates
 
-## License
+GET /ssddmap/api/county-boundaries
+Returns: All county boundaries with political control data
+```
+
+### Data Management Endpoints
+```
+GET /ssddmap/api/members
+Returns: All House member data with caching
+
+POST /ssddmap/api/refresh-cache
+Returns: Refreshed member data from house.gov
+
+GET /ssddmap/api/bill-votes/:billId
+Returns: Voting patterns for specific legislation
+```
+
+## 🎯 Usage Guide
+
+### Address Validation Workflow
+1. **Enter address** in search box or validation panel
+2. **Review USPS corrections** if suggested
+3. **Accept or modify** the standardized address
+4. **View district assignment** on map with member information
+5. **Compare methods** to verify accuracy
+
+### Batch Processing
+1. **Upload CSV** or paste addresses (one per line)
+2. **Select validation method** (USPS, Census, or Both)
+3. **Monitor progress** with real-time updates
+4. **Download results** as CSV with comparison data
+
+### District Navigation
+1. **Select state** from dropdown to zoom to region
+2. **Choose district** from district selector (shows party and representative)
+3. **Click map** to view detailed district information
+4. **Use address search** to find specific locations
+
+### Validation Mode Features
+1. **Toggle validation mode** to enable advanced features
+2. **Compare geocoding vs ZIP+4** results
+3. **View boundary proximity** warnings
+4. **Analyze consistency** between methods
+
+## 🔧 Configuration Guides
+
+### USPS OAuth Setup
+See [USPS_OAUTH_SETUP.md](./USPS_OAUTH_SETUP.md) for detailed instructions on:
+- Developer account registration
+- Application configuration
+- OAuth credential management
+- Business account linking
+
+### Database Setup
+See [DATABASE_SETUP.md](./DATABASE_SETUP.md) for:
+- PostgreSQL installation and configuration
+- PostGIS extension setup
+- District geometry import
+- ZIP+4 database creation
+
+### API Configuration
+See [API_CONFIGURATION.md](./API_CONFIGURATION.md) for:
+- USPS API registration and setup
+- Google Maps API configuration
+- Smarty API integration
+- Rate limiting and error handling
+
+## 🧪 Testing
+
+### Automated Testing
+```bash
+# Run all tests
+npm test
+
+# Run Playwright end-to-end tests
+npm run test:e2e
+
+# Run validation tests
+npm run test:validation
+
+# Generate test reports
+npm run test:report
+```
+
+### Manual Testing
+- Test address validation with various formats
+- Verify district assignments across state boundaries
+- Check batch processing with large datasets
+- Validate API responses and error handling
+
+## 📊 Performance & Monitoring
+
+### Optimization Features
+- **Server-side caching** for district geometries and member data
+- **Lazy loading** of district data on demand
+- **Efficient PostGIS queries** for point-in-polygon detection
+- **Token management** for USPS OAuth with automatic refresh
+- **Rate limiting** for API endpoints
+
+### Monitoring
+- **Application logs** for debugging and performance tracking
+- **API response times** and error rates
+- **Database query optimization** with PostGIS indexes
+- **OAuth token usage** and refresh cycles
+
+## 🔒 Security Considerations
+
+### API Security
+- **OAuth 2.0** implementation for USPS API
+- **Environment variables** for sensitive configuration
+- **Input validation** for all user inputs
+- **Rate limiting** to prevent abuse
+
+### Data Privacy
+- **No persistent storage** of user addresses (except for caching)
+- **Secure API communication** with HTTPS
+- **Minimal data collection** for functionality only
+
+## 🐛 Troubleshooting
+
+### Common Issues
+1. **USPS API 401 Errors**: Check OAuth credentials and token refresh
+2. **Database Connection**: Verify PostgreSQL service and credentials
+3. **District Not Found**: Check coordinate precision and boundary data
+4. **Performance Issues**: Review caching and database indexes
+
+### Debug Mode
+Enable debug logging:
+```bash
+DEBUG=ssddmap:* npm start
+```
+
+## 📝 Contributing
+
+### Development Setup
+1. Fork repository and create feature branch
+2. Install development dependencies
+3. Run tests before submitting changes
+4. Follow existing code style and patterns
+
+### Code Structure
+- `services/` - Backend service modules
+- `public/js/` - Frontend JavaScript modules
+- `tests/` - Test files and specifications
+- `database/` - Database schemas and migrations
+
+## 📚 Additional Documentation
+
+- [USPS_OAUTH_SETUP.md](./USPS_OAUTH_SETUP.md) - USPS API registration and OAuth configuration
+- [ADDRESS_VALIDATION_GUIDE.md](./ADDRESS_VALIDATION_GUIDE.md) - Address validation workflows and best practices
+- [API_REFERENCE.md](./API_REFERENCE.md) - Complete API endpoint documentation
+- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Production deployment instructions
+- [CHANGELOG.md](./CHANGELOG.md) - Version history and updates
+
+## 🆘 Support
+
+For issues and questions:
+- Check existing [Issues](https://github.com/kevinalthaus/ssddmap/issues)
+- Review documentation files
+- Contact: kevin@kevinalthaus.com
+
+## 📄 License
 
 This project uses public domain data from US government sources.
+Built with 🤖 by Claude Code and Kevin Althaus
 
 ---
 
-Built with 🤖 by Claude Code and Kevin Althaus
+**Version**: 2.0.0  
+**Last Updated**: January 2025  
+**Compatible with**: USPS API v3, PostgreSQL 12+, Node.js 18+
