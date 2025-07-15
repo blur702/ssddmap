@@ -1,8 +1,12 @@
 const express = require('express');
 const { Pool } = require('pg');
 const path = require('path');
+const fs = require('fs');
+const { exec } = require('child_process');
 const turf = require('@turf/turf');
 const fetch = require('node-fetch');
+const ValidationService = require('./services/validationService');
+const USPSOAuthService = require('./services/uspsOAuthService');
 require('dotenv').config();
 
 const app = express();
@@ -14,7 +18,7 @@ const pool = new Pool({
     port: process.env.DB_PORT || 5432,
     database: process.env.DB_NAME || 'ssddmap',
     user: process.env.DB_USER || 'ssddmap_user',
-    password: process.env.DB_PASSWORD
+    password: process.env.DB_PASSWORD || 'ssddmap123'
 });
 
 // Test database connection
@@ -32,6 +36,10 @@ app.use(express.json());
 
 // Create router for /ssddmap prefix
 const router = express.Router();
+
+// Initialize services
+const validationService = new ValidationService(pool);
+const uspsService = new USPSOAuthService();
 
 // Get all available states
 router.get('/api/states', async (req, res) => {
@@ -76,6 +84,7 @@ router.get('/api/state/:stateCode', async (req, res) => {
                 CASE WHEN d.is_at_large THEN NULL ELSE d.state_code || '-' || d.district_number || '.kml' END as filename,
                 json_build_object(
                     'name', m.full_name,
+                    'bioguideId', m.bioguide_id,
                     'party', m.party,
                     'phone', m.phone,
                     'website', m.website,
@@ -89,6 +98,16 @@ router.get('/api/state/:stateCode', async (req, res) => {
                         'twitter', (SELECT url FROM member_social_media WHERE member_id = m.id AND platform = 'twitter'),
                         'youtube', (SELECT url FROM member_social_media WHERE member_id = m.id AND platform = 'youtube'),
                         'instagram', (SELECT url FROM member_social_media WHERE member_id = m.id AND platform = 'instagram')
+                    ),
+                    'committees', (
+                        SELECT json_agg(json_build_object(
+                            'name', c.committee_name,
+                            'code', c.committee_code,
+                            'role', mc.role
+                        ) ORDER BY mc.rank, c.committee_name)
+                        FROM member_committees mc
+                        JOIN committees c ON mc.committee_id = c.id
+                        WHERE mc.member_id = m.id
                     )
                 ) as member
             FROM districts d
@@ -214,6 +233,7 @@ router.get('/api/members', async (req, res) => {
             SELECT 
                 CONCAT(m.state_code, '-', m.district_number) as key,
                 m.full_name as name,
+                m.bioguide_id as "bioguideId",
                 m.party,
                 m.phone,
                 m.website,
@@ -227,7 +247,17 @@ router.get('/api/members', async (req, res) => {
                     'twitter', (SELECT url FROM member_social_media WHERE member_id = m.id AND platform = 'twitter'),
                     'youtube', (SELECT url FROM member_social_media WHERE member_id = m.id AND platform = 'youtube'),
                     'instagram', (SELECT url FROM member_social_media WHERE member_id = m.id AND platform = 'instagram')
-                ) as social
+                ) as social,
+                (
+                    SELECT json_agg(json_build_object(
+                        'name', c.committee_name,
+                        'code', c.committee_code,
+                        'role', mc.role
+                    ) ORDER BY mc.rank, c.committee_name)
+                    FROM member_committees mc
+                    JOIN committees c ON mc.committee_id = c.id
+                    WHERE mc.member_id = m.id
+                ) as committees
             FROM members m
             JOIN states s ON m.state_code = s.state_code
         `);
@@ -237,15 +267,17 @@ router.get('/api/members', async (req, res) => {
         result.rows.forEach(row => {
             members[row.key] = {
                 name: row.name,
+                bioguideId: row.bioguideId,
                 party: row.party,
                 phone: row.phone,
                 website: row.website,
-                contactForm: row.contactform,
+                contactForm: row.contactForm,
                 photo: row.photo,
                 state: row.state,
                 district: row.district,
                 office: row.office,
-                social: row.social
+                social: row.social,
+                committees: row.committees || []
             };
         });
         
@@ -264,6 +296,7 @@ router.get('/api/member/:stateCode/:districtNumber', async (req, res) => {
         const result = await pool.query(`
             SELECT 
                 m.full_name as name,
+                m.bioguide_id as "bioguideId",
                 m.party,
                 m.phone,
                 m.website,
@@ -864,6 +897,54 @@ router.get('/api/counties/:stateCode', async (req, res) => {
     }
 });
 
+// Get all county boundaries (simplified for performance)
+router.get('/api/county-boundaries', async (req, res) => {
+    try {
+        // Get state filter from query params if provided
+        const { states } = req.query;
+        let whereClause = '';
+        let params = [];
+        
+        if (states) {
+            // Allow filtering by specific states for performance
+            const stateList = states.split(',').map(s => s.trim().toUpperCase());
+            whereClause = 'WHERE state_code = ANY($1)';
+            params = [stateList];
+        }
+        
+        const query = `
+            SELECT 
+                county_fips as "GEOID",
+                county_name as "NAME",
+                state_code as "STUSPS",
+                ST_AsGeoJSON(ST_Simplify(geometry, 0.02))::json as geometry
+            FROM counties
+            ${whereClause}
+            ORDER BY state_code, county_name
+        `;
+        
+        const result = await pool.query(query, params);
+        
+        const features = result.rows.map(row => ({
+            type: 'Feature',
+            geometry: row.geometry,
+            properties: {
+                GEOID: row.GEOID,
+                NAME: row.NAME,
+                STUSPS: row.STUSPS
+            }
+        }));
+        
+        res.json({
+            type: 'FeatureCollection',
+            features: features
+        });
+    } catch (error) {
+        console.error('Error fetching all county boundaries:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Health check endpoint
 router.get('/api/health', async (req, res) => {
     try {
@@ -871,6 +952,53 @@ router.get('/api/health', async (req, res) => {
         res.json({ status: 'healthy', database: 'connected' });
     } catch (error) {
         res.status(500).json({ status: 'unhealthy', database: 'disconnected', error: error.message });
+    }
+});
+
+// Configuration status endpoint
+router.get('/api/config-status', async (req, res) => {
+    try {
+        // For now, return a basic config status
+        // In a real implementation, this would check actual API configurations
+        res.json({
+            usps: {
+                configured: false,
+                tokenValid: false
+            },
+            smarty: {
+                configured: false
+            },
+            defaultMethod: 'census'
+        });
+    } catch (error) {
+        console.error('Error checking config status:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Save configuration endpoint (stub)
+router.post('/api/save-config', async (req, res) => {
+    try {
+        // In a real implementation, this would save API credentials securely
+        console.log('Config save requested (not implemented)');
+        res.json({ success: true, message: 'Configuration saved (stub)' });
+    } catch (error) {
+        console.error('Error saving config:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// USPS auth endpoint (stub)
+router.get('/api/usps-auth', async (req, res) => {
+    try {
+        // In a real implementation, this would initiate USPS OAuth
+        res.json({ 
+            authUrl: '#',
+            message: 'USPS authentication not implemented' 
+        });
+    } catch (error) {
+        console.error('Error with USPS auth:', error);
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -967,6 +1095,305 @@ router.get('/api/address-lookup-zip4', async (req, res) => {
         }
     } catch (error) {
         console.error('Address lookup error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Address Validation Endpoints
+
+// Comprehensive address validation
+router.post('/api/validate-address', async (req, res) => {
+    try {
+        const { address } = req.body;
+        
+        if (!address || typeof address !== 'string' || !address.trim()) {
+            return res.status(400).json({ error: 'Valid address is required' });
+        }
+
+        const trimmedAddress = address.trim();
+        console.log('Validation request for:', trimmedAddress);
+        
+        const results = await validationService.validateAddress(trimmedAddress);
+        res.json(results);
+
+    } catch (error) {
+        console.error('Address validation error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get USPS states list
+router.get('/api/usps-states', async (req, res) => {
+    try {
+        // USPS accepts these state codes
+        const uspsStates = [
+            { code: 'AA', name: 'Armed Forces Americas' },
+            { code: 'AE', name: 'Armed Forces Europe' },
+            { code: 'AL', name: 'Alabama' },
+            { code: 'AK', name: 'Alaska' },
+            { code: 'AP', name: 'Armed Forces Pacific' },
+            { code: 'AS', name: 'American Samoa' },
+            { code: 'AZ', name: 'Arizona' },
+            { code: 'AR', name: 'Arkansas' },
+            { code: 'CA', name: 'California' },
+            { code: 'CO', name: 'Colorado' },
+            { code: 'CT', name: 'Connecticut' },
+            { code: 'DE', name: 'Delaware' },
+            { code: 'DC', name: 'District of Columbia' },
+            { code: 'FM', name: 'Federated States of Micronesia' },
+            { code: 'FL', name: 'Florida' },
+            { code: 'GA', name: 'Georgia' },
+            { code: 'GU', name: 'Guam' },
+            { code: 'HI', name: 'Hawaii' },
+            { code: 'ID', name: 'Idaho' },
+            { code: 'IL', name: 'Illinois' },
+            { code: 'IN', name: 'Indiana' },
+            { code: 'IA', name: 'Iowa' },
+            { code: 'KS', name: 'Kansas' },
+            { code: 'KY', name: 'Kentucky' },
+            { code: 'LA', name: 'Louisiana' },
+            { code: 'ME', name: 'Maine' },
+            { code: 'MH', name: 'Marshall Islands' },
+            { code: 'MD', name: 'Maryland' },
+            { code: 'MA', name: 'Massachusetts' },
+            { code: 'MI', name: 'Michigan' },
+            { code: 'MN', name: 'Minnesota' },
+            { code: 'MS', name: 'Mississippi' },
+            { code: 'MO', name: 'Missouri' },
+            { code: 'MP', name: 'Northern Mariana Islands' },
+            { code: 'MT', name: 'Montana' },
+            { code: 'NE', name: 'Nebraska' },
+            { code: 'NV', name: 'Nevada' },
+            { code: 'NH', name: 'New Hampshire' },
+            { code: 'NJ', name: 'New Jersey' },
+            { code: 'NM', name: 'New Mexico' },
+            { code: 'NY', name: 'New York' },
+            { code: 'NC', name: 'North Carolina' },
+            { code: 'ND', name: 'North Dakota' },
+            { code: 'OH', name: 'Ohio' },
+            { code: 'OK', name: 'Oklahoma' },
+            { code: 'OR', name: 'Oregon' },
+            { code: 'PW', name: 'Palau' },
+            { code: 'PA', name: 'Pennsylvania' },
+            { code: 'PR', name: 'Puerto Rico' },
+            { code: 'RI', name: 'Rhode Island' },
+            { code: 'SC', name: 'South Carolina' },
+            { code: 'SD', name: 'South Dakota' },
+            { code: 'TN', name: 'Tennessee' },
+            { code: 'TX', name: 'Texas' },
+            { code: 'UT', name: 'Utah' },
+            { code: 'VT', name: 'Vermont' },
+            { code: 'VI', name: 'Virgin Islands' },
+            { code: 'VA', name: 'Virginia' },
+            { code: 'WA', name: 'Washington' },
+            { code: 'WV', name: 'West Virginia' },
+            { code: 'WI', name: 'Wisconsin' },
+            { code: 'WY', name: 'Wyoming' }
+        ];
+        
+        res.json(uspsStates);
+    } catch (error) {
+        console.error('USPS states error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Test USPS connection
+router.get('/api/test-usps', async (req, res) => {
+    try {
+        const result = await uspsService.testConnection();
+        res.json(result);
+    } catch (error) {
+        console.error('USPS test error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Get validation service configuration status
+router.get('/api/validation-status', async (req, res) => {
+    try {
+        const status = {
+            usps: {
+                configured: uspsService.isConfigured(),
+                tokenValid: uspsService.isTokenValid()
+            },
+            google: {
+                configured: !!(process.env.GOOGLE_MAPS_API_KEY)
+            },
+            census: {
+                configured: true // Always available
+            }
+        };
+        
+        res.json(status);
+    } catch (error) {
+        console.error('Status check error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Distance to boundary calculation
+router.get('/api/distance-to-boundary', async (req, res) => {
+    try {
+        const { lat, lon, state, district } = req.query;
+        
+        if (!lat || !lon || !state || !district) {
+            return res.status(400).json({ error: 'lat, lon, state, and district are required' });
+        }
+
+        const distance = await validationService.getDistanceToBoundary(
+            parseFloat(lat), 
+            parseFloat(lon), 
+            state, 
+            district
+        );
+        
+        res.json(distance);
+    } catch (error) {
+        console.error('Distance calculation error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Configuration status endpoint
+router.get('/api/config/status', async (req, res) => {
+    try {
+        const status = {
+            census: {
+                configured: true,
+                active: true
+            },
+            usps: {
+                configured: uspsService.isConfigured(),
+                tokenValid: uspsService.isTokenValid()
+            },
+            google: {
+                configured: !!(process.env.GOOGLE_MAPS_API_KEY)
+            }
+        };
+        
+        res.json(status);
+    } catch (error) {
+        console.error('Config status error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Save USPS configuration
+router.post('/api/config/usps', async (req, res) => {
+    try {
+        const { clientId, clientSecret } = req.body;
+        
+        if (!clientId || !clientSecret) {
+            return res.status(400).json({ error: 'Client ID and Secret are required' });
+        }
+        
+        // Update .env file
+        const envPath = path.join(__dirname, '.env');
+        let envContent = fs.readFileSync(envPath, 'utf8');
+        
+        // Update or add USPS credentials
+        envContent = envContent.replace(/USPS_CLIENT_ID=.*/g, `USPS_CLIENT_ID=${clientId}`);
+        envContent = envContent.replace(/USPS_CLIENT_SECRET=.*/g, `USPS_CLIENT_SECRET=${clientSecret}`);
+        
+        fs.writeFileSync(envPath, envContent);
+        
+        // Restart the application
+        exec('pm2 restart ssddmap', (error, stdout, stderr) => {
+            if (error) {
+                console.error('PM2 restart error:', error);
+                return res.status(500).json({ error: 'Failed to restart application' });
+            }
+            res.json({ success: true, message: 'Configuration saved and application restarted' });
+        });
+        
+    } catch (error) {
+        console.error('USPS config error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Test USPS configuration
+router.post('/api/test/usps', async (req, res) => {
+    try {
+        const { clientId, clientSecret } = req.body;
+        
+        if (!clientId || !clientSecret) {
+            return res.status(400).json({ error: 'Client ID and Secret are required' });
+        }
+        
+        // Create temporary service instance with provided credentials
+        const testService = new USPSOAuthService();
+        testService.clientId = clientId;
+        testService.clientSecret = clientSecret;
+        
+        // Test connection
+        const result = await testService.testConnection();
+        
+        res.json(result);
+    } catch (error) {
+        console.error('USPS test error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Save Google configuration
+router.post('/api/config/google', async (req, res) => {
+    try {
+        const { apiKey } = req.body;
+        
+        if (!apiKey) {
+            return res.status(400).json({ error: 'API Key is required' });
+        }
+        
+        // Update .env file
+        const envPath = path.join(__dirname, '.env');
+        let envContent = fs.readFileSync(envPath, 'utf8');
+        
+        // Update or add Google API key
+        envContent = envContent.replace(/GOOGLE_MAPS_API_KEY=.*/g, `GOOGLE_MAPS_API_KEY=${apiKey}`);
+        
+        fs.writeFileSync(envPath, envContent);
+        
+        // Restart the application
+        exec('pm2 restart ssddmap', (error, stdout, stderr) => {
+            if (error) {
+                console.error('PM2 restart error:', error);
+                return res.status(500).json({ error: 'Failed to restart application' });
+            }
+            res.json({ success: true, message: 'Configuration saved and application restarted' });
+        });
+        
+    } catch (error) {
+        console.error('Google config error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Test Google configuration
+router.post('/api/test/google', async (req, res) => {
+    try {
+        const { apiKey } = req.body;
+        
+        if (!apiKey) {
+            return res.status(400).json({ error: 'API Key is required' });
+        }
+        
+        // Test with a simple geocoding request
+        const testAddress = '1600 Pennsylvania Ave, Washington, DC';
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(testAddress)}&key=${apiKey}`;
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.status === 'OK') {
+            res.json({ success: true, message: 'Google Maps API is working correctly' });
+        } else {
+            res.json({ success: false, error: data.error_message || data.status });
+        }
+        
+    } catch (error) {
+        console.error('Google test error:', error);
         res.status(500).json({ error: error.message });
     }
 });

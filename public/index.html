@@ -61,10 +61,23 @@
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Rep View</span>
                 </label>
+                
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggleValidationMode">
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Validation Mode</span>
+                </label>
             </div>
             
             <!-- Icon Buttons -->
             <div class="icon-buttons">
+                <button id="addressFormBtn" class="icon-btn" title="Enter Address">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                </button>
+                
                 <button id="viewUSA" class="icon-btn" title="View Full USA">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"></circle>
@@ -128,6 +141,16 @@
             </div>
             <div id="districtInfo" class="district-info-content">
                 <p class="placeholder">Select a district to view details</p>
+            </div>
+            
+            <!-- Address Validation Panel -->
+            <div id="validationPanel" class="validation-panel" style="display: none;">
+                <h4>Address Validation</h4>
+                <div class="validation-input">
+                    <input type="text" id="validationAddress" placeholder="Enter address to validate..." />
+                    <button id="validateBtn" class="btn btn-primary">Validate</button>
+                </div>
+                <div id="validationResults" class="validation-results"></div>
             </div>
             <div id="districtList" class="district-list" style="display: none;">
                 <!-- Hidden - no longer used -->
@@ -240,6 +263,70 @@
             <div class="modal-footer">
                 <button id="saveConfigBtn" class="btn btn-primary">Save Configuration</button>
                 <button class="btn btn-secondary close">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Address Input Modal (House PRF Style) -->
+    <div id="addressModal" class="modal">
+        <div class="modal-content address-modal">
+            <div class="modal-header">
+                <h2>Find Your Congressional District</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addressForm" class="address-form">
+                    <div class="form-section">
+                        <h3>Enter Your Address</h3>
+                        <p class="form-description">Please provide your full address to determine your congressional district.</p>
+                        
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="streetAddress">Street Address <span class="required">*</span></label>
+                                <input type="text" id="streetAddress" name="streetAddress" required 
+                                       placeholder="123 Main Street" autocomplete="address-line1">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="apartment">Apartment/Suite/Unit</label>
+                                <input type="text" id="apartment" name="apartment" 
+                                       placeholder="Apt 4B" autocomplete="address-line2">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City <span class="required">*</span></label>
+                                <input type="text" id="city" name="city" required 
+                                       placeholder="Washington" autocomplete="address-level2">
+                            </div>
+                            
+                            <div class="form-group small">
+                                <label for="state">State <span class="required">*</span></label>
+                                <select id="state" name="state" required autocomplete="address-level1">
+                                    <option value="">Select State</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group small">
+                                <label for="zipCode">ZIP Code</label>
+                                <input type="text" id="zipCode" name="zipCode" 
+                                       placeholder="20500" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelAddressBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="findDistrictBtn">Find My District</button>
+                    </div>
+                </form>
+                
+                <div id="addressValidationResults" class="validation-results-modal" style="display: none;">
+                    <!-- Validation results will appear here -->
+                </div>
             </div>
         </div>
     </div>

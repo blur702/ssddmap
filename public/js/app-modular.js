@@ -5,6 +5,8 @@ import { MapManager } from './map.js';
 import { SearchManager } from './search.js';
 import { UIManager } from './ui.js';
 import { DataManager } from './data.js';
+import { ValidationManager } from './validation.js';
+import { AddressModal } from './addressModal.js';
 
 class CongressionalDistrictsApp {
     constructor() {
@@ -12,11 +14,14 @@ class CongressionalDistrictsApp {
         this.search = new SearchManager();
         this.ui = new UIManager();
         this.data = new DataManager();
+        this.validation = new ValidationManager();
+        this.addressModal = null;
         
         this.currentState = null;
         this.currentDistrict = null;
         this.isRepView = false;
         this.districtLayers = {};
+        this.currentGlowLayer = null;
     }
     
     /**
@@ -37,6 +42,12 @@ class CongressionalDistrictsApp {
             
             // Initialize search with UI elements
             this.search.initialize(this.ui.getElements());
+            
+            // Initialize validation
+            this.validation.initialize(this.map, this.ui);
+            
+            // Initialize address modal
+            this.addressModal = new AddressModal(this.map, this.ui);
             
             // Setup event handlers
             this.setupEventHandlers();
@@ -92,6 +103,16 @@ class CongressionalDistrictsApp {
         this.ui.on('onLocationMethodChange', (method) => {
             this.search.setLocationMethod(method);
         });
+        
+        // Address form button
+        const addressFormBtn = document.getElementById('addressFormBtn');
+        if (addressFormBtn) {
+            addressFormBtn.addEventListener('click', () => {
+                if (this.addressModal) {
+                    this.addressModal.show();
+                }
+            });
+        }
         
         // Search Events
         this.search.on('onSearchStart', () => {
@@ -376,6 +397,17 @@ class CongressionalDistrictsApp {
     }
     
     /**
+     * Select district from dropdown
+     * @param {string} districtKey - District key (state-district)
+     */
+    selectDistrictFromDropdown(districtKey) {
+        if (!districtKey) return;
+        
+        const [state, district] = districtKey.split('-');
+        this.selectDistrict(state, district);
+    }
+    
+    /**
      * Select a district and show its information
      * @param {string} state - State abbreviation
      * @param {string} district - District number
@@ -389,20 +421,86 @@ class CongressionalDistrictsApp {
                 district: district,
                 representative: member ? {
                     name: member.name,
+                    bioguideId: member.bioguideId,
                     party: member.party,
                     photo: member.photo,
+                    phone: member.phone,
+                    office: member.office,
                     website: member.website,
                     committees: member.committees || []
                 } : null
             };
             
             this.ui.updateDistrictInfo(districtInfo);
-            this.currentDistrict = `${state}-${district}`;
+            
+            // Remove previous selection
+            if (this.currentDistrict) {
+                const prevLayer = this.districtLayers[this.currentDistrict];
+                if (prevLayer) {
+                    this.resetDistrictStyle(prevLayer, this.currentDistrict);
+                }
+                // Remove active class from summary items
+                document.querySelectorAll('.district-summary-item.active').forEach(item => {
+                    item.classList.remove('active');
+                });
+            }
+            
+            // Highlight new selection
+            const districtKey = `${state}-${district}`;
+            const layer = this.districtLayers[districtKey];
+            if (layer) {
+                // Apply white border with increased weight
+                layer.setStyle({
+                    weight: 6,
+                    color: '#ffffff',
+                    opacity: 1,
+                    fillOpacity: 0.6
+                });
+                layer.bringToFront();
+            }
+            
+            // Update dropdown selection
+            const dropdown = document.getElementById('districtSelect');
+            if (dropdown) {
+                dropdown.value = districtKey;
+            }
+            
+            // Add active class to summary item
+            const summaryItem = document.querySelector(`.district-summary-item[data-district="${districtKey}"]`);
+            if (summaryItem) {
+                summaryItem.classList.add('active');
+            }
+            
+            this.currentDistrict = districtKey;
             
         } catch (error) {
             console.error('Error selecting district:', error);
             this.ui.showNotification('Error loading district information', 'error');
         }
+    }
+    
+    /**
+     * Reset district style to default
+     * @param {L.Layer} layer - The layer to reset
+     * @param {string} districtKey - District key (state-district)
+     */
+    resetDistrictStyle(layer, districtKey) {
+        const member = this.data.cache.members[districtKey];
+        let fillColor = '#6b7280';
+        
+        if (this.currentState && member) {
+            fillColor = this.data.getPartyColor(member.party);
+        } else if (this.isRepView && member) {
+            fillColor = this.data.getPartyColor(member.party);
+        }
+        
+        layer.setStyle({
+            weight: 1.5,
+            opacity: 0.9,
+            color: '#333333',
+            fillColor: fillColor,
+            className: ''
+        });
     }
     
     /**
@@ -551,32 +649,6 @@ class CongressionalDistrictsApp {
         return '#6b7280';
     }
     
-    /**
-     * Toggle district accordion in sidebar
-     * @param {string} districtKey - District key (state-district)
-     */
-    toggleDistrictAccordion(districtKey) {
-        const content = document.getElementById(`content-${districtKey}`);
-        const arrow = document.querySelector(`[data-district="${districtKey}"] .accordion-arrow`);
-        
-        if (content) {
-            const isVisible = content.style.display !== 'none';
-            
-            // Close all other accordions
-            document.querySelectorAll('.district-content').forEach(el => {
-                el.style.display = 'none';
-            });
-            document.querySelectorAll('.accordion-arrow').forEach(el => {
-                el.style.transform = 'rotate(0deg)';
-            });
-            
-            // Toggle this accordion
-            if (!isVisible) {
-                content.style.display = 'block';
-                if (arrow) arrow.style.transform = 'rotate(180deg)';
-            }
-        }
-    }
 }
 
 // Initialize app when DOM is ready

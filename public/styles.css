@@ -11,6 +11,9 @@
     --democrat-color: #3b82f6;
     --republican-color: #ef4444;
     --independent-color: #8b5cf6;
+    --validation-success: #10b981;
+    --validation-warning: #f59e0b;
+    --validation-error: #ef4444;
     --bg-primary: #ffffff;
     --bg-secondary: #f8fafc;
     --bg-tertiary: #f1f5f9;
@@ -53,6 +56,21 @@ body {
     height: 100%;
     background-color: var(--bg-tertiary);
     position: relative;
+}
+
+/* Remove focus outline on map */
+#map:focus {
+    outline: none;
+}
+
+/* Also remove outline from Leaflet container */
+.leaflet-container:focus {
+    outline: none;
+}
+
+/* White highlight for selected districts */
+.leaflet-overlay-pane path {
+    transition: stroke-width 0.2s ease;
 }
 
 /* Toolbar */
@@ -325,23 +343,47 @@ body {
     flex: 1;
 }
 
-.district-details h4 {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    color: var(--text-primary);
+.district-details {
+    padding: 0.5rem;
 }
 
-.rep-info {
-    display: flex;
-    gap: 1rem;
+.district-header-main {
     margin-bottom: 1.5rem;
 }
 
+.district-title-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.district-title-main h4 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.party-indicator.large {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+}
+
+.rep-info-full {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
 .rep-photo {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     border-radius: 0.5rem;
     object-fit: cover;
+    border: 2px solid var(--border-color);
 }
 
 .rep-details h5 {
@@ -813,10 +855,46 @@ body {
     border-color: var(--secondary-color);
 }
 
-.districts-accordion {
+.districts-select-container {
+    padding: 1rem;
+}
+
+.select-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.district-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.district-select:hover {
+    border-color: var(--primary-color);
+}
+
+.district-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.district-list-summary {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.25rem;
+    margin-top: 1rem;
+    max-height: 350px;
+    overflow-y: auto;
 }
 
 .district-item {
@@ -825,6 +903,57 @@ body {
     border-radius: 8px;
     overflow: hidden;
     transition: var(--transition);
+    cursor: pointer;
+}
+
+.district-item:hover {
+    background: var(--bg-tertiary);
+    transform: translateX(2px);
+}
+
+.district-item.active {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.district-summary-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.district-summary-item:hover {
+    background: var(--bg-tertiary);
+}
+
+.district-summary-item.active {
+    background: var(--bg-tertiary);
+    font-weight: 600;
+}
+
+.district-summary-item .district-number {
+    font-weight: 600;
+    min-width: 50px;
+}
+
+.district-summary-item .party-indicator {
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+}
+
+.district-summary-item .district-rep {
+    flex: 1;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .district-item.d {
@@ -931,9 +1060,23 @@ body {
     color: var(--text-secondary);
 }
 
-.accordion-arrow {
-    color: var(--text-tertiary);
-    transition: transform 0.2s ease;
+.vacant-message {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.website-link {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.website-link:hover {
+    text-decoration: underline;
 }
 
 .district-content {
@@ -1008,4 +1151,462 @@ body {
     font-style: italic;
     text-align: center;
     padding: 1rem;
+}
+
+/* Address Validation Panel Styles */
+.validation-panel {
+    border-top: 1px solid var(--border-color);
+    padding: 1rem;
+    background: var(--bg-primary);
+    margin-top: 1rem;
+}
+
+.validation-panel h4 {
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.validation-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.validation-input input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+}
+
+.validation-input button {
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.validation-input button:hover {
+    background: var(--primary-hover);
+}
+
+.validation-results {
+    font-size: 0.875rem;
+}
+
+.validation-comparison {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.validation-method {
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    background: var(--bg-secondary);
+}
+
+.validation-method-header {
+    display: flex;
+    justify-content: between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.validation-method-title {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.validation-status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.validation-status.success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--validation-success);
+}
+
+.validation-status.warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--validation-warning);
+}
+
+.validation-status.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--validation-error);
+}
+
+.validation-details {
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.8125rem;
+}
+
+.validation-detail {
+    display: flex;
+    justify-content: space-between;
+}
+
+.validation-detail-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.validation-detail-value {
+    color: var(--text-primary);
+}
+
+.boundary-distance {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-tertiary);
+    border-radius: 0.25rem;
+    border-left: 3px solid var(--primary-color);
+}
+
+.distance-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8125rem;
+}
+
+.distance-value {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.address-markers {
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: rgba(37, 99, 235, 0.05);
+    border: 1px solid rgba(37, 99, 235, 0.2);
+    border-radius: 0.375rem;
+}
+
+.address-markers-title {
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+    font-size: 0.8125rem;
+}
+
+.markers-legend {
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.marker-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.marker-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.marker-color.usps { background: #3b82f6; }
+.marker-color.census { background: #10b981; }
+.marker-color.google { background: #ef4444; }
+
+/* Address Modal (House PRF Style) */
+.address-modal {
+    max-width: 700px;
+    width: 95%;
+}
+
+.address-modal .modal-header {
+    background: #003366;
+    color: white;
+    padding: 2rem;
+    border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.address-modal .modal-header h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.address-modal .modal-header .close {
+    color: white;
+    opacity: 0.8;
+    font-size: 2rem;
+}
+
+.address-modal .modal-header .close:hover {
+    opacity: 1;
+}
+
+.address-form {
+    padding: 0;
+}
+
+.form-section {
+    background: var(--bg-primary);
+    padding: 2rem;
+}
+
+.form-section h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #003366;
+}
+
+.form-description {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-group.full-width {
+    flex: 1 1 100%;
+}
+
+.form-group.small {
+    flex: 0 0 150px;
+}
+
+.address-form label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.required {
+    color: #dc3545;
+    margin-left: 2px;
+}
+
+.address-form input[type="text"],
+.address-form select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #dee2e6;
+    border-radius: 0.375rem;
+    font-size: 1rem;
+    transition: var(--transition);
+    background: white;
+}
+
+.address-form input[type="text"]:focus,
+.address-form select:focus {
+    outline: none;
+    border-color: #003366;
+    box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+}
+
+.address-form input[type="text"]:disabled,
+.address-form select:disabled {
+    background: #f8f9fa;
+    cursor: not-allowed;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0 0 0.75rem 0.75rem;
+}
+
+.form-actions .btn {
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+}
+
+.form-actions .btn-primary {
+    background: #003366;
+    color: white;
+}
+
+.form-actions .btn-primary:hover {
+    background: #002244;
+}
+
+.form-actions .btn-secondary {
+    background: white;
+    color: #003366;
+    border: 2px solid #003366;
+}
+
+.form-actions .btn-secondary:hover {
+    background: #f8f9fa;
+}
+
+/* Validation Results in Modal */
+.validation-results-modal {
+    padding: 2rem;
+    background: #f8f9fa;
+    border-top: 1px solid var(--border-color);
+}
+
+.validation-results-modal h4 {
+    font-size: 1.1rem;
+    color: #003366;
+    margin-bottom: 1rem;
+}
+
+.address-result-card {
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    transition: var(--transition);
+}
+
+.address-result-card:hover {
+    border-color: #003366;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.address-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.address-result-title {
+    font-weight: 600;
+    color: #003366;
+    font-size: 0.95rem;
+}
+
+.address-status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.address-details {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.address-line {
+    margin-bottom: 0.25rem;
+}
+
+.district-info-inline {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.district-badge {
+    background: #003366;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.use-address-btn {
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.use-address-btn:hover {
+    background: #218838;
+}
+
+/* Loading state for modal */
+.modal-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.modal-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e0e0e0;
+    border-top-color: #003366;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 1rem;
+}
+
+/* Address marker styles */
+.address-marker-usps {
+    background: none !important;
+    border: none !important;
+}
+
+.address-marker-usps .marker-pin {
+    width: 30px;
+    height: 30px;
+    background: #3b82f6;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.address-marker-usps .marker-pin::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
