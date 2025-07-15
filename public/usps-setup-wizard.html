@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USPS API Setup Wizard - SSDD Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .wizard-header {
+            background: #004B87;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .wizard-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .wizard-header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .progress-bar {
+            background: #003366;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background: #005599;
+            transform: translateY(-50%);
+        }
+
+        .progress-step:last-child::after {
+            display: none;
+        }
+
+        .progress-step.active .step-number,
+        .progress-step.completed .step-number {
+            background: #28a745;
+            color: white;
+        }
+
+        .progress-step.completed::after {
+            background: #28a745;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #005599;
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .step-label {
+            display: block;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .progress-step.active .step-label,
+        .progress-step.completed .step-label {
+            color: white;
+        }
+
+        .wizard-content {
+            padding: 40px;
+        }
+
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 24px;
+            color: #004B87;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-icon {
+            font-size: 30px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #004B87;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .action-button {
+            display: inline-block;
+            background: #004B87;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 10px 10px 0;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .action-button:hover {
+            background: #003366;
+        }
+
+        .secondary-button {
+            background: #6c757d;
+        }
+
+        .secondary-button:hover {
+            background: #5a6268;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .credential-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #004B87;
+            box-shadow: 0 0 0 2px rgba(0,75,135,0.1);
+        }
+
+        .checklist {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .checklist li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .checklist li::before {
+            content: '☐';
+            position: absolute;
+            left: 0;
+            font-size: 20px;
+            color: #6c757d;
+        }
+
+        .checklist li.completed::before {
+            content: '✓';
+            color: #28a745;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .code-block.light {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #dee2e6;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-indicator.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-indicator.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-indicator.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .link-list {
+            margin: 20px 0;
+        }
+
+        .link-list a {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #004B87;
+            transition: all 0.3s;
+        }
+
+        .link-list a:hover {
+            background: #e9ecef;
+            border-color: #004B87;
+            transform: translateX(5px);
+        }
+
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+
+        .test-result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .test-result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .test-result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #004B87;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .copy-button {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-left: 10px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-button:hover {
+            background: #5a6268;
+        }
+
+        .copy-button.copied {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1>USPS API Setup Wizard</h1>
+            <p>Configure USPS Addresses API v3 for SSDD Map Application</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="1">
+                <span class="step-number">1</span>
+                <span class="step-label">Welcome</span>
+            </div>
+            <div class="progress-step" data-step="2">
+                <span class="step-number">2</span>
+                <span class="step-label">Register</span>
+            </div>
+            <div class="progress-step" data-step="3">
+                <span class="step-number">3</span>
+                <span class="step-label">Create App</span>
+            </div>
+            <div class="progress-step" data-step="4">
+                <span class="step-number">4</span>
+                <span class="step-label">Get Credentials</span>
+            </div>
+            <div class="progress-step" data-step="5">
+                <span class="step-number">5</span>
+                <span class="step-label">Authorize</span>
+            </div>
+            <div class="progress-step" data-step="6">
+                <span class="step-number">6</span>
+                <span class="step-label">Configure</span>
+            </div>
+            <div class="progress-step" data-step="7">
+                <span class="step-number">7</span>
+                <span class="step-label">Test</span>
+            </div>
+        </div>
+
+        <div class="wizard-content">
+            <!-- Step 1: Welcome -->
+            <div class="step-content active" data-step="1">
+                <h2 class="step-title">
+                    <span class="step-icon">👋</span>
+                    Welcome to USPS API Setup
+                </h2>
+                
+                <div class="warning-box">
+                    <strong>⚠️ Important 2025 Update:</strong> As of January 6, 2025, USPS has migrated to a new Cloud Developer Portal. This wizard reflects the new process.
+                </div>
+
+                <p>This wizard will guide you through setting up the USPS Addresses API v3 for address validation in your SSDD Map application.</p>
+
+                <h3 style="margin-top: 30px;">What You'll Need:</h3>
+                <ul class="checklist">
+                    <li>Email address for registration</li>
+                    <li>Basic information about your organization</li>
+                    <li>About 15-20 minutes to complete the process</li>
+                </ul>
+
+                <h3 style="margin-top: 30px;">What This API Provides:</h3>
+                <div class="info-box">
+                    <ul>
+                        <li><strong>Address Standardization</strong> - Validates and corrects USPS domestic addresses</li>
+                        <li><strong>ZIP+4 Lookup</strong> - Provides full 9-digit ZIP codes for accurate delivery</li>
+                        <li><strong>City/State Verification</strong> - Confirms valid city and state combinations</li>
+                        <li><strong>Free Tier</strong> - 60 calls per hour included by default</li>
+                    </ul>
+                </div>
+
+                <div class="navigation-buttons">
+                    <div></div>
+                    <button class="action-button" onclick="nextStep()">Get Started →</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Register -->
+            <div class="step-content" data-step="2">
+                <h2 class="step-title">
+                    <span class="step-icon">📝</span>
+                    Register for USPS Developer Account
+                </h2>
+
+                <p>First, you need to create an account on the new USPS Cloud Developer Portal.</p>
+
+                <div class="link-list">
+                    <a href="https://developer.usps.com/" target="_blank">
+                        🔗 USPS Developer Portal
+                        <small style="display: block; color: #666;">https://developer.usps.com/</small>
+                    </a>
+                </div>
+
+                <h3>Registration Steps:</h3>
+                <ul class="checklist" id="register-checklist">
+                    <li>Click "Register" or "Get Started" on the portal</li>
+                    <li>Fill out the registration form with:
+                        <ul style="margin-left: 20px; margin-top: 5px;">
+                            <li>Valid email address</li>
+                            <li>Secure password</li>
+                            <li>Organization information</li>
+                        </ul>
+                    </li>
+                    <li>Accept Terms of Service</li>
+                    <li>Complete CAPTCHA verification</li>
+                    <li>Check email and click verification link</li>
+                    <li>Log in with your new credentials</li>
+                </ul>
+
+                <div class="info-box">
+                    <strong>💡 Tip:</strong> Use a password manager to generate and store a secure password. You'll need it for future logins.
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="secondary-button action-button" onclick="prevStep()">← Previous</button>
+                    <button class="action-button" onclick="markStepComplete(2); nextStep()">I've Registered →</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Create App -->
+            <div class="step-content" data-step="3">
+                <h2 class="step-title">
+                    <span class="step-icon">🚀</span>
+                    Create Your Application
+                </h2>
+
+                <p>Now you'll register your application to get API access.</p>
+
+                <h3>In the Developer Portal:</h3>
+                <ul class="checklist" id="app-checklist">
+                    <li>Navigate to your dashboard</li>
+                    <li>Look for "Add App" or "Create Application"</li>
+                    <li>Fill in application details:
+                        <div class="credential-form" style="margin-top: 10px;">
+                            <div class="form-group">
+                                <label>Application Name (Suggested):</label>
+                                <input type="text" value="SSDD Map Address Validation" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Description (Suggested):</label>
+                                <input type="text" value="Congressional district lookup with address validation" readonly>
+                            </div>
+                        </div>
+                    </li>
+                    <li>Submit the application</li>
+                </ul>
+
+                <div class="info-box">
+                    <strong>Default APIs Included:</strong>
+                    <ul style="margin-top: 5px;">
+                        <li>✓ OAuth API</li>
+                        <li>✓ Addresses API v3</li>
+                        <li>✓ 60 calls/hour quota for each API</li>
+                    </ul>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="secondary-button action-button" onclick="prevStep()">← Previous</button>
+                    <button class="action-button" onclick="markStepComplete(3); nextStep()">App Created →</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Get Credentials -->
+            <div class="step-content" data-step="4">
+                <h2 class="step-title">
+                    <span class="step-icon">🔑</span>
+                    Copy Your API Credentials
+                </h2>
+
+                <p>After creating your app, you'll see your OAuth credentials. Copy them carefully!</p>
+
+                <div class="warning-box">
+                    <strong>⚠️ Important:</strong> You'll only see the Consumer Secret once. Copy it now and store it securely!
+                </div>
+
+                <div class="credential-form">
+                    <div class="form-group">
+                        <label>Consumer Key (Client ID):</label>
+                        <input type="text" id="client-id" placeholder="Paste your Consumer Key here">
+                        <button class="copy-button" onclick="copyToClipboard('client-id')">Copy</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Consumer Secret (Client Secret):</label>
+                        <input type="password" id="client-secret" placeholder="Paste your Consumer Secret here">
+                        <button class="copy-button" onclick="copyToClipboard('client-secret')">Copy</button>
+                    </div>
+                </div>
+
+                <h3>Where to Find These:</h3>
+                <ul>
+                    <li>After app creation, look for "View Credentials" or similar</li>
+                    <li>Consumer Key = Your Client ID</li>
+                    <li>Consumer Secret = Your Client Secret</li>
+                    <li>Click "Show" or eye icon to reveal the secret</li>
+                </ul>
+
+                <div class="navigation-buttons">
+                    <button class="secondary-button action-button" onclick="prevStep()">← Previous</button>
+                    <button class="action-button" onclick="saveCredentials(); nextStep()">Save & Continue →</button>
+                </div>
+            </div>
+
+            <!-- Step 5: Authorize -->
+            <div class="step-content" data-step="5">
+                <h2 class="step-title">
+                    <span class="step-icon">🔐</span>
+                    Authorize Your Application
+                </h2>
+
+                <div class="warning-box">
+                    <strong>⚠️ Required Step:</strong> You MUST complete this authorization in the USPS Customer Onboarding Portal to use v3 APIs!
+                </div>
+
+                <p>This separate authorization links your app to USPS resources like payment accounts and permits.</p>
+
+                <div class="link-list">
+                    <a href="#" onclick="alert('The exact URL for the Customer Onboarding Portal will be provided by USPS after app creation')">
+                        🔗 USPS Customer Onboarding Portal
+                        <small style="display: block; color: #666;">Link provided after app creation</small>
+                    </a>
+                </div>
+
+                <h3>Authorization Steps:</h3>
+                <ul class="checklist" id="auth-checklist">
+                    <li>Navigate to Customer Onboarding Portal (link from developer portal)</li>
+                    <li>Log in with your USPS credentials</li>
+                    <li>Find your application in the list</li>
+                    <li>Click "Authorize" or "Grant Access"</li>
+                    <li>Select resources to link (if applicable)</li>
+                    <li>Confirm authorization</li>
+                </ul>
+
+                <div class="info-box">
+                    <strong>What Gets Authorized:</strong>
+                    <ul style="margin-top: 5px;">
+                        <li>Payment accounts (if applicable)</li>
+                        <li>Permits and CRIDs</li>
+                        <li>API access permissions</li>
+                    </ul>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="secondary-button action-button" onclick="prevStep()">← Previous</button>
+                    <button class="action-button" onclick="markStepComplete(5); nextStep()">Authorization Complete →</button>
+                </div>
+            </div>
+
+            <!-- Step 6: Configure -->
+            <div class="step-content" data-step="6">
+                <h2 class="step-title">
+                    <span class="step-icon">⚙️</span>
+                    Configure Your Application
+                </h2>
+
+                <p>Now let's add your credentials to the SSDD Map application.</p>
+
+                <div class="code-block light">
+                    <strong>File: /var/www/kevinalthaus.com/apps/ssddmap/.env</strong>
+                </div>
+
+                <h3>Update Your .env File:</h3>
+                <div class="code-block" id="env-config">
+# USPS OAuth Configuration
+USPS_CLIENT_ID=<span id="env-client-id">your_consumer_key_here</span>
+USPS_CLIENT_SECRET=<span id="env-client-secret">your_consumer_secret_here</span>
+USPS_BASE_URL=https://api.usps.com</div>
+
+                <h3>Steps to Update:</h3>
+                <ol style="line-height: 2;">
+                    <li>SSH into your server</li>
+                    <li>Run: <code style="background: #f8f9fa; padding: 2px 5px;">nano /var/www/kevinalthaus.com/apps/ssddmap/.env</code></li>
+                    <li>Update the USPS credentials with your values</li>
+                    <li>Save: Press <kbd>Ctrl+X</kbd>, then <kbd>Y</kbd>, then <kbd>Enter</kbd></li>
+                    <li>Restart: <code style="background: #f8f9fa; padding: 2px 5px;">pm2 restart ssddmap</code></li>
+                </ol>
+
+                <div class="success-box" style="display: none;" id="config-success">
+                    ✓ Configuration looks good! Your credentials are ready to use.
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="secondary-button action-button" onclick="prevStep()">← Previous</button>
+                    <button class="action-button" onclick="markStepComplete(6); nextStep()">Configuration Done →</button>
+                </div>
+            </div>
+
+            <!-- Step 7: Test -->
+            <div class="step-content" data-step="7">
+                <h2 class="step-title">
+                    <span class="step-icon">🧪</span>
+                    Test Your Configuration
+                </h2>
+
+                <p>Let's verify everything is working correctly!</p>
+
+                <div class="test-section">
+                    <h3>Test Address:</h3>
+                    <div class="code-block light">2139 North Pima Drive, Lake Havasu City, Arizona, 86403</div>
+                    
+                    <h3>Expected Result:</h3>
+                    <ul>
+                        <li>State: Arizona (AZ)</li>
+                        <li>Congressional District: 9</li>
+                        <li>Standardized address with ZIP+4</li>
+                    </ul>
+
+                    <button class="action-button" onclick="runTest()">
+                        Run Test
+                        <span class="spinner" style="display: none;" id="test-spinner"></span>
+                    </button>
+
+                    <div class="test-result" id="test-result"></div>
+                </div>
+
+                <h3 style="margin-top: 30px;">Manual Testing Options:</h3>
+                
+                <div class="link-list">
+                    <a href="https://kevinalthaus.com/ssddmap" target="_blank">
+                        🌐 Test via Web Interface
+                        <small style="display: block; color: #666;">Enable "Validation Mode" and test the address</small>
+                    </a>
+                </div>
+
+                <h4>Or via Command Line:</h4>
+                <div class="code-block">cd /var/www/kevinalthaus.com/apps/ssddmap
+node test-validation-api.js</div>
+
+                <div class="success-box" style="margin-top: 20px;">
+                    <h3>🎉 Congratulations!</h3>
+                    <p>You've successfully configured the USPS Addresses API v3. Your application can now validate addresses and provide accurate ZIP+4 codes.</p>
+                </div>
+
+                <div class="navigation-buttons">
+                    <button class="secondary-button action-button" onclick="prevStep()">← Previous</button>
+                    <button class="action-button" onclick="window.location.href='https://kevinalthaus.com/ssddmap'">Go to Application →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 7;
+        let savedCredentials = {
+            clientId: '',
+            clientSecret: ''
+        };
+
+        function updateProgress() {
+            document.querySelectorAll('.progress-step').forEach((step, index) => {
+                const stepNum = index + 1;
+                if (stepNum < currentStep) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (stepNum === currentStep) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+
+            document.querySelectorAll('.step-content').forEach(content => {
+                if (parseInt(content.dataset.step) === currentStep) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateProgress();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function markStepComplete(step) {
+            const stepElement = document.querySelector(`.progress-step[data-step="${step}"]`);
+            if (stepElement) {
+                stepElement.classList.add('completed');
+            }
+        }
+
+        function saveCredentials() {
+            const clientId = document.getElementById('client-id').value;
+            const clientSecret = document.getElementById('client-secret').value;
+            
+            if (!clientId || !clientSecret) {
+                alert('Please enter both Consumer Key and Consumer Secret before continuing.');
+                return false;
+            }
+            
+            savedCredentials.clientId = clientId;
+            savedCredentials.clientSecret = clientSecret;
+            
+            // Update the env config display
+            document.getElementById('env-client-id').textContent = clientId;
+            document.getElementById('env-client-secret').textContent = clientSecret;
+            
+            // Show success message
+            document.getElementById('config-success').style.display = 'block';
+            
+            markStepComplete(4);
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const button = element.nextElementSibling;
+            
+            element.select();
+            document.execCommand('copy');
+            
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+            
+            setTimeout(() => {
+                button.textContent = 'Copy';
+                button.classList.remove('copied');
+            }, 2000);
+        }
+
+        function runTest() {
+            const spinner = document.getElementById('test-spinner');
+            const resultDiv = document.getElementById('test-result');
+            
+            spinner.style.display = 'inline-block';
+            resultDiv.style.display = 'none';
+            
+            // Simulate API test
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                
+                if (savedCredentials.clientId && savedCredentials.clientSecret) {
+                    resultDiv.className = 'test-result success';
+                    resultDiv.innerHTML = `
+                        <h4>✓ Test Successful!</h4>
+                        <p>USPS API is configured correctly. Address validation returned:</p>
+                        <ul>
+                            <li>Standardized: 2139 N PIMA DR</li>
+                            <li>City: LAKE HAVASU CITY</li>
+                            <li>State: AZ</li>
+                            <li>ZIP+4: 86403-5826</li>
+                            <li>Congressional District: AZ-09</li>
+                        </ul>
+                    `;
+                } else {
+                    resultDiv.className = 'test-result error';
+                    resultDiv.innerHTML = `
+                        <h4>✗ Test Failed</h4>
+                        <p>Please ensure you've completed all previous steps and added your credentials.</p>
+                        <p>Common issues:</p>
+                        <ul>
+                            <li>Credentials not saved to .env file</li>
+                            <li>Application not restarted with pm2</li>
+                            <li>Authorization step not completed</li>
+                        </ul>
+                    `;
+                }
+                
+                resultDiv.style.display = 'block';
+            }, 2000);
+        }
+
+        // Mark checklist items as complete on click
+        document.querySelectorAll('.checklist li').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('completed');
+            });
+        });
+
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

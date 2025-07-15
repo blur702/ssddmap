@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Configuration Wizard - SSDD Map</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .wizard-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .wizard-header {
+            background: #004B87;
+            color: white;
+            padding: 30px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .wizard-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .wizard-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom-color: #004B87;
+            color: #004B87;
+        }
+
+        .tab.completed {
+            color: #28a745;
+        }
+
+        .tab-icon {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .wizard-content {
+            padding: 40px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .api-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        .api-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .api-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .api-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-badge.configured {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.not-configured {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-badge.testing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.15s ease-in-out;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #004B87;
+            box-shadow: 0 0 0 3px rgba(0,75,135,0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #6c757d;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #004B87;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #003366;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-link {
+            background: none;
+            color: #004B87;
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .alert-info {
+            background: #cfe2ff;
+            border: 1px solid #b6d4fe;
+            color: #084298;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            color: #664d03;
+        }
+
+        .alert-success {
+            background: #d1e7dd;
+            border: 1px solid #badbcc;
+            color: #0f5132;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border: 1px solid #f5c2c7;
+            color: #842029;
+        }
+
+        .test-results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .test-results.show {
+            display: block;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #004B87;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .step-list {
+            list-style: none;
+            counter-reset: step-counter;
+            margin: 20px 0;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 40px;
+            margin-bottom: 15px;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: #004B87;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .step-list li.completed::before {
+            background: #28a745;
+            content: "✓";
+        }
+
+        .external-link {
+            color: #004B87;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .external-link:hover {
+            text-decoration: underline;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .config-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .status-card {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .status-card.active {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+
+        .status-card h4 {
+            margin-bottom: 5px;
+            color: #495057;
+        }
+
+        .status-card .status {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wizard-container">
+        <div class="wizard-header">
+            <h1>API Configuration Wizard</h1>
+            <p>Set up address validation services for SSDD Map</p>
+        </div>
+
+        <div class="wizard-tabs">
+            <div class="tab active" data-tab="overview">
+                <span class="tab-icon">📋</span>
+                Overview
+            </div>
+            <div class="tab" data-tab="usps">
+                <span class="tab-icon">📮</span>
+                USPS API
+            </div>
+            <div class="tab" data-tab="google">
+                <span class="tab-icon">🗺️</span>
+                Google Maps
+            </div>
+            <div class="tab" data-tab="test">
+                <span class="tab-icon">🧪</span>
+                Test Config
+            </div>
+        </div>
+
+        <div class="wizard-content">
+            <!-- Overview Tab -->
+            <div class="tab-content active" data-tab="overview">
+                <h2>Address Validation Services</h2>
+                <p>Configure one or more address validation services to enable accurate district lookups.</p>
+
+                <div class="config-status">
+                    <div class="status-card" id="census-status">
+                        <h4>Census Geocoder</h4>
+                        <div class="status">✅</div>
+                        <p>Free & Active</p>
+                    </div>
+                    <div class="status-card" id="usps-status-card">
+                        <h4>USPS API</h4>
+                        <div class="status">❌</div>
+                        <p>Not Configured</p>
+                    </div>
+                    <div class="status-card" id="google-status-card">
+                        <h4>Google Maps</h4>
+                        <div class="status">❌</div>
+                        <p>Not Configured</p>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <span>ℹ️</span>
+                    <div>
+                        <strong>Census Geocoder</strong> is already active and requires no configuration. 
+                        For better accuracy and ZIP+4 support, configure USPS API. 
+                        For global coverage, add Google Maps.
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px;">Service Comparison</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Service</th>
+                            <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Cost</th>
+                            <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Features</th>
+                            <th style="padding: 10px; text-align: left; border: 1px solid #dee2e6;">Best For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>Census</strong></td>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;">Free</td>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;">Basic geocoding</td>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;">Simple lookups</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>USPS</strong></td>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;">Free (60/hr)</td>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;">ZIP+4, Address standardization</td>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;">Accurate US addresses</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>Google</strong></td>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;">Pay per use</td>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;">Global coverage, High accuracy</td>
+                            <td style="padding: 10px; border: 1px solid #dee2e6;">International/Complex</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="button-group" style="margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="switchTab('usps')">
+                        Configure USPS API →
+                    </button>
+                    <button class="btn btn-secondary" onclick="switchTab('google')">
+                        Configure Google Maps →
+                    </button>
+                </div>
+            </div>
+
+            <!-- USPS Tab -->
+            <div class="tab-content" data-tab="usps">
+                <div class="api-section">
+                    <div class="api-header">
+                        <div class="api-title">
+                            <span style="font-size: 40px;">📮</span>
+                            <span>USPS Addresses API v3</span>
+                        </div>
+                        <span class="status-badge not-configured" id="usps-status">Not Configured</span>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <span>⚠️</span>
+                        <div>
+                            <strong>2025 Update:</strong> USPS now uses OAuth 2.0 authentication through their new Cloud Developer Portal.
+                        </div>
+                    </div>
+
+                    <h3>Quick Setup Steps</h3>
+                    <ol class="step-list" id="usps-steps">
+                        <li>
+                            Register at USPS Developer Portal
+                            <a href="https://developer.usps.com/" target="_blank" class="external-link">
+                                Open Portal ↗
+                            </a>
+                        </li>
+                        <li>Create an application to get Consumer Key & Secret</li>
+                        <li>Complete authorization in Customer Onboarding Portal</li>
+                        <li>Enter your credentials below</li>
+                    </ol>
+
+                    <form id="usps-form">
+                        <div class="form-group">
+                            <label for="usps-client-id">Consumer Key (Client ID)</label>
+                            <input type="text" id="usps-client-id" name="clientId" placeholder="Enter your USPS Consumer Key">
+                            <small>Found in your USPS developer dashboard after creating an app</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="usps-client-secret">Consumer Secret (Client Secret)</label>
+                            <input type="password" id="usps-client-secret" name="clientSecret" placeholder="Enter your USPS Consumer Secret">
+                            <small>Keep this secret! You'll only see it once when creating your app</small>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn btn-primary" onclick="saveUSPSConfig()">
+                                <span id="usps-save-text">Save Configuration</span>
+                                <span class="spinner" id="usps-spinner" style="display: none;"></span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="testUSPSConfig()">
+                                Test Connection
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="test-results" id="usps-test-results"></div>
+
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+                        <h4>Need Help?</h4>
+                        <ul>
+                            <li><a href="/ssddmap/USPS_API_REGISTRATION_GUIDE.md" target="_blank" class="external-link">
+                                Detailed Setup Guide ↗
+                            </a></li>
+                            <li><a href="https://developer.usps.com/getting-started" target="_blank" class="external-link">
+                                USPS Getting Started ↗
+                            </a></li>
+                            <li><a href="mailto:APISupport@usps.gov" class="external-link">
+                                Contact USPS Support ↗
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Maps Tab -->
+            <div class="tab-content" data-tab="google">
+                <div class="api-section">
+                    <div class="api-header">
+                        <div class="api-title">
+                            <span style="font-size: 40px;">🗺️</span>
+                            <span>Google Maps Geocoding API</span>
+                        </div>
+                        <span class="status-badge not-configured" id="google-status">Not Configured</span>
+                    </div>
+
+                    <h3>Quick Setup Steps</h3>
+                    <ol class="step-list" id="google-steps">
+                        <li>
+                            Go to Google Cloud Console
+                            <a href="https://console.cloud.google.com/" target="_blank" class="external-link">
+                                Open Console ↗
+                            </a>
+                        </li>
+                        <li>Create a project or select existing one</li>
+                        <li>Enable "Geocoding API"</li>
+                        <li>Create credentials (API Key)</li>
+                        <li>Enter your API key below</li>
+                    </ol>
+
+                    <form id="google-form">
+                        <div class="form-group">
+                            <label for="google-api-key">Google Maps API Key</label>
+                            <input type="text" id="google-api-key" name="apiKey" placeholder="Enter your Google Maps API Key">
+                            <small>Found in Credentials section of Google Cloud Console</small>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="button" class="btn btn-primary" onclick="saveGoogleConfig()">
+                                <span id="google-save-text">Save Configuration</span>
+                                <span class="spinner" id="google-spinner" style="display: none;"></span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="testGoogleConfig()">
+                                Test Connection
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="test-results" id="google-test-results"></div>
+
+                    <div class="alert alert-info" style="margin-top: 20px;">
+                        <span>💡</span>
+                        <div>
+                            <strong>Billing Required:</strong> Google requires a billing account even for the free tier ($200/month credit).
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Tab -->
+            <div class="tab-content" data-tab="test">
+                <h2>Test Your Configuration</h2>
+                
+                <div class="alert alert-info">
+                    <span>🏠</span>
+                    <div>
+                        Test address: <strong>2139 North Pima Drive, Lake Havasu City, Arizona, 86403</strong><br>
+                        Expected result: Congressional District AZ-09
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3>Available Services</h3>
+                    <div id="test-service-status" style="margin: 20px 0;">
+                        <!-- Status will be populated by JavaScript -->
+                    </div>
+
+                    <button class="btn btn-primary" onclick="runComprehensiveTest()">
+                        <span id="test-button-text">Run Validation Test</span>
+                        <span class="spinner" id="test-spinner" style="display: none;"></span>
+                    </button>
+
+                    <div class="test-results" id="comprehensive-test-results" style="margin-top: 20px;"></div>
+                </div>
+
+                <div class="success-message" id="success-message">
+                    <div class="success-icon">✅</div>
+                    <h2>Configuration Complete!</h2>
+                    <p>Your address validation services are ready to use.</p>
+                    <div class="button-group" style="justify-content: center; margin-top: 30px;">
+                        <a href="/ssddmap" class="btn btn-success">
+                            Go to Application →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.tab === tabName) {
+                    tab.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.dataset.tab === tabName) {
+                    content.classList.add('active');
+                }
+            });
+
+            // Update test status when switching to test tab
+            if (tabName === 'test') {
+                updateTestStatus();
+            }
+        }
+
+        // Tab click handlers
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+        });
+
+        // Load current configuration
+        async function loadCurrentConfig() {
+            try {
+                const response = await fetch('/ssddmap/api/config/status');
+                const data = await response.json();
+                
+                // Update USPS status
+                if (data.usps && data.usps.configured) {
+                    document.getElementById('usps-status').textContent = 'Configured';
+                    document.getElementById('usps-status').className = 'status-badge configured';
+                    document.getElementById('usps-status-card').classList.add('active');
+                    document.getElementById('usps-status-card').querySelector('.status').textContent = '✅';
+                    document.getElementById('usps-status-card').querySelector('p').textContent = 'Configured';
+                    document.querySelector('.tab[data-tab="usps"]').classList.add('completed');
+                }
+                
+                // Update Google status
+                if (data.google && data.google.configured) {
+                    document.getElementById('google-status').textContent = 'Configured';
+                    document.getElementById('google-status').className = 'status-badge configured';
+                    document.getElementById('google-status-card').classList.add('active');
+                    document.getElementById('google-status-card').querySelector('.status').textContent = '✅';
+                    document.getElementById('google-status-card').querySelector('p').textContent = 'Configured';
+                    document.querySelector('.tab[data-tab="google"]').classList.add('completed');
+                }
+            } catch (error) {
+                console.error('Error loading config:', error);
+            }
+        }
+
+        // Save USPS configuration
+        async function saveUSPSConfig() {
+            const clientId = document.getElementById('usps-client-id').value;
+            const clientSecret = document.getElementById('usps-client-secret').value;
+            
+            if (!clientId || !clientSecret) {
+                alert('Please enter both Consumer Key and Consumer Secret');
+                return;
+            }
+            
+            const spinner = document.getElementById('usps-spinner');
+            const saveText = document.getElementById('usps-save-text');
+            spinner.style.display = 'inline-block';
+            saveText.textContent = 'Saving...';
+            
+            try {
+                const response = await fetch('/ssddmap/api/config/usps', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        clientId: clientId,
+                        clientSecret: clientSecret
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('usps-test-results').className = 'test-results show';
+                    document.getElementById('usps-test-results').innerHTML = `
+                        <div class="alert alert-success">
+                            <span>✅</span>
+                            <div>Configuration saved successfully! Application restarted.</div>
+                        </div>
+                    `;
+                    
+                    // Update status
+                    document.getElementById('usps-status').textContent = 'Configured';
+                    document.getElementById('usps-status').className = 'status-badge configured';
+                    
+                    // Mark step as complete
+                    document.querySelector('.tab[data-tab="usps"]').classList.add('completed');
+                    
+                    // Update overview
+                    loadCurrentConfig();
+                } else {
+                    throw new Error(result.error || 'Failed to save configuration');
+                }
+            } catch (error) {
+                document.getElementById('usps-test-results').className = 'test-results show';
+                document.getElementById('usps-test-results').innerHTML = `
+                    <div class="alert alert-danger">
+                        <span>❌</span>
+                        <div>Error: ${error.message}</div>
+                    </div>
+                `;
+            } finally {
+                spinner.style.display = 'none';
+                saveText.textContent = 'Save Configuration';
+            }
+        }
+
+        // Test USPS configuration
+        async function testUSPSConfig() {
+            const clientId = document.getElementById('usps-client-id').value;
+            const clientSecret = document.getElementById('usps-client-secret').value;
+            
+            if (!clientId || !clientSecret) {
+                alert('Please enter credentials first');
+                return;
+            }
+            
+            document.getElementById('usps-test-results').className = 'test-results show';
+            document.getElementById('usps-test-results').innerHTML = `
+                <div class="alert alert-info">
+                    <span class="spinner"></span>
+                    <div>Testing connection...</div>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('/ssddmap/api/test/usps', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        clientId: clientId,
+                        clientSecret: clientSecret
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('usps-test-results').innerHTML = `
+                        <div class="alert alert-success">
+                            <span>✅</span>
+                            <div>
+                                <strong>Connection successful!</strong><br>
+                                Token obtained and API is ready to use.
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(result.error || 'Connection failed');
+                }
+            } catch (error) {
+                document.getElementById('usps-test-results').innerHTML = `
+                    <div class="alert alert-danger">
+                        <span>❌</span>
+                        <div>
+                            <strong>Connection failed:</strong><br>
+                            ${error.message}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Save Google configuration
+        async function saveGoogleConfig() {
+            const apiKey = document.getElementById('google-api-key').value;
+            
+            if (!apiKey) {
+                alert('Please enter your Google Maps API Key');
+                return;
+            }
+            
+            const spinner = document.getElementById('google-spinner');
+            const saveText = document.getElementById('google-save-text');
+            spinner.style.display = 'inline-block';
+            saveText.textContent = 'Saving...';
+            
+            try {
+                const response = await fetch('/ssddmap/api/config/google', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        apiKey: apiKey
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('google-test-results').className = 'test-results show';
+                    document.getElementById('google-test-results').innerHTML = `
+                        <div class="alert alert-success">
+                            <span>✅</span>
+                            <div>Configuration saved successfully! Application restarted.</div>
+                        </div>
+                    `;
+                    
+                    // Update status
+                    document.getElementById('google-status').textContent = 'Configured';
+                    document.getElementById('google-status').className = 'status-badge configured';
+                    
+                    // Mark step as complete
+                    document.querySelector('.tab[data-tab="google"]').classList.add('completed');
+                    
+                    // Update overview
+                    loadCurrentConfig();
+                } else {
+                    throw new Error(result.error || 'Failed to save configuration');
+                }
+            } catch (error) {
+                document.getElementById('google-test-results').className = 'test-results show';
+                document.getElementById('google-test-results').innerHTML = `
+                    <div class="alert alert-danger">
+                        <span>❌</span>
+                        <div>Error: ${error.message}</div>
+                    </div>
+                `;
+            } finally {
+                spinner.style.display = 'none';
+                saveText.textContent = 'Save Configuration';
+            }
+        }
+
+        // Test Google configuration
+        async function testGoogleConfig() {
+            const apiKey = document.getElementById('google-api-key').value;
+            
+            if (!apiKey) {
+                alert('Please enter API key first');
+                return;
+            }
+            
+            document.getElementById('google-test-results').className = 'test-results show';
+            document.getElementById('google-test-results').innerHTML = `
+                <div class="alert alert-info">
+                    <span class="spinner"></span>
+                    <div>Testing connection...</div>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('/ssddmap/api/test/google', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        apiKey: apiKey
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('google-test-results').innerHTML = `
+                        <div class="alert alert-success">
+                            <span>✅</span>
+                            <div>
+                                <strong>Connection successful!</strong><br>
+                                Google Maps API is ready to use.
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(result.error || 'Connection failed');
+                }
+            } catch (error) {
+                document.getElementById('google-test-results').innerHTML = `
+                    <div class="alert alert-danger">
+                        <span>❌</span>
+                        <div>
+                            <strong>Connection failed:</strong><br>
+                            ${error.message}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Update test tab status
+        async function updateTestStatus() {
+            try {
+                const response = await fetch('/ssddmap/api/config/status');
+                const data = await response.json();
+                
+                let statusHTML = '<div class="config-status">';
+                
+                // Census
+                statusHTML += `
+                    <div class="status-card active">
+                        <h4>Census Geocoder</h4>
+                        <div class="status">✅</div>
+                        <p>Active</p>
+                    </div>
+                `;
+                
+                // USPS
+                statusHTML += `
+                    <div class="status-card ${data.usps?.configured ? 'active' : ''}">
+                        <h4>USPS API</h4>
+                        <div class="status">${data.usps?.configured ? '✅' : '❌'}</div>
+                        <p>${data.usps?.configured ? 'Configured' : 'Not Configured'}</p>
+                    </div>
+                `;
+                
+                // Google
+                statusHTML += `
+                    <div class="status-card ${data.google?.configured ? 'active' : ''}">
+                        <h4>Google Maps</h4>
+                        <div class="status">${data.google?.configured ? '✅' : '❌'}</div>
+                        <p>${data.google?.configured ? 'Configured' : 'Not Configured'}</p>
+                    </div>
+                `;
+                
+                statusHTML += '</div>';
+                
+                document.getElementById('test-service-status').innerHTML = statusHTML;
+            } catch (error) {
+                console.error('Error updating test status:', error);
+            }
+        }
+
+        // Run comprehensive test
+        async function runComprehensiveTest() {
+            const spinner = document.getElementById('test-spinner');
+            const buttonText = document.getElementById('test-button-text');
+            const resultsDiv = document.getElementById('comprehensive-test-results');
+            
+            spinner.style.display = 'inline-block';
+            buttonText.textContent = 'Testing...';
+            resultsDiv.className = 'test-results show';
+            resultsDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <span class="spinner"></span>
+                    <div>Running validation test with all configured services...</div>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('/ssddmap/api/validate-address', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        address: '2139 North Pima Drive, Lake Havasu City, Arizona, 86403'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                let resultsHTML = '<h3>Test Results</h3>';
+                
+                // Census results
+                if (result.methods?.census) {
+                    resultsHTML += '<div class="alert alert-' + (result.methods.census.success ? 'success' : 'danger') + '">';
+                    resultsHTML += '<strong>Census Geocoder:</strong><br>';
+                    if (result.methods.census.success) {
+                        resultsHTML += `✅ Success - District: ${result.methods.census.district?.state}-${result.methods.census.district?.district}`;
+                    } else {
+                        resultsHTML += `❌ Failed: ${result.methods.census.error}`;
+                    }
+                    resultsHTML += '</div>';
+                }
+                
+                // USPS results
+                if (result.methods?.usps) {
+                    resultsHTML += '<div class="alert alert-' + (result.methods.usps.success ? 'success' : 'danger') + '">';
+                    resultsHTML += '<strong>USPS API:</strong><br>';
+                    if (result.methods.usps.success) {
+                        resultsHTML += `✅ Success - ZIP+4: ${result.methods.usps.standardized?.zipCode}-${result.methods.usps.standardized?.zipPlus4}`;
+                        if (result.methods.usps.district) {
+                            resultsHTML += ` - District: ${result.methods.usps.district.state}-${result.methods.usps.district.district}`;
+                        }
+                    } else {
+                        resultsHTML += `❌ Failed: ${result.methods.usps.error}`;
+                    }
+                    resultsHTML += '</div>';
+                }
+                
+                // Google results
+                if (result.methods?.google) {
+                    resultsHTML += '<div class="alert alert-' + (result.methods.google.success ? 'success' : 'danger') + '">';
+                    resultsHTML += '<strong>Google Maps:</strong><br>';
+                    if (result.methods.google.success) {
+                        resultsHTML += `✅ Success - District: ${result.methods.google.district?.state}-${result.methods.google.district?.district}`;
+                    } else {
+                        resultsHTML += `❌ Failed: ${result.methods.google.error}`;
+                    }
+                    resultsHTML += '</div>';
+                }
+                
+                // Analysis
+                if (result.analysis) {
+                    resultsHTML += '<h4>Analysis</h4>';
+                    resultsHTML += '<div class="alert alert-info">';
+                    resultsHTML += `<strong>Consistency:</strong> ${result.analysis.consistency}<br>`;
+                    if (result.analysis.issues?.length > 0) {
+                        resultsHTML += `<strong>Issues:</strong><br>`;
+                        result.analysis.issues.forEach(issue => {
+                            resultsHTML += `- ${issue}<br>`;
+                        });
+                    }
+                    if (result.analysis.recommendations?.length > 0) {
+                        resultsHTML += `<strong>Recommendations:</strong><br>`;
+                        result.analysis.recommendations.forEach(rec => {
+                            resultsHTML += `- ${rec}<br>`;
+                        });
+                    }
+                    resultsHTML += '</div>';
+                }
+                
+                resultsDiv.innerHTML = resultsHTML;
+                
+                // Show success message if at least one service succeeded
+                const hasSuccess = Object.values(result.methods || {}).some(m => m.success);
+                if (hasSuccess) {
+                    setTimeout(() => {
+                        document.getElementById('success-message').classList.add('show');
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <span>❌</span>
+                        <div>
+                            <strong>Test failed:</strong><br>
+                            ${error.message}
+                        </div>
+                    </div>
+                `;
+            } finally {
+                spinner.style.display = 'none';
+                buttonText.textContent = 'Run Validation Test';
+            }
+        }
+
+        // Load configuration on page load
+        document.addEventListener('DOMContentLoaded', loadCurrentConfig);
+    </script>
+</body>
+</html>
