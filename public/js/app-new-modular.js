@@ -195,15 +195,6 @@ class ModularCongressionalDistrictsApp {
             }
         });
         
-        // District info module event handlers
-        this.eventBus.on('centerOnDistrict', async (data) => {
-            // Re-select the district to highlight it
-            await this.selectDistrict(data.state, data.district);
-            
-            // Zoom to the district
-            const districtKey = `${data.state}-${data.district}`;
-            this.core.zoomToDistrict(districtKey);
-        });
         
         // Legacy UI events
         this.ui.on('onMapStyleChange', (style) => {

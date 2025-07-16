@@ -127,10 +127,8 @@ export class DistrictInfoModule {
       content += this.generateBoundaryDistanceSection(distanceInfo);
     }
 
-    // 4. District Actions Section (Priority #4)
-    content += this.generateDistrictActionsSection(state, district, rep);
 
-    // Setup event listeners for action buttons
+    // Setup event listeners for copy buttons
     this.setupActionListeners();
 
     return content;
@@ -162,10 +160,8 @@ export class DistrictInfoModule {
       content += this.generateBoundaryDistanceSection(distanceInfo);
     }
 
-    // 4. District Actions Section (Priority #4)
-    content += this.generateDistrictActionsSection(state, district, null);
 
-    // Setup event listeners for action buttons
+    // Setup event listeners for copy buttons
     this.setupActionListeners();
 
     return content;
@@ -285,77 +281,23 @@ export class DistrictInfoModule {
     `;
   }
 
-  /**
-     * Generate district actions section - matching AddressSearchModule format
-     */
-  generateDistrictActionsSection (state, district, representative) {
-    return `
-      <div class="actions-section">
-        <div class="info-card">
-          <h4>🎯 District Actions</h4>
-          <div class="action-buttons">
-            <button class="action-btn primary" data-action="search-district" data-state="${state}" data-district="${district}">
-              🔍 Search This District
-            </button>
-            <button class="action-btn secondary" data-action="view-on-map" data-state="${state}" data-district="${district}">
-              🗺️ Center on District
-            </button>
-            ${representative
-    ? `
-              <button class="action-btn secondary" data-action="contact-rep" data-bioguide="${representative.bioguideId || ''}">
-                📞 Contact Representative
-              </button>
-            `
-    : ''}
-            <button class="action-btn secondary" data-action="new-search">
-              🆕 New Address Search
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-  }
 
   /**
-     * Setup event listeners for action buttons - matching AddressSearchModule format
+     * Setup event listeners for copy buttons
      */
   setupActionListeners () {
     // Remove existing listeners to prevent duplicates
-    if (this.boundActionHandler) {
-      document.removeEventListener('click', this.boundActionHandler);
-    }
     if (this.boundCopyHandler) {
       document.removeEventListener('click', this.boundCopyHandler);
     }
 
-    // Bind the handlers to preserve 'this' context
-    this.boundActionHandler = this.handleActionClick.bind(this);
+    // Bind the handler to preserve 'this' context
     this.boundCopyHandler = this.handleCopyClick.bind(this);
 
-    // Add event listeners
-    document.addEventListener('click', this.boundActionHandler);
+    // Add event listener for copy functionality
     document.addEventListener('click', this.boundCopyHandler);
   }
 
-  /**
-   * Handle action button clicks
-   */
-  handleActionClick (event) {
-    if (event.target.matches('[data-action]') || event.target.closest('[data-action]')) {
-      const button = event.target.matches('[data-action]') ? event.target : event.target.closest('[data-action]');
-      
-      // Only handle buttons in the sidebar content
-      const sidebar = document.querySelector('.sidebar-content');
-      if (!sidebar || !sidebar.contains(button)) return;
-      
-      // Prevent default action and stop propagation
-      event.preventDefault();
-      event.stopPropagation();
-      
-      const action = button.dataset.action;
-      this.handleAction(action, button);
-    }
-  }
 
   /**
    * Handle copy button clicks
@@ -368,80 +310,10 @@ export class DistrictInfoModule {
     }
   }
 
-  /**
-     * Handle action button clicks - matching AddressSearchModule format
-     */
-  handleAction (action, button) {
-    const state = button.dataset.state;
-    const district = button.dataset.district;
-    const bioguide = button.dataset.bioguide;
 
-    switch (action) {
-    case 'search-district':
-      this.searchDistrict(state, district);
-      break;
-    case 'view-on-map':
-      this.centerOnDistrict(state, district);
-      break;
-    case 'contact-rep':
-      this.contactRepresentative(bioguide);
-      break;
-    case 'new-search':
-      this.startNewSearch();
-      break;
-    default:
-      console.warn('Unknown action:', action);
-    }
-  }
 
-  /**
-     * Search for addresses in this district
-     */
-  searchDistrict (state, district) {
-    // Emit event to trigger district search
-    if (window.eventBus) {
-      window.eventBus.emit('searchDistrict', { state, district });
-    }
-    console.log(`Searching district ${state}-${district}`);
-  }
 
-  /**
-     * Center map on district
-     */
-  centerOnDistrict (state, district) {
-    // Emit event to center map on district
-    if (window.eventBus) {
-      window.eventBus.emit('centerOnDistrict', { state, district });
-    }
-    console.log(`Centering on district ${state}-${district}`);
-  }
 
-  /**
-     * Open contact information for representative
-     */
-  contactRepresentative (bioguide) {
-    if (bioguide) {
-      const url = `https://www.congress.gov/member/${bioguide}`;
-      window.open(url, '_blank');
-    }
-  }
-
-  /**
-     * Start a new address search
-     */
-  startNewSearch () {
-    // Emit event to focus on address input
-    if (window.eventBus) {
-      window.eventBus.emit('startNewSearch');
-    }
-
-    // Focus on address input
-    const addressInput = document.getElementById('addressInput');
-    if (addressInput) {
-      addressInput.focus();
-      addressInput.select();
-    }
-  }
 
   /**
      * Copy text to clipboard
