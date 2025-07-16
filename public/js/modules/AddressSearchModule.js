@@ -171,12 +171,14 @@ export class AddressSearchModule {
      */
   setupActionListeners () {
     // Remove existing listeners to prevent duplicates
-    document.removeEventListener('click', this.boundActionHandler);
+    if (this.boundActionHandler) {
+      document.removeEventListener('click', this.boundActionHandler);
+    }
 
     // Bind the handler to preserve 'this' context
     this.boundActionHandler = this.handleActionClick.bind(this);
 
-    // Add event listener for action buttons
+    // Add event listener for action buttons with specific targeting
     document.addEventListener('click', this.boundActionHandler);
   }
 
@@ -187,7 +189,12 @@ export class AddressSearchModule {
     const button = event.target.closest('[data-action]');
     if (!button) return;
 
+    // Only handle buttons in the sidebar content
+    const sidebar = document.querySelector('.sidebar-content');
+    if (!sidebar || !sidebar.contains(button)) return;
+
     event.preventDefault();
+    event.stopPropagation();
 
     const action = button.dataset.action;
 

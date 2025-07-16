@@ -110,10 +110,11 @@ class ModularCongressionalDistrictsApp {
         // Initialize sidebar modules
         const sidebarElement = document.getElementById('info-sidebar');
         if (sidebarElement) {
-            this.districtInfoModule = new DistrictInfoModule(sidebarElement, this.data);
-            
-            // Initialize boundary distance module
+            // Initialize boundary distance module first
             this.boundaryDistanceModule = new BoundaryDistanceModule(this.core, this.eventBus);
+            
+            // Initialize district info module with boundary distance support
+            this.districtInfoModule = new DistrictInfoModule(sidebarElement, this.data, this.boundaryDistanceModule);
             
             // Initialize address search module with boundary distance integration
             this.addressSearchModule = new AddressSearchModule(
@@ -161,11 +162,11 @@ class ModularCongressionalDistrictsApp {
         
         // District selection handler
         this.eventBus.on('districtClicked', async (data) => {
-            await this.selectDistrict(data.state, data.district);
+            await this.selectDistrict(data.state, data.district, data.clickLocation);
         });
 
         this.eventBus.on('districtSelected', async (data) => {
-            await this.selectDistrict(data.state, data.district);
+            await this.selectDistrict(data.state, data.district, data.clickLocation);
         });
 
         // State info display handler
@@ -192,6 +193,16 @@ class ModularCongressionalDistrictsApp {
                 searchInput.value = '';
                 searchInput.focus();
             }
+        });
+        
+        // District info module event handlers
+        this.eventBus.on('centerOnDistrict', async (data) => {
+            // Re-select the district to highlight it
+            await this.selectDistrict(data.state, data.district);
+            
+            // Zoom to the district
+            const districtKey = `${data.state}-${data.district}`;
+            this.core.zoomToDistrict(districtKey);
         });
         
         // Legacy UI events
@@ -314,8 +325,11 @@ class ModularCongressionalDistrictsApp {
 
     /**
      * Select a district and show its information
+     * @param {string} state - State abbreviation
+     * @param {string} district - District number
+     * @param {Object} clickLocation - Optional click location {lat, lon} for distance calculation
      */
-    async selectDistrict(state, district) {
+    async selectDistrict(state, district, clickLocation = null) {
         try {
             const member = await this.data.getMember(state, district);
             
@@ -331,12 +345,13 @@ class ModularCongressionalDistrictsApp {
                     office: member.office,
                     website: member.website,
                     committees: member.committees || []
-                } : null
+                } : null,
+                clickLocation: clickLocation
             };
             
             // Use new district info module if available, fallback to legacy UI
             if (this.districtInfoModule) {
-                this.districtInfoModule.displayDistrictInfo(districtInfo);
+                await this.districtInfoModule.displayDistrictInfo(districtInfo);
             } else {
                 this.ui.updateDistrictInfo(districtInfo);
             }

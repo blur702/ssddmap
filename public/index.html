@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="css/sidebar-templates.css">
     <link rel="stylesheet" href="css/reporting-module.css">
+    <link rel="stylesheet" href="css/usps-validation.css">
 </head>
 <body>
     <!-- Top Toolbar -->
@@ -187,10 +188,18 @@
     <div id="configModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>API Configuration</h3>
+                <h3>API Configuration & Statistics</h3>
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <button class="tab-btn active" data-tab="config">Configuration</button>
+                    <button class="tab-btn" data-tab="stats">API Statistics</button>
+                </div>
+                
+                <!-- Configuration Tab -->
+                <div id="configTab" class="tab-content active">
                 <!-- Lookup Method Selection -->
                 <div class="config-section">
                     <h4>Address Lookup Method</h4>
@@ -223,18 +232,20 @@
                     <h4>USPS Web Tools API</h4>
                     <p class="config-note">Required for ZIP+4 address verification. Register at <a href="https://developers.usps.com/" target="_blank">developers.usps.com</a></p>
                     
-                    <div class="form-group">
-                        <label for="uspsClientId">Client ID</label>
-                        <input type="text" id="uspsClientId" placeholder="Your USPS Client ID">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="uspsClientSecret">Client Secret</label>
-                        <input type="password" id="uspsClientSecret" placeholder="Your USPS Client Secret">
-                    </div>
-                    
-                    <button id="testUspsBtn" class="btn btn-secondary">Test USPS Connection</button>
-                    <button id="authorizeUspsBtn" class="btn btn-secondary" style="display: none;">Authorize USPS</button>
+                    <form id="uspsConfigForm">
+                        <div class="form-group">
+                            <label for="uspsClientId">Client ID</label>
+                            <input type="text" id="uspsClientId" placeholder="Your USPS Client ID" autocomplete="off">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="uspsClientSecret">Client Secret</label>
+                            <input type="password" id="uspsClientSecret" placeholder="Your USPS Client Secret" autocomplete="off">
+                        </div>
+                        
+                        <button type="button" id="testUspsBtn" class="btn btn-secondary">Test USPS Connection</button>
+                        <button type="button" id="authorizeUspsBtn" class="btn btn-secondary" style="display: none;">Authorize USPS</button>
+                    </form>
                     <div id="uspsTestResult" class="test-result"></div>
                 </div>
                 
@@ -242,18 +253,29 @@
                     <h4>Smarty API (Alternative)</h4>
                     <p class="config-note">Commercial service with free tier. Register at <a href="https://www.smarty.com/" target="_blank">smarty.com</a></p>
                     
-                    <div class="form-group">
-                        <label for="smartyAuthId">Auth ID</label>
-                        <input type="text" id="smartyAuthId" placeholder="Your Smarty Auth ID">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="smartyAuthToken">Auth Token</label>
-                        <input type="password" id="smartyAuthToken" placeholder="Your Smarty Auth Token">
-                    </div>
-                    
-                    <button id="testSmartyBtn" class="btn btn-secondary">Test Smarty Connection</button>
+                    <form id="smartyConfigForm">
+                        <div class="form-group">
+                            <label for="smartyAuthId">Auth ID</label>
+                            <input type="text" id="smartyAuthId" placeholder="Your Smarty Auth ID" autocomplete="off">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="smartyAuthToken">Auth Token</label>
+                            <input type="password" id="smartyAuthToken" placeholder="Your Smarty Auth Token" autocomplete="off">
+                        </div>
+                        
+                        <button type="button" id="testSmartyBtn" class="btn btn-secondary">Test Smarty Connection</button>
+                    </form>
                     <div id="smartyTestResult" class="test-result"></div>
+                </div>
+                </div>
+                
+                <!-- API Statistics Tab -->
+                <div id="statsTab" class="tab-content">
+                    <div class="stats-loading">
+                        <div class="spinner"></div>
+                        <div>Loading statistics...</div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -267,145 +289,114 @@
     <div id="addressModal" class="modal">
         <div class="modal-content address-modal-enhanced">
             <div class="modal-header">
-                <h2>Address Validation & District Lookup</h2>
+                <h2>🏛️ USPS Address Validation</h2>
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
-                <form id="addressForm" class="address-form">
-                    <div class="form-section">
-                        <h3>Enter Address</h3>
-                        <p class="form-description">Validate your address using multiple services and find your congressional district.</p>
-                        
-                        <div class="form-row">
-                            <div class="form-group full-width">
-                                <label for="streetAddress">Street Address <span class="required">*</span></label>
-                                <input type="text" id="streetAddress" name="streetAddress" required 
-                                       placeholder="123 Main Street" autocomplete="address-line1">
+                <!-- Two-Column Layout Container -->
+                <div class="validation-layout">
+                    <!-- Left Column: Form -->
+                    <div class="validation-form-column">
+                        <div class="form-section">
+                            <h3>Enter Address</h3>
+                            <p class="form-description">Validate your address using the USPS database with intelligent suggestions for corrections.</p>
+                            
+                            <form id="addressForm" class="address-form" autocomplete="off">
+                                <div class="form-row">
+                                    <div class="form-group full-width">
+                                        <label for="streetAddress">Street Address <span class="required">*</span></label>
+                                        <input type="text" id="streetAddress" name="streetAddress" required 
+                                               placeholder="123 Main Street" autocomplete="off">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="apartment">Apartment/Suite/Unit</label>
+                                        <input type="text" id="apartment" name="apartment" 
+                                               placeholder="Apt 4B" autocomplete="off">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="city">City <span class="required">*</span></label>
+                                        <input type="text" id="city" name="city" required 
+                                               placeholder="Washington" autocomplete="off">
+                                    </div>
+                                    
+                                    <div class="form-group small">
+                                        <label for="state">State <span class="required">*</span></label>
+                                        <select id="state" name="state" required autocomplete="off">
+                                            <option value="">Select State</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group small">
+                                        <label for="zipCode">ZIP Code</label>
+                                        <input type="text" id="zipCode" name="zipCode" 
+                                               placeholder="20500" pattern="[0-9]{5}" maxlength="5" autocomplete="off">
+                                    </div>
+                                </div>
+                                
+                                <!-- USPS Service Status -->
+                                <div class="api-status-section">
+                                    <div class="service-status">
+                                        <div class="service-indicator">
+                                            <span class="status-dot" id="uspsStatusDot"></span>
+                                            <span class="service-name">USPS Address Validation</span>
+                                        </div>
+                                        <span class="service-status-text" id="uspsStatusText">Checking...</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-secondary" id="cancelAddressBtn">Cancel</button>
+                                    <button type="submit" class="btn btn-primary" id="validateAddressBtn">
+                                        <span class="btn-text">Validate Address</span>
+                                        <span class="btn-loading" style="display: none;">
+                                            <span class="mini-spinner"></span>
+                                            Validating...
+                                        </span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Results -->
+                    <div class="validation-results-column">
+                        <!-- Default state when no results -->
+                        <div class="results-placeholder" id="resultsPlaceholder">
+                            <div class="placeholder-content">
+                                <div class="placeholder-icon">📍</div>
+                                <h4>Validation Results</h4>
+                                <p>Enter an address and click "Validate Address" to see results here.</p>
                             </div>
                         </div>
                         
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="apartment">Apartment/Suite/Unit</label>
-                                <input type="text" id="apartment" name="apartment" 
-                                       placeholder="Apt 4B" autocomplete="address-line2">
-                            </div>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="city">City <span class="required">*</span></label>
-                                <input type="text" id="city" name="city" required 
-                                       placeholder="Washington" autocomplete="address-level2">
+                        <!-- Results Container -->
+                        <div id="validationResultsContainer" class="validation-results-container" style="display: none;">
+                            <div class="results-header">
+                                <h3>Validation Results</h3>
+                                <button type="button" class="btn btn-sm btn-secondary" id="clearResultsBtn">Clear Results</button>
                             </div>
                             
-                            <div class="form-group small">
-                                <label for="state">State <span class="required">*</span></label>
-                                <select id="state" name="state" required autocomplete="address-level1">
-                                    <option value="">Select State</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group small">
-                                <label for="zipCode">ZIP Code</label>
-                                <input type="text" id="zipCode" name="zipCode" 
-                                       placeholder="20500" pattern="[0-9]{5}" maxlength="5" autocomplete="postal-code">
-                            </div>
-                        </div>
-                        
-                        <!-- API Selection Toggles -->
-                        <div class="api-toggles-section">
-                            <h4>Validation Services</h4>
-                            <div class="api-toggle-group">
-                                <label class="api-toggle">
-                                    <input type="checkbox" id="toggleUSPS" checked>
-                                    <span class="toggle-slider"></span>
-                                    <span class="api-label">
-                                        <span class="api-name">USPS API</span>
-                                        <span class="api-status" id="uspsApiStatus">Ready</span>
-                                    </span>
-                                </label>
+                            <!-- USPS Results Section -->
+                            <div class="usps-results-section">
+                                <div class="validation-result" id="validationResult" style="display: none;">
+                                    <!-- Success or error result will be shown here -->
+                                </div>
                                 
-                                <label class="api-toggle">
-                                    <input type="checkbox" id="toggleCensus" checked>
-                                    <span class="toggle-slider"></span>
-                                    <span class="api-label">
-                                        <span class="api-name">Census Geocoder</span>
-                                        <span class="api-status ready" id="censusApiStatus">Ready</span>
-                                    </span>
-                                </label>
-                                
-                                <label class="api-toggle">
-                                    <input type="checkbox" id="toggleGoogle">
-                                    <span class="toggle-slider"></span>
-                                    <span class="api-label">
-                                        <span class="api-name">Google Maps</span>
-                                        <span class="api-status" id="googleApiStatus">Not Configured</span>
-                                    </span>
-                                </label>
+                                <!-- Suggestions Section -->
+                                <div class="suggestions-section" id="suggestionsSection" style="display: none;">
+                                    <h4>💡 Suggested Corrections</h4>
+                                    <p class="suggestions-description">The address couldn't be validated as entered. Try one of these suggestions:</p>
+                                    <div class="suggestions-list" id="suggestionsList">
+                                        <!-- Suggestions will be inserted here -->
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-secondary" id="cancelAddressBtn">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="validateAddressBtn">
-                            <span class="btn-text">Validate Address</span>
-                            <span class="btn-loading" style="display: none;">
-                                <span class="mini-spinner"></span>
-                                Validating...
-                            </span>
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Multi-column Results Section -->
-                <div id="validationResultsContainer" class="validation-results-container" style="display: none;">
-                    <div class="results-header">
-                        <h3>Validation Results</h3>
-                        <button type="button" class="btn btn-sm btn-secondary" id="clearResultsBtn">Clear Results</button>
-                    </div>
-                    
-                    <div class="results-columns">
-                        <!-- USPS Results Column -->
-                        <div class="result-column" id="uspsResultColumn" style="display: none;">
-                            <div class="result-header usps">
-                                <h4>USPS Validation</h4>
-                                <span class="result-status" id="uspsResultStatus"></span>
-                            </div>
-                            <div class="result-content" id="uspsResultContent">
-                                <!-- USPS results will be inserted here -->
-                            </div>
-                        </div>
-                        
-                        <!-- Census Results Column -->
-                        <div class="result-column" id="censusResultColumn" style="display: none;">
-                            <div class="result-header census">
-                                <h4>Census Geocoder</h4>
-                                <span class="result-status" id="censusResultStatus"></span>
-                            </div>
-                            <div class="result-content" id="censusResultContent">
-                                <!-- Census results will be inserted here -->
-                            </div>
-                        </div>
-                        
-                        <!-- Google Results Column -->
-                        <div class="result-column" id="googleResultColumn" style="display: none;">
-                            <div class="result-header google">
-                                <h4>Google Maps</h4>
-                                <span class="result-status" id="googleResultStatus"></span>
-                            </div>
-                            <div class="result-content" id="googleResultContent">
-                                <!-- Google results will be inserted here -->
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Comparison Summary -->
-                    <div class="comparison-summary" id="comparisonSummary" style="display: none;">
-                        <h4>District Comparison</h4>
-                        <div class="comparison-content" id="comparisonContent">
-                            <!-- Comparison analysis will be inserted here -->
                         </div>
                     </div>
                 </div>
@@ -440,5 +431,11 @@
     <!-- Load NEW modular JavaScript as ES6 modules -->
     <script type="module" src="js/common/CopyUtility.js"></script>
     <script type="module" src="js/app-new-modular.js"></script>
+    
+    <!-- Load API Statistics Dashboard -->
+    <script src="js/apiStatistics.js"></script>
+    
+    <!-- Load Configuration Manager -->
+    <script src="js/configurationManager.js"></script>
 </body>
 </html>

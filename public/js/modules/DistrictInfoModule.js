@@ -3,12 +3,15 @@
  * This module uses the SidepanelInterface to display district/rep data
  */
 import { SidepanelInterface } from '../ui/SidepanelInterface.js';
+import { SidebarTemplates } from '../common/SidebarTemplates.js';
 
 export class DistrictInfoModule {
-  constructor (sidebarElement, dataManager) {
+  constructor (sidebarElement, dataManager, boundaryDistanceModule = null) {
     this.dataManager = dataManager;
     this.sidepanelInterface = new SidepanelInterface(sidebarElement);
+    this.templates = new SidebarTemplates();
     this.currentDistrictKey = null;
+    this.boundaryDistanceModule = boundaryDistanceModule;
   }
 
   /**
@@ -17,9 +20,11 @@ export class DistrictInfoModule {
      * @param {string} districtInfo.state - State abbreviation
      * @param {string} districtInfo.district - District number
      * @param {Object} districtInfo.representative - Representative data
+     * @param {Object} districtInfo.clickLocation - Optional click location for distance calculation
+     * @param {Object} districtInfo.boundaryDistance - Optional boundary distance information
      */
-  displayDistrictInfo (districtInfo) {
-    const { state, district, representative } = districtInfo;
+  async displayDistrictInfo (districtInfo) {
+    const { state, district, representative, clickLocation, boundaryDistance } = districtInfo;
     const districtKey = `${state}-${district}`;
 
     // Store current district
@@ -28,19 +33,40 @@ export class DistrictInfoModule {
     // Generate title
     const title = `District ${state}-${district}`;
 
+    // Calculate boundary distance if we have a click location and boundary module
+    let distanceInfo = boundaryDistance;
+    if (!distanceInfo && clickLocation && this.boundaryDistanceModule) {
+      try {
+        const result = await this.boundaryDistanceModule.calculateBoundaryDistance(
+          clickLocation,
+          { state, district }
+        );
+        if (result.success) {
+          distanceInfo = result;
+          // Store the click location for the templates
+          distanceInfo.clickLocation = clickLocation;
+        }
+      } catch (error) {
+        console.error('Error calculating boundary distance:', error);
+      }
+    } else if (distanceInfo && clickLocation) {
+      // If we have both, make sure click location is stored
+      distanceInfo.clickLocation = clickLocation;
+    }
+
     // Generate content based on whether representative exists
     let content;
     if (!representative || !representative.name) {
-      content = this.generateVacantContent(state, district);
+      content = this.generateVacantContent(state, district, distanceInfo);
     } else {
-      content = this.generateRepresentativeContent(state, district, representative);
+      content = this.generateRepresentativeContent(state, district, representative, distanceInfo);
     }
 
     // Show in sidepanel
     this.sidepanelInterface.show({
       title,
       content,
-      data: districtInfo
+      data: { ...districtInfo, boundaryDistance: distanceInfo }
     });
   }
 
@@ -67,68 +93,82 @@ export class DistrictInfoModule {
   }
 
   /**
-     * Generate content for a district with representative
+     * Generate content for a district with representative - using same structure as AddressSearchModule
      */
-  generateRepresentativeContent (state, district, rep) {
-    const districtHeader = this.sidepanelInterface.createSection('', `
-            <div class="district-header-main">
-                <div class="district-title-main">
-                    <h4>${state}-${district}</h4>
-                    ${this.sidepanelInterface.createPartyIndicator(rep.party, 'large')}
-                </div>
-            </div>
-        `);
+  generateRepresentativeContent (state, district, rep, distanceInfo = null) {
+    let content = '';
 
-    const repSection = this.sidepanelInterface.createSection('Representative', `
-            <div class="rep-info-full">
-                ${this.sidepanelInterface.createRepPhoto(rep.photo, rep.name)}
-                <div class="rep-details">
-                    <h5>${rep.name}</h5>
-                    <p class="party ${rep.party?.toLowerCase()}">
-                        ${this.getPartyFullName(rep.party)}
-                    </p>
-                    ${this.sidepanelInterface.createInfoItem('Bioguide ID', rep.bioguideId)}
-                    ${this.sidepanelInterface.createInfoItem('Phone', rep.phone)}
-                    ${this.sidepanelInterface.createInfoItem('Office', rep.office)}
-                    ${rep.website ? `<p>${this.sidepanelInterface.createLink(rep.website, 'Official Website')}</p>` : ''}
-                </div>
-            </div>
-        `);
+    // 1. Representative/District Section (Priority #1) - Use SidebarTemplates
+    if (rep && rep.name) {
+      content += this.templates.createRepresentativeTemplate(
+        rep,
+        { state, district },
+        { showActions: true, showBioguide: true }
+      );
+    } else {
+      // Vacant seat
+      content += this.templates.createVacantSeatTemplate(
+        { state, district }
+      );
+    }
 
-    const committeesSection = rep.committees && rep.committees.length > 0
-      ? this.sidepanelInterface.createSection('Committee Assignments', `
-                <ul class="committees-list">
-                    ${rep.committees.map(committee => `
-                        <li>
-                            <span class="committee-name">${committee.name}</span>
-                            ${committee.role !== 'Member' ? `<span class="committee-role">(${committee.role})</span>` : ''}
-                        </li>
-                    `).join('')}
-                </ul>
-            `, 'committees-section')
-      : '';
+    // 2. District Location Section (Priority #2) - Show click coordinates if available
+    if (distanceInfo && distanceInfo.clickLocation) {
+      content += this.templates.createCompactAddressTemplate({
+        address: `District ${state}-${district} click location`,
+        lat: distanceInfo.clickLocation.lat,
+        lon: distanceInfo.clickLocation.lon,
+        source: 'district_click'
+      });
+    }
 
-    return districtHeader + repSection + committeesSection;
+    // 3. Boundary Distance Section (Priority #3)
+    if (distanceInfo) {
+      content += this.generateBoundaryDistanceSection(distanceInfo);
+    }
+
+    // 4. District Actions Section (Priority #4)
+    content += this.generateDistrictActionsSection(state, district, rep);
+
+    // Setup event listeners for action buttons
+    this.setupActionListeners();
+
+    return content;
   }
 
   /**
-     * Generate content for a vacant district
+     * Generate content for a vacant district - using same structure as AddressSearchModule
      */
-  generateVacantContent (state, district) {
-    const districtHeader = this.sidepanelInterface.createSection('', `
-            <div class="district-header-main">
-                <div class="district-title-main">
-                    <h4>${state}-${district}</h4>
-                    ${this.sidepanelInterface.createPartyIndicator(null, 'large')}
-                </div>
-            </div>
-        `);
+  generateVacantContent (state, district, distanceInfo = null) {
+    let content = '';
 
-    const vacantSection = this.sidepanelInterface.createSection('', `
-            <div class="vacant-message">This seat is currently vacant.</div>
-        `, 'vacant-section');
+    // 1. Vacant Seat Section (Priority #1) - Use SidebarTemplates
+    content += this.templates.createVacantSeatTemplate(
+      { state, district }
+    );
 
-    return districtHeader + vacantSection;
+    // 2. District Location Section (Priority #2) - Show click coordinates if available
+    if (distanceInfo && distanceInfo.clickLocation) {
+      content += this.templates.createCompactAddressTemplate({
+        address: `District ${state}-${district} click location`,
+        lat: distanceInfo.clickLocation.lat,
+        lon: distanceInfo.clickLocation.lon,
+        source: 'district_click'
+      });
+    }
+
+    // 3. Boundary Distance Section (Priority #3)
+    if (distanceInfo) {
+      content += this.generateBoundaryDistanceSection(distanceInfo);
+    }
+
+    // 4. District Actions Section (Priority #4)
+    content += this.generateDistrictActionsSection(state, district, null);
+
+    // Setup event listeners for action buttons
+    this.setupActionListeners();
+
+    return content;
   }
 
   /**
@@ -192,6 +232,314 @@ export class DistrictInfoModule {
         `);
 
     return stateHeader + statsSection + partySection + instructionSection;
+  }
+
+  /**
+     * Generate boundary distance section - matching AddressSearchModule format
+     */
+  generateBoundaryDistanceSection (distanceInfo) {
+    if (!distanceInfo || !distanceInfo.distance) return '';
+
+    const distance = distanceInfo.distance;
+    const closestPoint = distanceInfo.closestPoint;
+
+    return `
+      <div class="boundary-distance-section">
+        <div class="info-card">
+          <h4>📏 Distance to District Boundary</h4>
+          <div class="distance-info">
+            <div class="distance-primary">
+              <span class="distance-value">${this.formatDistance(distance)}</span>
+              <span class="distance-label">to district boundary</span>
+            </div>
+            <div class="distance-details">
+              <div class="distance-measurements">
+                <div class="measurement-item">
+                  <span class="measurement-label">Miles:</span>
+                  <span class="measurement-value">${distance.miles.toFixed(2)}</span>
+                </div>
+                <div class="measurement-item">
+                  <span class="measurement-label">Feet:</span>
+                  <span class="measurement-value">${Math.round(distance.feet)}</span>
+                </div>
+                <div class="measurement-item">
+                  <span class="measurement-label">Kilometers:</span>
+                  <span class="measurement-value">${distance.kilometers.toFixed(2)}</span>
+                </div>
+              </div>
+              ${closestPoint
+    ? `
+                <div class="boundary-coordinates">
+                  <span class="coord-label">Closest boundary point:</span>
+                  <span class="coord-value copyable" data-copy-text="${closestPoint.lat.toFixed(6)}, ${closestPoint.lon.toFixed(6)}">
+                    ${closestPoint.lat.toFixed(6)}, ${closestPoint.lon.toFixed(6)}
+                    <button class="copy-btn" data-copy-text="${closestPoint.lat.toFixed(6)}, ${closestPoint.lon.toFixed(6)}">📋</button>
+                  </span>
+                </div>
+              `
+    : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+     * Generate district actions section - matching AddressSearchModule format
+     */
+  generateDistrictActionsSection (state, district, representative) {
+    return `
+      <div class="actions-section">
+        <div class="info-card">
+          <h4>🎯 District Actions</h4>
+          <div class="action-buttons">
+            <button class="action-btn primary" data-action="search-district" data-state="${state}" data-district="${district}">
+              🔍 Search This District
+            </button>
+            <button class="action-btn secondary" data-action="view-on-map" data-state="${state}" data-district="${district}">
+              🗺️ Center on District
+            </button>
+            ${representative
+    ? `
+              <button class="action-btn secondary" data-action="contact-rep" data-bioguide="${representative.bioguideId || ''}">
+                📞 Contact Representative
+              </button>
+            `
+    : ''}
+            <button class="action-btn secondary" data-action="new-search">
+              🆕 New Address Search
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+     * Setup event listeners for action buttons - matching AddressSearchModule format
+     */
+  setupActionListeners () {
+    // Remove existing listeners to prevent duplicates
+    if (this.boundActionHandler) {
+      document.removeEventListener('click', this.boundActionHandler);
+    }
+    if (this.boundCopyHandler) {
+      document.removeEventListener('click', this.boundCopyHandler);
+    }
+
+    // Bind the handlers to preserve 'this' context
+    this.boundActionHandler = this.handleActionClick.bind(this);
+    this.boundCopyHandler = this.handleCopyClick.bind(this);
+
+    // Add event listeners
+    document.addEventListener('click', this.boundActionHandler);
+    document.addEventListener('click', this.boundCopyHandler);
+  }
+
+  /**
+   * Handle action button clicks
+   */
+  handleActionClick (event) {
+    if (event.target.matches('[data-action]') || event.target.closest('[data-action]')) {
+      const button = event.target.matches('[data-action]') ? event.target : event.target.closest('[data-action]');
+      
+      // Only handle buttons in the sidebar content
+      const sidebar = document.querySelector('.sidebar-content');
+      if (!sidebar || !sidebar.contains(button)) return;
+      
+      // Prevent default action and stop propagation
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const action = button.dataset.action;
+      this.handleAction(action, button);
+    }
+  }
+
+  /**
+   * Handle copy button clicks
+   */
+  handleCopyClick (event) {
+    if (event.target.matches('.copy-btn') || event.target.closest('.copy-btn')) {
+      const button = event.target.matches('.copy-btn') ? event.target : event.target.closest('.copy-btn');
+      const textToCopy = button.dataset.copyText;
+      this.copyToClipboard(textToCopy);
+    }
+  }
+
+  /**
+     * Handle action button clicks - matching AddressSearchModule format
+     */
+  handleAction (action, button) {
+    const state = button.dataset.state;
+    const district = button.dataset.district;
+    const bioguide = button.dataset.bioguide;
+
+    switch (action) {
+    case 'search-district':
+      this.searchDistrict(state, district);
+      break;
+    case 'view-on-map':
+      this.centerOnDistrict(state, district);
+      break;
+    case 'contact-rep':
+      this.contactRepresentative(bioguide);
+      break;
+    case 'new-search':
+      this.startNewSearch();
+      break;
+    default:
+      console.warn('Unknown action:', action);
+    }
+  }
+
+  /**
+     * Search for addresses in this district
+     */
+  searchDistrict (state, district) {
+    // Emit event to trigger district search
+    if (window.eventBus) {
+      window.eventBus.emit('searchDistrict', { state, district });
+    }
+    console.log(`Searching district ${state}-${district}`);
+  }
+
+  /**
+     * Center map on district
+     */
+  centerOnDistrict (state, district) {
+    // Emit event to center map on district
+    if (window.eventBus) {
+      window.eventBus.emit('centerOnDistrict', { state, district });
+    }
+    console.log(`Centering on district ${state}-${district}`);
+  }
+
+  /**
+     * Open contact information for representative
+     */
+  contactRepresentative (bioguide) {
+    if (bioguide) {
+      const url = `https://www.congress.gov/member/${bioguide}`;
+      window.open(url, '_blank');
+    }
+  }
+
+  /**
+     * Start a new address search
+     */
+  startNewSearch () {
+    // Emit event to focus on address input
+    if (window.eventBus) {
+      window.eventBus.emit('startNewSearch');
+    }
+
+    // Focus on address input
+    const addressInput = document.getElementById('addressInput');
+    if (addressInput) {
+      addressInput.focus();
+      addressInput.select();
+    }
+  }
+
+  /**
+     * Copy text to clipboard
+     */
+  copyToClipboard (text) {
+    navigator.clipboard.writeText(text).then(() => {
+      // Show success feedback
+      this.showCopyFeedback('Copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+      this.showCopyFeedback('Failed to copy', 'error');
+    });
+  }
+
+  /**
+     * Show copy feedback message
+     */
+  showCopyFeedback (message, type = 'success') {
+    // Create temporary feedback element
+    const feedback = document.createElement('div');
+    feedback.className = `copy-feedback ${type}`;
+    feedback.textContent = message;
+    feedback.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: ${type === 'success' ? '#10b981' : '#ef4444'};
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      z-index: 10000;
+      font-size: 14px;
+      animation: fadeInOut 2s ease-in-out;
+    `;
+
+    document.body.appendChild(feedback);
+
+    // Remove after animation
+    setTimeout(() => {
+      if (feedback.parentNode) {
+        feedback.parentNode.removeChild(feedback);
+      }
+    }, 2000);
+  }
+
+  /**
+     * Format distance for display
+     */
+  formatDistance (distance) {
+    if (!distance) return 'Unknown distance';
+
+    if (distance.miles < 0.1) {
+      return `${Math.round(distance.feet)} feet`;
+    } else if (distance.miles < 10) {
+      return `${distance.miles.toFixed(2)} miles`;
+    } else {
+      return `${Math.round(distance.miles)} miles`;
+    }
+  }
+
+  /**
+     * Create distance section for boundary distance display
+     */
+  createDistanceSection (distanceInfo) {
+    if (!distanceInfo || !distanceInfo.distance) return '';
+
+    // Use the boundary module's formatDistance method for consistent formatting
+    const formattedDistance = this.boundaryDistanceModule
+      ? this.boundaryDistanceModule.formatDistance(distanceInfo.distance)
+      : this.formatDistanceSimple(distanceInfo.distance);
+
+    return this.sidepanelInterface.createSection('Distance to Boundary', `
+            <div class="distance-info">
+                <div class="distance-primary">
+                    <span class="distance-value">${formattedDistance}</span>
+                    <span class="distance-label">to district boundary</span>
+                </div>
+                <div class="boundary-coordinates">
+                    <span class="coord-label">Closest boundary point:</span>
+                    <span class="coord-value">${distanceInfo.closestPoint.lat.toFixed(6)}, ${distanceInfo.closestPoint.lon.toFixed(6)}</span>
+                </div>
+            </div>
+        `, 'distance-section');
+  }
+
+  /**
+     * Simple distance formatting (fallback if no boundary module)
+     */
+  formatDistanceSimple (distance) {
+    if (!distance) return 'Unknown distance';
+
+    if (distance.miles < 0.1) {
+      return `${Math.round(distance.feet)} feet`;
+    } else if (distance.miles < 10) {
+      return `${distance.miles.toFixed(2)} miles`;
+    } else {
+      return `${Math.round(distance.miles)} miles`;
+    }
   }
 
   /**

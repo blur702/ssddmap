@@ -23,9 +23,14 @@ export class Core {
         this.map = L.map(mapElementId, {
             center: [39.8283, -98.5795],
             zoom: 4,
-            zoomControl: true,
+            zoomControl: false,  // Disable default zoom control
             attributionControl: true
         });
+
+        // Add zoom control to bottom right corner
+        L.control.zoom({
+            position: 'bottomright'
+        }).addTo(this.map);
 
         // Set default tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -185,6 +190,26 @@ export class Core {
             layer.bringToFront();
 
             this.eventBus?.emit('districtHighlighted', { districtKey });
+        }
+    }
+    
+    /**
+     * Zoom to district bounds
+     */
+    zoomToDistrict(districtKey, options = {}) {
+        const layer = this.districtLayers[districtKey];
+        if (layer) {
+            // Get bounds of the district
+            const bounds = layer.getBounds();
+            
+            // Fit map to district bounds with padding
+            this.map.fitBounds(bounds, {
+                padding: [50, 50],
+                maxZoom: 10,
+                ...options
+            });
+            
+            this.eventBus?.emit('districtZoomed', { districtKey, bounds });
         }
     }
 
