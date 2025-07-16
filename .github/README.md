@@ -16,13 +16,15 @@ Runs on every push and pull request to master branch.
 - **Build**: Creates production build artifacts
 - **Performance**: Lighthouse CI performance testing
 
-### 2. Claude Assistant (`claude.yml`)
+### 2. Claude GitHub App Integration (`claude.yml`)
 Integrates with Claude GitHub App for AI-assisted code reviews and issue responses.
+**Compatible with Claude Max subscription users.**
 
 **Triggers:**
 - Issues mentioning `@claude`
 - Pull request comments with `@claude`
-- Automatically runs tests after Claude makes changes
+- `@claude help` for usage information
+- Automatically runs tests after Claude interactions
 
 ### 3. Deployment (`deploy.yml`)
 Deploys to production on master branch pushes or manual dispatch.
@@ -35,11 +37,11 @@ Deploys to production on master branch pushes or manual dispatch.
 ## Setup Requirements
 
 ### 1. Repository Secrets
-Add these secrets in GitHub Settings → Secrets and variables → Actions:
+**No API keys required!** This setup works with Claude Max subscription via GitHub App.
 
+Optional secrets for enhanced features:
 ```
-ANTHROPIC_API_KEY          # For Claude GitHub App integration
-LHCI_GITHUB_APP_TOKEN     # Optional: For Lighthouse CI uploads
+LHCI_GITHUB_APP_TOKEN     # Optional: For enhanced Lighthouse CI uploads
 ```
 
 ### 2. Environment Setup
@@ -97,12 +99,25 @@ npm run health        # Check if application is running
 - **Code Quality**: Checks for console.log and TODO comments
 - **Automated Updates**: Dependabot for dependency updates
 
-## Usage with Claude GitHub App
+## Usage with Claude GitHub App (Claude Max Compatible)
 
-1. **Issue Resolution**: Tag `@claude` in issues for AI assistance
-2. **Code Review**: Tag `@claude` in PR comments for automated reviews
-3. **Bug Fixes**: Claude can automatically create PRs to fix issues
-4. **Documentation**: Ask Claude to update docs and comments
+The Claude GitHub App is installed and ready to use with your Claude Max subscription!
+
+### Basic Commands:
+1. **`@claude`** - Ask questions about the code
+2. **`@claude help`** - Get usage information and available commands
+3. **`@claude fix this bug`** - Request bug fixes
+4. **`@claude review this PR`** - Request code review
+5. **`@claude explain this function`** - Get code explanations
+6. **`@claude add tests for this feature`** - Request test additions
+
+### Features:
+- ✅ **No API key required** - Works with Claude Max subscription
+- ✅ **Automatic testing** - Tests run after Claude interactions
+- ✅ **Issue assistance** - Tag Claude in issues for help
+- ✅ **PR reviews** - Claude can review and suggest improvements
+- ✅ **Code explanations** - Get detailed explanations of complex code
+- ✅ **Bug detection** - Claude can identify and fix issues
 
 ## Troubleshooting
 
