@@ -15,7 +15,12 @@
     "lint": "echo 'Linting JavaScript files...' && find public/js -name '*.js' -exec node -c {} \\;",
     "audit": "npm audit --audit-level moderate",
     "health": "curl -f http://localhost:3001 || exit 1",
-    "pretest": "npm run health"
+    "pretest": "npm run health",
+    "hooks:install": "./install-hooks.sh",
+    "hooks:uninstall": "./uninstall-hooks.sh",
+    "hooks:test": "echo 'Testing hooks...' && npm run lint && npm run health",
+    "commit:safe": "git add -A && git commit",
+    "commit:force": "git add -A && git commit --no-verify"
   },
   "keywords": [],
   "author": "",

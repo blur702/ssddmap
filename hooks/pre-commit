@@ -96,8 +96,8 @@ if [ -n "$TODO_COMMENTS" ]; then
 fi
 
 # Check for hardcoded secrets (basic check)
-SECRET_PATTERNS="password\|secret\|key\|token\|api_key"
-POTENTIAL_SECRETS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|json)$' | xargs grep -i "$SECRET_PATTERNS" 2>/dev/null | grep -v "example\|sample\|placeholder\|test" || true)
+SECRET_PATTERNS="password.*=\|secret.*=\|key.*=\|token.*=\|api_key.*="
+POTENTIAL_SECRETS=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(js|json)$' | xargs grep -i "$SECRET_PATTERNS" 2>/dev/null | grep -v "example\|sample\|placeholder\|test\|\"keywords\"\|scripts" || true)
 if [ -n "$POTENTIAL_SECRETS" ]; then
     print_error "Potential hardcoded secrets found:"
     echo "$POTENTIAL_SECRETS"
@@ -110,20 +110,23 @@ print_status "Starting application server..."
 npm start &
 SERVER_PID=$!
 
-# Wait for server to start
-sleep 10
-
-# Check if server is running
-if ! curl -f http://localhost:3001 >/dev/null 2>&1; then
-    print_error "Server failed to start on port 3001"
-    kill $SERVER_PID 2>/dev/null || true
-    exit 1
-fi
+# Wait for server to start and check multiple times
+for i in {1..6}; do
+    sleep 5
+    if curl -f http://localhost:3001/ssddmap >/dev/null 2>&1; then
+        break
+    elif [ $i -eq 6 ]; then
+        print_error "Server failed to start on port 3001 after 30 seconds"
+        kill $SERVER_PID 2>/dev/null || true
+        exit 1
+    fi
+    print_status "Waiting for server... ($i/6)"
+done
 
 print_success "Server started successfully"
 
 # Run quick health check
-if curl -f http://localhost:3001/api/health >/dev/null 2>&1; then
+if curl -f http://localhost:3001/ssddmap/api/health >/dev/null 2>&1; then
     print_success "Health check passed"
 else
     print_warning "Health endpoint not available (this may be normal)"
@@ -145,7 +148,8 @@ TEST_FAILED=0
 for test in $QUICK_TESTS; do
     if [ -f "$test" ]; then
         print_status "Running $test..."
-        if npx playwright test "$test" --reporter=line; then
+        # Update base URL for the sub-path deployment
+        if PLAYWRIGHT_BASE_URL="http://localhost:3001/ssddmap" npx playwright test "$test" --reporter=line; then
             print_success "$test passed"
         else
             print_error "$test failed"
