@@ -8,6 +8,7 @@ import { DataManager } from './data.js';
 import { ValidationManager } from './validation.js';
 import { AddressModalEnhanced } from './addressModalEnhanced.js';
 import { StateSelector } from './stateSelector.js';
+import { ReportingModule } from './modules/ReportingModule.js';
 
 class CongressionalDistrictsApp {
     constructor() {
@@ -18,6 +19,7 @@ class CongressionalDistrictsApp {
         this.validation = new ValidationManager();
         this.addressModal = null;
         this.stateSelector = null;
+        this.reporting = new ReportingModule();
         
         this.currentState = null;
         this.currentDistrict = null;
@@ -166,9 +168,8 @@ class CongressionalDistrictsApp {
             // Apply initial rep view state
             this.updateDistrictColors();
             
-            // Update cache status
-            const cacheStatus = await this.data.getCacheStatus();
-            this.ui.updateCacheStatus(cacheStatus);
+            // Initialize reporting module for data management
+            await this.reporting.initialize();
             
         } catch (error) {
             console.error('Error loading initial data:', error);
@@ -669,9 +670,8 @@ class CongressionalDistrictsApp {
                 this.updateDistrictColors();
             }
             
-            // Update cache status
-            const cacheStatus = await this.data.getCacheStatus();
-            this.ui.updateCacheStatus(cacheStatus);
+            // Update reporting module status
+            await this.reporting.updateCacheStatus();
             
         } catch (error) {
             console.error('Error refreshing cache:', error);
@@ -706,6 +706,7 @@ class CongressionalDistrictsApp {
 // Initialize app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     const app = new CongressionalDistrictsApp();
+    window.app = app; // Make app globally accessible for UI integration
     app.initialize();
     
     // Make app available globally for debugging

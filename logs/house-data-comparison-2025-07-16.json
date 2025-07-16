@@ -1,0 +1,69 @@
+{
+  "title": "House Members Data Comparison Report",
+  "generated_at": "2025-07-16T03:53:02.070Z",
+  "summary": {
+    "json_members_count": 435,
+    "db_members_count": 432,
+    "missing_in_db_count": 3,
+    "missing_in_json_count": 0,
+    "data_mismatches_count": 0,
+    "bioguide_duplicates_count": 0,
+    "comparison_timestamp": "2025-07-16T03:53:02.069Z"
+  },
+  "missingInDb": [
+    {
+      "state_district": "AZ-7",
+      "bioguide_id": null,
+      "full_name": "null",
+      "party": null,
+      "reason": "New member or missing from database"
+    },
+    {
+      "state_district": "TX-18",
+      "bioguide_id": null,
+      "full_name": "null",
+      "party": null,
+      "reason": "New member or missing from database"
+    },
+    {
+      "state_district": "VA-11",
+      "bioguide_id": null,
+      "full_name": "null",
+      "party": null,
+      "reason": "New member or missing from database"
+    }
+  ],
+  "missingInJson": [],
+  "dataMismatches": [],
+  "bioguideDuplicates": [],
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "action": "Add missing members to database",
+      "description": "3 members found in JSON feed but not in database",
+      "details": [
+        {
+          "state_district": "AZ-7",
+          "bioguide_id": null,
+          "full_name": "null",
+          "party": null,
+          "reason": "New member or missing from database"
+        },
+        {
+          "state_district": "TX-18",
+          "bioguide_id": null,
+          "full_name": "null",
+          "party": null,
+          "reason": "New member or missing from database"
+        },
+        {
+          "state_district": "VA-11",
+          "bioguide_id": null,
+          "full_name": "null",
+          "party": null,
+          "reason": "New member or missing from database"
+        }
+      ]
+    }
+  ]
+}

@@ -108,7 +108,13 @@ export class UIManager {
         // Data management button
         if (this.elements.dataManageBtn) {
             this.elements.dataManageBtn.addEventListener('click', () => {
-                this.showModal('dataModal');
+                // Use global app reference to access reporting module
+                if (window.app && window.app.reporting) {
+                    window.app.reporting.showDataManagementModal();
+                } else {
+                    // Fallback to old modal if reporting module not available
+                    this.showModal('dataModal');
+                }
             });
         }
         
@@ -497,10 +503,12 @@ export class UIManager {
     }
     
     /**
-     * Update cache status display
+     * Update cache status display (deprecated - use ReportingModule instead)
      * @param {Object} status - Cache status information
      */
     updateCacheStatus(status) {
+        // Legacy function maintained for backward compatibility
+        // New implementations should use ReportingModule.updateCacheStatus()
         if (!this.elements.cacheStatus) return;
         
         if (status.error) {

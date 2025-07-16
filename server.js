@@ -819,23 +819,65 @@ router.get('/api/geocode-census', async (req, res) => {
 // Cache status endpoint (simplified for DB version)
 router.get('/api/cache-status', async (req, res) => {
   try {
+    // Get accurate counts from database
     const memberCount = await pool.query('SELECT COUNT(*) FROM members');
     const districtCount = await pool.query('SELECT COUNT(*) FROM districts');
     const countyCount = await pool.query('SELECT COUNT(*) FROM counties');
+    const committeeMemberCount = await pool.query('SELECT COUNT(*) FROM member_committees');
+
+    // Get most recent sync information for accurate cache time
+    const recentSync = await pool.query(`
+      SELECT completed_at, sync_status 
+      FROM sync_log 
+      WHERE data_type = 'house_members' AND sync_status = 'completed'
+      ORDER BY completed_at DESC 
+      LIMIT 1
+    `);
+
+    // Get last House JSON cache entry
+    const lastCache = await pool.query(`
+      SELECT fetch_date, created_at
+      FROM house_json_cache
+      ORDER BY fetch_date DESC
+      LIMIT 1
+    `);
+
+    // Determine actual last update time
+    let lastUpdate = null;
+    if (recentSync.rows.length > 0) {
+      lastUpdate = recentSync.rows[0].completed_at;
+    } else if (lastCache.rows.length > 0) {
+      lastUpdate = lastCache.rows[0].created_at;
+    }
+
+    // Calculate accurate cache age
+    let cacheAgeHours = 0;
+    if (lastUpdate) {
+      const ageMs = Date.now() - new Date(lastUpdate).getTime();
+      cacheAgeHours = Math.floor(ageMs / (1000 * 60 * 60));
+    }
 
     res.json({
+      memberCount: parseInt(memberCount.rows[0].count),
+      districtCount: parseInt(districtCount.rows[0].count),
+      countyCount: parseInt(countyCount.rows[0].count),
+      committeeMemberCount: parseInt(committeeMemberCount.rows[0].count),
+      lastUpdate: lastUpdate ? lastUpdate.toISOString() : null,
+      cacheAgeHours,
+      hasCachedData: parseInt(memberCount.rows[0].count) > 0,
+      // Legacy format for backward compatibility
       members: {
-        hasCachedData: true,
+        hasCachedData: parseInt(memberCount.rows[0].count) > 0,
         count: parseInt(memberCount.rows[0].count),
-        cacheTime: new Date().toISOString(),
-        cacheAgeHours: 0
+        cacheTime: lastUpdate ? lastUpdate.toISOString() : new Date().toISOString(),
+        cacheAgeHours
       },
       districts: {
-        hasCachedData: true,
+        hasCachedData: parseInt(districtCount.rows[0].count) > 0,
         count: parseInt(districtCount.rows[0].count)
       },
       counties: {
-        hasCachedData: true,
+        hasCachedData: parseInt(countyCount.rows[0].count) > 0,
         count: parseInt(countyCount.rows[0].count)
       }
     });
@@ -845,22 +887,123 @@ router.get('/api/cache-status', async (req, res) => {
   }
 });
 
+// Detailed reporting endpoint for data management
+router.get('/api/reporting/detailed-status', async (req, res) => {
+  try {
+    // Get comprehensive data counts
+    const memberCount = await pool.query('SELECT COUNT(*) FROM members');
+    const districtCount = await pool.query('SELECT COUNT(*) FROM districts');
+    const countyCount = await pool.query('SELECT COUNT(*) FROM counties');
+    const committeeMemberCount = await pool.query('SELECT COUNT(*) FROM member_committees');
+    const subcommitteeMemberCount = await pool.query('SELECT COUNT(*) FROM member_subcommittees');
+
+    // Get recent sync activity (last 10 imports)
+    const recentSyncs = await pool.query(`
+      SELECT data_type, sync_status, started_at, completed_at, records_processed, error_message
+      FROM sync_log
+      ORDER BY started_at DESC
+      LIMIT 10
+    `);
+
+    // Get data quality metrics
+    const membersWithBioguideId = await pool.query(`
+      SELECT COUNT(*) FROM members WHERE bioguide_id IS NOT NULL AND bioguide_id != ''
+    `);
+
+    const membersWithCommittees = await pool.query(`
+      SELECT COUNT(DISTINCT member_id) FROM member_committees
+    `);
+
+    // Get most recent House JSON cache
+    const lastCache = await pool.query(`
+      SELECT fetch_date, created_at
+      FROM house_json_cache
+      ORDER BY fetch_date DESC
+      LIMIT 1
+    `);
+
+    res.json({
+      timestamp: new Date().toISOString(),
+      overview: {
+        memberCount: parseInt(memberCount.rows[0].count),
+        districtCount: parseInt(districtCount.rows[0].count),
+        countyCount: parseInt(countyCount.rows[0].count),
+        committeeMemberCount: parseInt(committeeMemberCount.rows[0].count),
+        subcommitteeMemberCount: parseInt(subcommitteeMemberCount.rows[0].count)
+      },
+      dataQuality: {
+        membersWithBioguideId: parseInt(membersWithBioguideId.rows[0].count),
+        bioguideIdCoverage: memberCount.rows[0].count > 0
+          ? Math.round((membersWithBioguideId.rows[0].count / memberCount.rows[0].count) * 100)
+          : 0,
+        membersWithCommittees: parseInt(membersWithCommittees.rows[0].count),
+        committeeCoverage: memberCount.rows[0].count > 0
+          ? Math.round((membersWithCommittees.rows[0].count / memberCount.rows[0].count) * 100)
+          : 0
+      },
+      lastUpdate: {
+        houseJsonCache: lastCache.rows.length > 0 ? lastCache.rows[0].created_at : null,
+        fetchDate: lastCache.rows.length > 0 ? lastCache.rows[0].fetch_date : null
+      },
+      recentActivity: recentSyncs.rows.map(sync => ({
+        dataType: sync.data_type,
+        status: sync.sync_status,
+        startedAt: sync.started_at,
+        completedAt: sync.completed_at,
+        recordsProcessed: sync.records_processed,
+        errorMessage: sync.error_message,
+        duration: sync.completed_at && sync.started_at
+          ? Math.round((new Date(sync.completed_at) - new Date(sync.started_at)) / 1000)
+          : null
+      }))
+    });
+  } catch (error) {
+    console.error('Error fetching detailed reporting status:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Refresh members cache endpoint
 router.post('/api/refresh-members-cache', async (req, res) => {
   try {
-    // In the DB version, this would trigger a re-import from the house.gov API
-    // For now, just return success
+    const { spawn } = require('child_process');
+    const path = require('path');
+
+    // Trigger the import script to refresh House member data
+    const importScript = path.join(__dirname, 'database', 'import-house-json.js');
+
+    console.log('🔄 Manual cache refresh requested, triggering House data import...');
+
+    // Run the import script asynchronously
+    const importProcess = spawn('node', [importScript], {
+      detached: true,
+      stdio: 'ignore'
+    });
+
+    importProcess.unref();
+
+    // Get current count for response
     const result = await pool.query('SELECT COUNT(*) FROM members');
+
+    // Log the refresh request
+    await pool.query(`
+      INSERT INTO sync_log (data_type, sync_status, started_at)
+      VALUES ('house_members_manual', 'requested', CURRENT_TIMESTAMP)
+    `);
 
     res.json({
       success: true,
-      message: 'Database contains current member data',
+      message: 'House member data refresh initiated',
       memberCount: parseInt(result.rows[0].count),
-      cacheTime: new Date().toISOString()
+      refreshTime: new Date().toISOString(),
+      note: 'Import running in background - check status in a few minutes'
     });
   } catch (error) {
-    console.error('Error refreshing cache:', error);
-    res.status(500).json({ error: error.message });
+    console.error('Error triggering cache refresh:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
 });
 
