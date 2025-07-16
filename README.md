@@ -43,7 +43,9 @@ An interactive web application for visualizing US Congressional Districts with c
 - **Legislative voting patterns** with vote tracking
 - **Interactive legends** for all visualization modes
 - **Comparison reports** between validation methods
-- **Distance calculations** to district boundaries
+- **Boundary distance calculations** with simplified feet/miles display
+- **Professional sidebar design** with consistent templates for all district views
+- **Real-time distance calculations** from click locations to district boundaries
 
 ## 🏗️ Technical Architecture
 
@@ -58,11 +60,14 @@ An interactive web application for visualizing US Congressional Districts with c
   - `AddressService`: Geocoding and standardization
 
 ### Frontend Technology
-- **Vanilla JavaScript** ES6 modules
+- **Vanilla JavaScript** ES6 modules with modular architecture
 - **Leaflet.js** for interactive mapping
 - **Responsive design** with dark theme
 - **Real-time validation** with user feedback
 - **Progressive loading** for large datasets
+- **Professional sidebar interface** with consistent design templates
+- **Event-driven architecture** with EventBus for component communication
+- **Boundary distance integration** with BoundaryDistanceModule
 
 ### Data Sources & APIs
 - **Congressional districts**: KML files converted to PostGIS geometries
@@ -188,8 +193,10 @@ Returns: Voting patterns for specific legislation
 ### District Navigation
 1. **Select state** from dropdown to zoom to region
 2. **Choose district** from district selector (shows party and representative)
-3. **Click map** to view detailed district information
+3. **Click map** to view detailed district information with boundary distance
 4. **Use address search** to find specific locations
+5. **View consistent sidebar** with professional templates for all district types
+6. **See simplified distance display** in feet or miles to closest boundary
 
 ### Validation Mode Features
 1. **Toggle validation mode** to enable advanced features
@@ -301,13 +308,24 @@ DEBUG=ssddmap:* npm start
 - `kml/ssdd/` - Congressional district boundary files (435 KML files)
 - `counties/` - County boundary data files
 
-## 📚 Additional Documentation
+## 📚 Documentation
 
-- [USPS_OAUTH_SETUP.md](./USPS_OAUTH_SETUP.md) - USPS API registration and OAuth configuration
-- [ADDRESS_VALIDATION_GUIDE.md](./ADDRESS_VALIDATION_GUIDE.md) - Address validation workflows and best practices
-- [API_REFERENCE.md](./API_REFERENCE.md) - Complete API endpoint documentation
-- [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) - Production deployment instructions
+### Core Documentation
+- [Complete Documentation Index](./docs/README.md) - Comprehensive guide to all documentation
+- [API Reference](./docs/API_REFERENCE.md) - Complete API endpoint documentation
+- [User Guide](./docs/USER_GUIDE.md) - Complete user guide for the application
+- [Configuration Guide](./docs/CONFIGURATION_GUIDE.md) - Setup and configuration instructions
+
+### Quick Links
+- [USPS Setup](./docs/USPS_OAUTH_SETUP.md) - USPS API registration and OAuth configuration
+- [Address Validation](./docs/ADDRESS_VALIDATION_GUIDE.md) - Address validation workflows and best practices
+- [Distance Features](./docs/DISTANCE_FEATURES.md) - Boundary distance calculation documentation
+- [Boundary Analysis](./docs/BOUNDARY_ANALYSIS.md) - District boundary geometry analysis
+- [Testing Guide](./docs/PLAYWRIGHT_TESTING_GUIDE.md) - Comprehensive E2E testing guide
+
+### Project Files
 - [CHANGELOG.md](./CHANGELOG.md) - Version history and updates
+- [TODO.md](./TODO.md) - Current development tasks and roadmap
 
 ## 🆘 Support
 
