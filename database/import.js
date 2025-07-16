@@ -1,6 +1,9 @@
 const { Pool } = require('pg');
 const fs = require('fs').promises;
 const path = require('path');
+
+// KML directory path
+const KML_DIR = path.join(__dirname, '..', 'kml', 'ssdd');
 const fetch = require('node-fetch');
 const xml2js = require('xml2js');
 const tj = require('@mapbox/togeojson');
@@ -40,7 +43,7 @@ const STATE_NAMES = {
 // Import states
 async function importStates() {
     console.log('Importing states...');
-    const basePath = path.join(__dirname, '..');
+    const basePath = KML_DIR;
     const files = await fs.readdir(basePath);
     const kmlFiles = files.filter(f => f.endsWith('.kml') && !f.includes('cb_'));
     
@@ -88,7 +91,7 @@ async function importStates() {
 // Import districts
 async function importDistricts() {
     console.log('Importing districts...');
-    const basePath = path.join(__dirname, '..');
+    const basePath = KML_DIR;
     const files = await fs.readdir(basePath);
     const kmlFiles = files.filter(f => f.endsWith('.kml') && !f.includes('cb_'));
     

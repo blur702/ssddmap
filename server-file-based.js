@@ -1,6 +1,9 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
+
+// KML directory path
+const KML_DIR = path.join(__dirname, 'kml', 'ssdd');
 const tj = require('@mapbox/togeojson');
 const { DOMParser } = require('xmldom');
 const fetch = require('node-fetch');
@@ -133,7 +136,7 @@ const AT_LARGE_STATES = ['AK', 'DE', 'ND', 'SD', 'VT', 'WY'];
 // Endpoint to get all available states
 app.get('/api/states', async (req, res) => {
     try {
-        const files = await fs.readdir(__dirname);
+        const files = await fs.readdir(KML_DIR);
         const kmlFiles = files.filter(f => f.endsWith('.kml'));
         
         // Extract unique state codes
@@ -151,7 +154,7 @@ app.get('/api/states', async (req, res) => {
 // Endpoint to get representative count per state
 app.get('/api/state-rep-counts', async (req, res) => {
     try {
-        const files = await fs.readdir(__dirname);
+        const files = await fs.readdir(KML_DIR);
         const kmlFiles = files.filter(f => f.endsWith('.kml') && !f.includes('cb_2020'));
         
         // Count districts per state
@@ -198,7 +201,7 @@ app.get('/api/state/:stateCode', async (req, res) => {
             }]);
         }
         
-        const files = await fs.readdir(__dirname);
+        const files = await fs.readdir(KML_DIR);
         const stateFiles = files.filter(f => f.startsWith(`${stateCode}-`) && f.endsWith('.kml'));
         
         // Fetch member data
@@ -234,7 +237,7 @@ app.get('/api/district/:stateCode/:districtNumber', async (req, res) => {
         if (AT_LARGE_STATES.includes(stateCode) && districtNumber === '0') {
             // Try to load the actual KML file first
             const atLargeFilename = `${stateCode}-0.kml`;
-            const atLargeFilepath = path.join(__dirname, atLargeFilename);
+            const atLargeFilepath = path.join(KML_DIR, atLargeFilename);
             
             try {
                 const kmlData = await fs.readFile(atLargeFilepath, 'utf8');
@@ -277,7 +280,7 @@ app.get('/api/district/:stateCode/:districtNumber', async (req, res) => {
         }
         
         const filename = `${stateCode}-${districtNumber}.kml`;
-        const filepath = path.join(__dirname, filename);
+        const filepath = path.join(KML_DIR, filename);
         
         const kmlData = await fs.readFile(filepath, 'utf8');
         const dom = new DOMParser().parseFromString(kmlData);
@@ -302,7 +305,7 @@ app.get('/api/district/:stateCode/:districtNumber', async (req, res) => {
 // Endpoint to get all districts as GeoJSON (simplified for performance)
 app.get('/api/all-districts', async (req, res) => {
     try {
-        const files = await fs.readdir(__dirname);
+        const files = await fs.readdir(KML_DIR);
         const kmlFiles = files.filter(f => f.endsWith('.kml'));
         
         const features = [];
@@ -311,7 +314,7 @@ app.get('/api/all-districts', async (req, res) => {
         for (const stateCode of AT_LARGE_STATES) {
             // Try to load actual KML file
             const atLargeFilename = `${stateCode}-0.kml`;
-            const atLargeFilepath = path.join(__dirname, atLargeFilename);
+            const atLargeFilepath = path.join(KML_DIR, atLargeFilename);
             
             try {
                 const kmlData = await fs.readFile(atLargeFilepath, 'utf8');
@@ -357,7 +360,7 @@ app.get('/api/all-districts', async (req, res) => {
             await Promise.all(batch.map(async (file) => {
                 try {
                     const [state, district] = file.replace('.kml', '').split('-');
-                    const filepath = path.join(__dirname, file);
+                    const filepath = path.join(KML_DIR, file);
                     const kmlData = await fs.readFile(filepath, 'utf8');
                     const dom = new DOMParser().parseFromString(kmlData);
                     const geojson = tj.kml(dom);
@@ -554,12 +557,12 @@ async function loadDistrictGeometries() {
     const districts = [];
     
     try {
-        const files = await fs.readdir(__dirname);
+        const files = await fs.readdir(KML_DIR);
         const kmlFiles = files.filter(f => f.endsWith('.kml') && !f.includes('cb_2022'));
         
         for (const file of kmlFiles) {
             try {
-                const kmlData = await fs.readFile(path.join(__dirname, file), 'utf8');
+                const kmlData = await fs.readFile(path.join(KML_DIR, file), 'utf8');
                 const dom = new DOMParser().parseFromString(kmlData);
                 const geojson = tj.kml(dom);
                 

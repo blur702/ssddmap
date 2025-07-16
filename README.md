@@ -298,6 +298,8 @@ DEBUG=ssddmap:* npm start
 - `public/js/` - Frontend JavaScript modules
 - `tests/` - Test files and specifications
 - `database/` - Database schemas and migrations
+- `kml/ssdd/` - Congressional district boundary files (435 KML files)
+- `counties/` - County boundary data files
 
 ## 📚 Additional Documentation
 

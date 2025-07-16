@@ -12,3 +12,7 @@ npm-debug.log*
 # Large cache files
 cache/district-geometries.json
 cache/county-data.json
+
+# KML files are organized in kml/ssdd/ directory
+# Ignore any KML files accidentally placed in root
+/*.kml
