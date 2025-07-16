@@ -8,3 +8,7 @@ npm-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Large cache files
+cache/district-geometries.json
+cache/county-data.json
