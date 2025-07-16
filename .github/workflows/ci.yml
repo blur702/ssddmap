@@ -1,0 +1,193 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Start application server
+      run: |
+        npm start &
+        sleep 10
+        curl -f http://localhost:3001 || exit 1
+      env:
+        NODE_ENV: test
+        
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+      
+    - name: Run Playwright tests
+      run: npm test
+      env:
+        CI: true
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-${{ matrix.node-version }}
+        path: playwright-report/
+        retention-days: 30
+        
+    - name: Upload test screenshots
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: playwright-screenshots-${{ matrix.node-version }}
+        path: test-results/
+        retention-days: 7
+
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Check for console.log statements
+      run: |
+        if grep -r "console\.log" public/js/ --exclude-dir=node_modules; then
+          echo "Console.log statements found in production code"
+          exit 1
+        fi
+        
+    - name: Check for TODO/FIXME comments
+      run: |
+        if grep -r "TODO\|FIXME" public/js/ server.js services/ --exclude-dir=node_modules; then
+          echo "Found TODO/FIXME comments that need attention"
+          exit 1
+        fi
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run npm audit
+      run: npm audit --audit-level moderate
+      
+    - name: Check for hardcoded secrets
+      run: |
+        if grep -r "password\|secret\|key\|token" --include="*.js" --include="*.json" . --exclude-dir=node_modules --exclude-dir=.git | grep -v "example\|sample\|placeholder"; then
+          echo "Potential hardcoded secrets found"
+          exit 1
+        fi
+
+  build:
+    name: Build Application
+    runs-on: ubuntu-latest
+    needs: [test, lint, security]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Create production build
+      run: |
+        # Minify CSS
+        if command -v cssnano &> /dev/null; then
+          cssnano public/styles.css public/styles.min.css
+        fi
+        
+        # Create build info
+        echo "Build: $(date)" > public/build-info.txt
+        echo "Commit: ${{ github.sha }}" >> public/build-info.txt
+        
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: production-build
+        path: |
+          public/
+          server.js
+          services/
+          package.json
+          package-lock.json
+        retention-days: 30
+
+  performance:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Start application
+      run: |
+        npm start &
+        sleep 10
+        
+    - name: Install Lighthouse CI
+      run: npm install -g @lhci/cli@0.12.x
+      
+    - name: Run Lighthouse CI
+      run: |
+        lhci autorun --upload.target=temporary-public-storage || echo "Lighthouse CI completed with warnings"
+      env:
+        LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

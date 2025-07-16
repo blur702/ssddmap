@@ -9,7 +9,13 @@
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "test:ci": "playwright test --reporter=html",
+    "test:headed": "playwright test --headed",
+    "lint": "echo 'Linting JavaScript files...' && find public/js -name '*.js' -exec node -c {} \\;",
+    "audit": "npm audit --audit-level moderate",
+    "health": "curl -f http://localhost:3001 || exit 1",
+    "pretest": "npm run health"
   },
   "keywords": [],
   "author": "",
