@@ -1,0 +1,99 @@
+name: On Commit Testing
+
+on:
+  push:
+    branches: [ master, main ]
+
+jobs:
+  quick-test:
+    name: Quick Commit Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Quick syntax check
+      run: |
+        echo "🔍 Checking JavaScript syntax..."
+        find public/js -name "*.js" -exec node -c {} \;
+        find services -name "*.js" -exec node -c {} \;
+        node -c server.js
+        
+    - name: Security quick scan
+      run: |
+        echo "🔒 Running security checks..."
+        # Check for potential hardcoded secrets
+        if grep -r "password\|secret\|key\|token" --include="*.js" --include="*.json" . --exclude-dir=node_modules --exclude-dir=.git | grep -v "example\|sample\|placeholder\|test"; then
+          echo "❌ Potential hardcoded secrets found"
+          exit 1
+        fi
+        echo "✅ Security check passed"
+        
+    - name: Start application
+      run: |
+        echo "🚀 Starting application..."
+        npm start &
+        sleep 10
+        
+    - name: Basic health check
+      run: |
+        echo "🏥 Running health check..."
+        curl -f http://localhost:3001 || exit 1
+        curl -f http://localhost:3001/api/health || echo "Health endpoint not available"
+        echo "✅ Application is running"
+        
+    - name: Install Playwright
+      run: npx playwright install --with-deps chromium
+      
+    - name: Run critical tests only
+      run: |
+        echo "🧪 Running critical tests..."
+        npx playwright test tests/basic-app-load.spec.js --reporter=line
+        npx playwright test tests/js-error-debug.spec.js --reporter=line
+        echo "✅ Critical tests passed"
+        
+    - name: Commit info
+      run: |
+        echo "📝 Commit Information:"
+        echo "Commit: ${{ github.sha }}"
+        echo "Author: ${{ github.actor }}"
+        echo "Message: ${{ github.event.head_commit.message }}"
+        echo "Modified files:"
+        git diff-tree --no-commit-id --name-only -r ${{ github.sha }}
+
+  notify-success:
+    name: Notify Success
+    needs: quick-test
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+    - name: Success notification
+      run: |
+        echo "🎉 Commit testing completed successfully!"
+        echo "Commit ${{ github.sha }} passed all quick tests"
+        echo "Full CI pipeline will run automatically"
+
+  notify-failure:
+    name: Notify Failure
+    needs: quick-test
+    runs-on: ubuntu-latest
+    if: failure()
+    
+    steps:
+    - name: Failure notification
+      run: |
+        echo "❌ Commit testing failed!"
+        echo "Commit ${{ github.sha }} failed quick tests"
+        echo "Please check the logs and fix issues"
+        exit 1

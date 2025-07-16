@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ master, main ]
   workflow_dispatch:
+  # Trigger on any commit to master branch
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC for maintenance checks
 
 jobs:
   test:
