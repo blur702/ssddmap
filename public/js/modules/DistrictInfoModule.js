@@ -283,18 +283,23 @@ export class DistrictInfoModule {
 
 
   /**
-     * Setup event listeners for copy buttons
+     * Setup event listeners for action and copy buttons
      */
   setupActionListeners () {
     // Remove existing listeners to prevent duplicates
+    if (this.boundActionHandler) {
+      document.removeEventListener('click', this.boundActionHandler);
+    }
     if (this.boundCopyHandler) {
       document.removeEventListener('click', this.boundCopyHandler);
     }
 
-    // Bind the handler to preserve 'this' context
+    // Bind the handlers to preserve 'this' context
+    this.boundActionHandler = this.handleActionClick.bind(this);
     this.boundCopyHandler = this.handleCopyClick.bind(this);
 
-    // Add event listener for copy functionality
+    // Add event listeners
+    document.addEventListener('click', this.boundActionHandler);
     document.addEventListener('click', this.boundCopyHandler);
   }
 
@@ -537,6 +542,51 @@ export class DistrictInfoModule {
   }
 
   /**
+   * Handle action button clicks
+   */
+  handleActionClick (event) {
+    if (event.target.matches('[data-action]') || event.target.closest('[data-action]')) {
+      const button = event.target.matches('[data-action]') ? event.target : event.target.closest('[data-action]');
+      
+      // Only handle buttons in the sidebar content
+      const sidebar = document.querySelector('.sidebar-content');
+      if (!sidebar || !sidebar.contains(button)) return;
+      
+      // Prevent default action and stop propagation
+      event.preventDefault();
+      event.stopPropagation();
+      
+      const action = button.dataset.action;
+      this.handleAction(action, button);
+    }
+  }
+
+  /**
+   * Handle specific actions
+   */
+  handleAction (action, button) {
+    switch (action) {
+    case 'view-on-map':
+      this.focusOnMap();
+      break;
+    default:
+      console.warn('Unknown action:', action);
+    }
+  }
+
+  /**
+   * Focus map on current district
+   */
+  focusOnMap () {
+    if (this.currentDistrictKey) {
+      // Emit event to center map on district
+      if (window.eventBus) {
+        const [state, district] = this.currentDistrictKey.split('-');
+        window.eventBus.emit('centerOnDistrict', { state, district });
+      }
+      console.log(`Centering on district ${this.currentDistrictKey}`);
+    }
+  }  /**
      * Cleanup when destroying
      */
   destroy () {
