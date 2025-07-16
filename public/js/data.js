@@ -280,7 +280,12 @@ export class DataManager {
             { abbreviation: 'WA', name: 'Washington' },
             { abbreviation: 'WV', name: 'West Virginia' },
             { abbreviation: 'WI', name: 'Wisconsin' },
-            { abbreviation: 'WY', name: 'Wyoming' }
+            { abbreviation: 'WY', name: 'Wyoming' },
+            { abbreviation: 'AS', name: 'American Samoa' },
+            { abbreviation: 'GU', name: 'Guam' },
+            { abbreviation: 'MP', name: 'Northern Mariana Islands' },
+            { abbreviation: 'PR', name: 'Puerto Rico' },
+            { abbreviation: 'VI', name: 'Virgin Islands' }
         ];
     }
     

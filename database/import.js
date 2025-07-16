@@ -367,8 +367,8 @@ async function calculateCountyDistrictMapping () {
                 c.county_fips,
                 d.state_code,
                 d.district_number,
-                ROUND((ST_Area(ST_Intersection(c.geometry, d.geometry)::geography) / 
-                       ST_Area(c.geometry::geography)) * 100, 2) as overlap_percentage
+                ROUND(CAST((ST_Area(ST_Intersection(c.geometry, d.geometry)::geography) / 
+                       ST_Area(c.geometry::geography)) * 100 AS NUMERIC), 2) as overlap_percentage
             FROM counties c
             JOIN districts d ON ST_Intersects(c.geometry, d.geometry)
             WHERE c.state_code = d.state_code
