@@ -6,12 +6,13 @@ import { SidepanelInterface } from '../ui/SidepanelInterface.js';
 import { SidebarTemplates } from '../common/SidebarTemplates.js';
 
 export class DistrictInfoModule {
-  constructor (sidebarElement, dataManager, boundaryDistanceModule = null) {
+  constructor (sidebarElement, dataManager, boundaryDistanceModule = null, eventBus = null) {
     this.dataManager = dataManager;
     this.sidepanelInterface = new SidepanelInterface(sidebarElement);
     this.templates = new SidebarTemplates();
     this.currentDistrictKey = null;
     this.boundaryDistanceModule = boundaryDistanceModule;
+    this.eventBus = eventBus;
   }
 
   /**
@@ -580,9 +581,9 @@ export class DistrictInfoModule {
   focusOnMap () {
     if (this.currentDistrictKey) {
       // Emit event to center map on district
-      if (window.eventBus) {
+      if (this.eventBus) {
         const [state, district] = this.currentDistrictKey.split('-');
-        window.eventBus.emit('centerOnDistrict', { state, district });
+        this.eventBus.emit('centerOnDistrict', { state, district });
       }
       console.log(`Centering on district ${this.currentDistrictKey}`);
     }

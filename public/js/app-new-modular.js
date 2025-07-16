@@ -114,7 +114,7 @@ class ModularCongressionalDistrictsApp {
             this.boundaryDistanceModule = new BoundaryDistanceModule(this.core, this.eventBus);
             
             // Initialize district info module with boundary distance support
-            this.districtInfoModule = new DistrictInfoModule(sidebarElement, this.data, this.boundaryDistanceModule);
+            this.districtInfoModule = new DistrictInfoModule(sidebarElement, this.data, this.boundaryDistanceModule, this.eventBus);
             
             // Initialize address search module with boundary distance integration
             this.addressSearchModule = new AddressSearchModule(
