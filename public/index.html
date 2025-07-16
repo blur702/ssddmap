@@ -57,7 +57,7 @@
                 </label>
                 
                 <label class="toggle-switch">
-                    <input type="checkbox" id="toggleRepView">
+                    <input type="checkbox" id="toggleRepView" checked>
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Rep View</span>
                 </label>
@@ -132,10 +132,18 @@
                 <button id="closeSidebar" class="close-btn">&times;</button>
             </div>
             <div id="districtSelector" class="district-selector">
-                <!-- District dropdown will be populated here -->
+                <div class="prominent-dropdown" style="display: none;">
+                    <h4 class="dropdown-title">Select District</h4>
+                    <select id="districtSelect" class="form-select">
+                        <option value="">Select District</option>
+                    </select>
+                </div>
             </div>
-            <div id="districtInfo" class="district-info-content">
+            <div id="sidebar-content" class="district-info-content">
                 <p class="placeholder">Select a district to view details</p>
+            </div>
+            <div id="districtInfo" class="district-info-content" style="display: none;">
+                <!-- Legacy element for compatibility -->
             </div>
             
             <div id="districtList" class="district-list" style="display: none;">
@@ -427,7 +435,7 @@
     <!-- Load Leaflet -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
-    <!-- Load modular JavaScript as ES6 modules -->
-    <script type="module" src="js/app-modular.js"></script>
+    <!-- Load NEW modular JavaScript as ES6 modules -->
+    <script type="module" src="js/app-new-modular.js"></script>
 </body>
 </html>

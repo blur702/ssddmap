@@ -40,6 +40,7 @@ export class UIManager {
         this.elements.districtInfo = document.getElementById('districtInfo');
         this.elements.districtList = document.getElementById('districtList');
         this.elements.districtSelector = document.getElementById('districtSelector');
+        this.elements.sidebarContent = document.getElementById('sidebar-content') || this.elements.districtInfo;
         
         // Modal elements
         this.elements.dataModal = document.getElementById('dataModal');
@@ -337,6 +338,93 @@ export class UIManager {
     }
     
     /**
+     * Update state information in sidebar
+     * @param {string} state - State abbreviation
+     * @param {Array} districts - Array of district objects with member info
+     */
+    updateStateInfo(state, districts) {
+        if (!this.elements.districtInfo || !districts || districts.length === 0) return;
+        
+        // Calculate party breakdown
+        const partyBreakdown = { D: 0, R: 0, I: 0, V: 0 };
+        districts.forEach(district => {
+            const party = district.member?.party || 'V';
+            partyBreakdown[party] = (partyBreakdown[party] || 0) + 1;
+        });
+        
+        // Get state name
+        const stateNames = {
+            'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California',
+            'CO': 'Colorado', 'CT': 'Connecticut', 'DC': 'District of Columbia', 'DE': 'Delaware', 
+            'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois',
+            'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana',
+            'ME': 'Maine', 'MD': 'Maryland', 'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota',
+            'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
+            'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina',
+            'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania',
+            'RI': 'Rhode Island', 'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas',
+            'UT': 'Utah', 'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+            'WI': 'Wisconsin', 'WY': 'Wyoming'
+        };
+        
+        const stateName = stateNames[state] || state;
+        
+        const html = `
+            <div class="state-info">
+                <div class="state-header">
+                    <h3>${stateName} (${state})</h3>
+                </div>
+                
+                <div class="state-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Representatives:</span>
+                        <span class="stat-value">${districts.length}</span>
+                    </div>
+                    
+                    <div class="party-breakdown">
+                        <h4>Party Breakdown</h4>
+                        ${partyBreakdown.R > 0 ? `
+                            <div class="party-stat republican">
+                                <span class="party-icon">🐘</span>
+                                <span class="party-label">Republican:</span>
+                                <span class="party-count">${partyBreakdown.R}</span>
+                            </div>
+                        ` : ''}
+                        ${partyBreakdown.D > 0 ? `
+                            <div class="party-stat democrat">
+                                <span class="party-icon">🫏</span>
+                                <span class="party-label">Democrat:</span>
+                                <span class="party-count">${partyBreakdown.D}</span>
+                            </div>
+                        ` : ''}
+                        ${partyBreakdown.I > 0 ? `
+                            <div class="party-stat independent">
+                                <span class="party-icon">Ⓘ</span>
+                                <span class="party-label">Independent:</span>
+                                <span class="party-count">${partyBreakdown.I}</span>
+                            </div>
+                        ` : ''}
+                        ${partyBreakdown.V > 0 ? `
+                            <div class="party-stat vacant">
+                                <span class="party-icon">•</span>
+                                <span class="party-label">Vacant:</span>
+                                <span class="party-count">${partyBreakdown.V}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                <div class="instruction-text">
+                    <p>Select a district below to view representative details</p>
+                </div>
+            </div>
+        `;
+        
+        this.elements.districtInfo.innerHTML = html;
+        this.showSidebar();
+    }
+    
+    /**
      * Update district list for state view
      * @param {string} state - State abbreviation
      * @param {Array} districts - Array of district objects with member info
@@ -359,9 +447,10 @@ export class UIManager {
         
         // Create dropdown HTML with party icons
         const dropdownHtml = `
-            <div class="districts-select-wrapper">
-                <select id="districtSelect" class="district-select" onchange="window.congressApp.selectDistrictFromDropdown(this.value)">
-                    <option value="">Select a district...</option>
+            <div class="districts-select-wrapper prominent-dropdown">
+                <h4 class="dropdown-title">Select District</h4>
+                <select id="districtSelect" class="district-select prominent" onchange="window.congressApp.selectDistrictFromDropdown(this.value)">
+                    <option value="">Choose a district to view details...</option>
                     ${districts.map((district, index) => {
                         const member = district.member;
                         const districtKey = `${state}-${district.district}`;
@@ -390,9 +479,8 @@ export class UIManager {
         
         this.elements.districtSelector.innerHTML = dropdownHtml;
         
-        // Hide the district list (no longer showing summary)
+        // Clear the district list (the dropdown is in districtSelector)
         this.elements.districtList.innerHTML = '';
-        this.elements.districtList.style.display = 'none';
         
         // Show the sidebar if not already visible
         this.showSidebar();

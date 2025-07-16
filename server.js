@@ -1250,6 +1250,60 @@ router.get('/api/distance-to-boundary', async (req, res) => {
     }
 });
 
+// Get closest point on district boundary
+router.post('/api/closest-boundary-point', async (req, res) => {
+    try {
+        const { lat, lon, state, district } = req.body;
+        
+        if (!lat || !lon || !state || !district) {
+            return res.status(400).json({ error: 'lat, lon, state, and district are required' });
+        }
+
+        // Query to find the closest point on the district boundary
+        const result = await pool.query(`
+            WITH point_location AS (
+                SELECT 
+                    ST_SetSRID(ST_MakePoint($2, $1), 4326) as geom,
+                    ST_SetSRID(ST_MakePoint($2, $1), 4326)::geography as geog
+            )
+            SELECT 
+                ST_X(ST_ClosestPoint(ST_Boundary(d.geometry), p.geom)) as lon,
+                ST_Y(ST_ClosestPoint(ST_Boundary(d.geometry), p.geom)) as lat,
+                ST_Distance(p.geog, ST_Boundary(d.geometry)::geography) as distance_meters,
+                ST_Distance(p.geog, ST_Boundary(d.geometry)::geography) * 0.000621371 as distance_miles,
+                ST_Distance(p.geog, ST_Boundary(d.geometry)::geography) * 3.28084 as distance_feet,
+                ST_Distance(p.geog, ST_Boundary(d.geometry)::geography) / 1000 as distance_kilometers
+            FROM districts d
+            CROSS JOIN point_location p
+            WHERE d.state_code = $3 
+            AND d.district_number = $4
+        `, [lat, lon, state, parseInt(district)]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'District not found' });
+        }
+        
+        const row = result.rows[0];
+        
+        res.json({
+            success: true,
+            closestPoint: {
+                lat: row.lat,
+                lon: row.lon
+            },
+            distance: {
+                meters: row.distance_meters,
+                kilometers: row.distance_kilometers,
+                miles: row.distance_miles,
+                feet: row.distance_feet
+            }
+        });
+    } catch (error) {
+        console.error('Closest boundary point error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Configuration status endpoint
 router.get('/api/config/status', async (req, res) => {
     try {

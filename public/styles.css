@@ -889,6 +889,396 @@ body {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+/* Prominent dropdown styling */
+.prominent-dropdown {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 1rem 0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-title {
+    margin: 0 0 0.75rem 0;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.district-select.prominent {
+    background: var(--bg-primary);
+    border: 2px solid var(--primary-color);
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.district-select.prominent:hover {
+    border-color: var(--primary-hover);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.district-select.prominent:focus {
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+/* State info styling */
+.state-info {
+    padding: 1rem 0;
+}
+
+.state-header h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+}
+
+.state-stats {
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+}
+
+.stat-label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.stat-value {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.party-breakdown h4 {
+    margin: 1rem 0 0.5rem 0;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.party-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    border-radius: 6px;
+    background: var(--bg-secondary);
+}
+
+.party-stat.republican {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.party-stat.democrat {
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.party-stat.independent {
+    background: rgba(107, 114, 128, 0.1);
+}
+
+.party-stat.vacant {
+    background: rgba(156, 163, 175, 0.1);
+}
+
+.party-icon {
+    font-size: 1.2rem;
+}
+
+.party-label {
+    flex: 1;
+    font-weight: 500;
+}
+
+.party-count {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.instruction-text {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.instruction-text p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-style: italic;
+    text-align: center;
+}
+
+/* Address Search Module Styles */
+.address-section .search-address {
+    padding: 1rem;
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0fdf4 100%);
+    border-radius: 8px;
+    border-left: 4px solid #10b981;
+}
+
+.address-section .address-main {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem 0;
+    line-height: 1.4;
+}
+
+.address-section .coordinates {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.address-section .coord-label,
+.address-section .source-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.address-section .coord-value,
+.address-section .source-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.address-section .data-source {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.district-section .district-assignment {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.district-section .district-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.district-section .district-number {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.district-section .rep-details {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.district-section .rep-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+}
+
+.district-section .rep-info {
+    flex: 1;
+}
+
+.district-section .rep-name {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.district-section .rep-party {
+    margin: 0 0 0.75rem 0;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.district-section .committees-info {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.district-section .committees-info h6 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.district-section .committees-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.district-section .committee-item {
+    padding: 0.5rem;
+    margin-bottom: 0.25rem;
+    background: var(--bg-primary);
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.district-section .committee-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.district-section .committee-role {
+    margin-left: 0.5rem;
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.district-section .vacant-seat {
+    text-align: center;
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 2px dashed var(--border-color);
+}
+
+.district-section .vacant-message {
+    margin: 0;
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.district-section .district-partial,
+.district-section .no-district-info {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.district-section .warning-message {
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+    color: #f59e0b;
+}
+
+.district-section .info-message {
+    margin: 0 0 0.5rem 0;
+    color: var(--text-secondary);
+}
+
+.district-section .suggestion {
+    margin: 0;
+    font-style: italic;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.comparison-section .comparison-grid {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.comparison-section .comparison-item {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.comparison-section .comparison-item h6 {
+    margin: 0 0 0.75rem 0;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.comparison-section .comparison-details p {
+    margin: 0 0 0.25rem 0;
+    font-size: 0.9rem;
+}
+
+.comparison-section .discrepancy-warning {
+    padding: 1rem;
+    background: #fef3c7;
+    border: 2px solid #f59e0b;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.comparison-section .warning-text {
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+    color: #92400e;
+}
+
+.comparison-section .warning-detail {
+    margin: 0;
+    color: #92400e;
+    font-size: 0.9rem;
+}
+
+.actions-section .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.actions-section .btn {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+    text-decoration: none;
+    display: block;
+}
+
+.actions-section .btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.actions-section .btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.actions-section .btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.actions-section .btn-secondary:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
 .district-list-summary {
     display: flex;
     flex-direction: column;

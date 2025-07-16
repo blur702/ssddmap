@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modular App</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { height: 400px; width: 100%; }
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>Modular Architecture Test</h1>
+    <div id="status" class="status">Loading...</div>
+    
+    <div>
+        <label>
+            <input type="checkbox" id="toggleRepView" checked> Rep View
+        </label>
+        <select id="stateSelect">
+            <option value="">All States</option>
+            <option value="CA">California</option>
+            <option value="TX">Texas</option>
+        </select>
+        <select id="districtSelect">
+            <option value="">Select District</option>
+        </select>
+    </div>
+    
+    <div id="map"></div>
+    <div id="sidebar-content">Sidebar content</div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script type="module">
+        const statusDiv = document.getElementById('status');
+        
+        function updateStatus(message, isError = false) {
+            console.log(message);
+            statusDiv.innerHTML = message;
+            statusDiv.className = `status ${isError ? 'error' : 'success'}`;
+        }
+        
+        try {
+            updateStatus('Loading Core module...');
+            const { Core } = await import('./js/core.js');
+            updateStatus('✅ Core loaded');
+            
+            updateStatus('Loading Common module...');
+            const { EventBus, PluginManager } = await import('./js/common.js');
+            updateStatus('✅ Common loaded');
+            
+            updateStatus('Loading RepView plugin...');
+            const { RepViewPlugin } = await import('./js/plugins/rep-view-plugin.js');
+            updateStatus('✅ RepView plugin loaded');
+            
+            updateStatus('Loading StateSelector plugin...');
+            const { StateSelectorPlugin } = await import('./js/plugins/state-selector-plugin.js');
+            updateStatus('✅ StateSelector plugin loaded');
+            
+            updateStatus('Loading DataManager...');
+            const { DataManager } = await import('./js/data.js');
+            updateStatus('✅ DataManager loaded');
+            
+            // Initialize core system
+            updateStatus('Initializing core system...');
+            const eventBus = new EventBus();
+            const core = new Core();
+            core.initialize('map', eventBus);
+            
+            // Initialize data manager
+            const dataManager = new DataManager();
+            
+            // Initialize plugin manager
+            const pluginManager = new PluginManager(core, eventBus);
+            
+            // Register plugins
+            const repViewPlugin = new RepViewPlugin(core, eventBus, dataManager);
+            const stateSelectorPlugin = new StateSelectorPlugin(core, eventBus, dataManager);
+            
+            pluginManager.register(repViewPlugin);
+            pluginManager.register(stateSelectorPlugin);
+            
+            // Initialize plugins
+            await pluginManager.initializeAll();
+            
+            // Make available globally
+            window.testCore = core;
+            window.testEventBus = eventBus;
+            window.testPluginManager = pluginManager;
+            window.testDataManager = dataManager;
+            
+            updateStatus('✅ All modules loaded and initialized successfully!');
+            
+            // Test basic functionality
+            setTimeout(async () => {
+                try {
+                    await dataManager.fetchMembers();
+                    await stateSelectorPlugin.showAllStates();
+                    updateStatus('✅ Test data loaded and districts displayed!');
+                } catch (error) {
+                    updateStatus(`❌ Error loading test data: ${error.message}`, true);
+                }
+            }, 1000);
+            
+        } catch (error) {
+            updateStatus(`❌ Error loading modules: ${error.message}`, true);
+            console.error('Module loading error:', error);
+        }
+    </script>
+</body>
+</html>

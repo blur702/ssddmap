@@ -7,16 +7,19 @@ export class SearchManager {
         this.searchResults = [];
         this.selectedResultIndex = -1;
         this.autosuggestEnabled = true;
-        this.currentLocationMethod = 'census';
+        this.currentLocationMethod = 'usps_ai'; // Changed to use USPS + AI workflow
         this.callbacks = {};
+        this.addressResolutionModule = null;
     }
     
     /**
      * Initialize search functionality
      * @param {Object} elements - DOM elements used by search
+     * @param {Object} addressResolutionModule - Address resolution module for USPS + AI workflow
      */
-    initialize(elements) {
+    initialize(elements, addressResolutionModule = null) {
         this.elements = elements;
+        this.addressResolutionModule = addressResolutionModule;
         this.setupEventListeners();
     }
     
@@ -268,12 +271,115 @@ export class SearchManager {
      */
     async geocodeAddress(address) {
         switch (this.currentLocationMethod) {
+            case 'usps_ai':
+                return await this.geocodeWithUSPSAI(address);
             case 'census':
                 return await this.geocodeWithCensus(address);
             case 'both':
                 return await this.geocodeWithBoth(address);
             default:
+                return await this.geocodeWithUSPSAI(address);
+        }
+    }
+    
+    /**
+     * Geocode using USPS + AI intelligent address resolution
+     * @param {string} address - Address to geocode
+     * @returns {Object} Geocoding result
+     */
+    async geocodeWithUSPSAI(address) {
+        try {
+            if (!this.addressResolutionModule) {
+                console.warn('AddressResolutionModule not available, falling back to Census');
                 return await this.geocodeWithCensus(address);
+            }
+
+            console.log('🚀 Starting USPS + AI address resolution for:', address);
+            
+            // Step 1: Resolve address using USPS + AI to get ZIP+4
+            const resolutionResult = await this.addressResolutionModule.resolveAddress(address);
+            
+            if (!resolutionResult.success) {
+                console.warn('USPS + AI resolution failed, falling back to Census');
+                return await this.geocodeWithCensus(address);
+            }
+
+            console.log('✅ Address resolved with ZIP+4:', resolutionResult.zip4);
+
+            // Step 2: Check if we already have district info from the validation response
+            let districtData = { found: false };
+            if (resolutionResult.uspsData && resolutionResult.uspsData.methods && resolutionResult.uspsData.methods.usps && resolutionResult.uspsData.methods.usps.district) {
+                const uspsDistrict = resolutionResult.uspsData.methods.usps.district;
+                districtData = {
+                    found: true,
+                    state: uspsDistrict.state,
+                    district: uspsDistrict.district,
+                    member: uspsDistrict.member || null
+                };
+            }
+
+            // Step 3: If ZIP+4 district lookup fails, try coordinate-based lookup
+            let coordinates = null;
+            if (!districtData.found && resolutionResult.uspsData && resolutionResult.uspsData.coordinates) {
+                coordinates = resolutionResult.uspsData.coordinates;
+                const coordDistrictResponse = await fetch(`/ssddmap/api/find-district?lat=${coordinates.lat}&lon=${coordinates.lon}`);
+                if (coordDistrictResponse.ok) {
+                    const coordDistrictData = await coordDistrictResponse.json();
+                    if (coordDistrictData.found) {
+                        districtData = coordDistrictData;
+                    }
+                }
+            }
+
+            // Step 4: If we still don't have coordinates, geocode the final address
+            if (!coordinates) {
+                const geocodeResponse = await fetch(`/ssddmap/api/geocode?address=${encodeURIComponent(resolutionResult.finalAddress)}`);
+                if (geocodeResponse.ok) {
+                    const geocodeData = await geocodeResponse.json();
+                    if (geocodeData && geocodeData.length > 0) {
+                        coordinates = {
+                            lat: geocodeData[0].lat,
+                            lon: geocodeData[0].lon
+                        };
+                        
+                        // Try district lookup with geocoded coordinates if we don't have district yet
+                        if (!districtData.found) {
+                            const coordDistrictResponse = await fetch(`/ssddmap/api/find-district?lat=${coordinates.lat}&lon=${coordinates.lon}`);
+                            if (coordDistrictResponse.ok) {
+                                const coordDistrictData = await coordDistrictResponse.json();
+                                if (coordDistrictData.found) {
+                                    districtData = coordDistrictData;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Ensure we have coordinates
+            if (!coordinates) {
+                throw new Error('Could not obtain coordinates for resolved address');
+            }
+
+            return {
+                address: resolutionResult.finalAddress,
+                lat: coordinates.lat,
+                lon: coordinates.lon,
+                source: 'usps_ai',
+                zip4: resolutionResult.zip4,
+                state: districtData.found ? districtData.state : null,
+                district: districtData.found ? districtData.district : null,
+                member: districtData.found ? districtData.member : null,
+                districtInfo: districtData,
+                resolutionSummary: this.addressResolutionModule.getResolutionSummary(resolutionResult),
+                uspsStandardized: true,
+                geminiCorrections: resolutionResult.geminiCorrections
+            };
+            
+        } catch (error) {
+            console.error('USPS + AI geocoding error:', error);
+            console.warn('Falling back to Census geocoder');
+            return await this.geocodeWithCensus(address);
         }
     }
     
@@ -284,27 +390,32 @@ export class SearchManager {
      */
     async geocodeWithCensus(address) {
         try {
-            const response = await fetch('/ssddmap/api/geocode', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ address })
-            });
+            const response = await fetch(`/ssddmap/api/geocode?address=${encodeURIComponent(address)}`);
             
             if (!response.ok) throw new Error('Geocoding failed');
             
             const data = await response.json();
             
-            if (data.error) {
-                throw new Error(data.error);
+            if (!data || !Array.isArray(data) || data.length === 0) {
+                throw new Error('No geocoding results found');
             }
             
+            // Get the first (best) result
+            const result = data[0];
+            
+            // Now find district information for these coordinates
+            const districtResponse = await fetch(`/ssddmap/api/find-district?lat=${result.lat}&lon=${result.lon}`);
+            const districtData = await districtResponse.json();
+            
             return {
-                address: data.address || address,
-                lat: data.lat,
-                lon: data.lon,
+                address: result.display_name || address,
+                lat: result.lat,
+                lon: result.lon,
                 source: 'census',
-                state: data.state,
-                district: data.district
+                state: districtData.found ? districtData.state : null,
+                district: districtData.found ? districtData.district : null,
+                member: districtData.found ? districtData.member : null,
+                districtInfo: districtData
             };
             
         } catch (error) {

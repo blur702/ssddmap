@@ -11,6 +11,9 @@ import { UIManager } from './ui.js';
 import { ValidationManager } from './validation.js';
 import { AddressModalEnhanced } from './addressModalEnhanced.js';
 import { DistrictInfoModule } from './modules/DistrictInfoModule.js';
+import { AddressSearchModule } from './modules/AddressSearchModule.js';
+import { BoundaryDistanceModule } from './modules/BoundaryDistanceModule.js';
+import { AddressResolutionModule } from './modules/AddressResolutionModule.js';
 
 class ModularCongressionalDistrictsApp {
     constructor() {
@@ -26,8 +29,11 @@ class ModularCongressionalDistrictsApp {
         this.validation = new ValidationManager();
         this.addressModal = null;
         
-        // District info module for sidepanel
+        // Modules for sidepanel
         this.districtInfoModule = null;
+        this.addressSearchModule = null;
+        this.boundaryDistanceModule = null;
+        this.addressResolutionModule = null;
         
         // App state
         this.currentState = null;
@@ -85,8 +91,11 @@ class ModularCongressionalDistrictsApp {
         // Initialize UI
         this.ui.initialize();
         
-        // Initialize search
-        this.search.initialize(this.ui.getElements());
+        // Initialize address resolution module
+        this.addressResolutionModule = new AddressResolutionModule(this.eventBus);
+        
+        // Initialize search with address resolution module
+        this.search.initialize(this.ui.getElements(), this.addressResolutionModule);
         
         // Initialize validation
         this.validation.initialize({ getMap: () => this.core.getMap() }, this.ui);
@@ -98,10 +107,24 @@ class ModularCongressionalDistrictsApp {
         );
         window.addressModal = this.addressModal;
         
-        // Initialize district info module
+        // Initialize sidebar modules
         const sidebarElement = document.getElementById('info-sidebar');
         if (sidebarElement) {
             this.districtInfoModule = new DistrictInfoModule(sidebarElement, this.data);
+            
+            // Initialize boundary distance module
+            this.boundaryDistanceModule = new BoundaryDistanceModule(this.core, this.eventBus);
+            
+            // Initialize address search module with boundary distance integration
+            this.addressSearchModule = new AddressSearchModule(
+                sidebarElement, 
+                this.data, 
+                this.eventBus, 
+                this.boundaryDistanceModule
+            );
+            
+            // Setup address search module callbacks as fallback
+            this.setupAddressSearchCallbacks();
         }
         
         console.log('✅ Legacy managers initialized');
@@ -149,6 +172,25 @@ class ModularCongressionalDistrictsApp {
         this.eventBus.on('stateInfoDisplay', (data) => {
             if (this.districtInfoModule) {
                 this.districtInfoModule.displayStateInfo(data.state, data.districts);
+            }
+        });
+
+        // Address search module event handlers
+        this.eventBus.on('focusMapLocation', (data) => {
+            this.core.setView(data.lat, data.lon, data.zoom);
+        });
+
+        this.eventBus.on('showDistrictDetails', (districtInfo) => {
+            if (this.districtInfoModule) {
+                this.districtInfoModule.displayDistrictInfo(districtInfo);
+            }
+        });
+
+        this.eventBus.on('clearSearchInput', () => {
+            const searchInput = document.getElementById('addressInput');
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
             }
         });
         
@@ -209,6 +251,31 @@ class ModularCongressionalDistrictsApp {
         });
         
         console.log('✅ Core event handlers setup complete');
+    }
+
+    /**
+     * Setup address search module callbacks as fallback
+     */
+    setupAddressSearchCallbacks() {
+        if (!this.addressSearchModule) return;
+
+        this.addressSearchModule.on('onFocusMap', (lat, lon, zoom) => {
+            this.core.setView(lat, lon, zoom);
+        });
+
+        this.addressSearchModule.on('onShowDistrictDetails', (districtInfo) => {
+            if (this.districtInfoModule) {
+                this.districtInfoModule.displayDistrictInfo(districtInfo);
+            }
+        });
+
+        this.addressSearchModule.on('onClearSearch', () => {
+            const searchInput = document.getElementById('addressInput');
+            if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+            }
+        });
     }
 
     /**
@@ -313,9 +380,14 @@ class ModularCongressionalDistrictsApp {
             // Center map on location
             this.core.setView(result.lat, result.lon, 10);
             
-            // If we have district info from geocoding, select it
-            if (result.state && result.district) {
-                await this.selectDistrict(result.state, result.district);
+            // Use new address search module to display comprehensive SSDD info
+            if (this.addressSearchModule) {
+                await this.addressSearchModule.displaySearchResult(result);
+            } else {
+                // Fallback to district selection if no address module
+                if (result.state && result.district) {
+                    await this.selectDistrict(result.state, result.district);
+                }
             }
             
             // Show address in notification

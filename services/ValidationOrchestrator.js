@@ -65,14 +65,14 @@ class ValidationOrchestrator {
         const lastPart = parts[parts.length - 1];
         
         // Extract ZIP, state, and city
-        const zipMatch = lastPart.match(/\\b(\\d{5}(-\\d{4})?)\\b/);
+        const zipMatch = lastPart.match(/\b(\d{5}(-\d{4})?)\b/);
         let zip = zipMatch ? zipMatch[1].split('-')[0] : '';
         let state = '';
         let city = '';
 
         if (zipMatch) {
             const withoutZip = lastPart.replace(zipMatch[0], '').trim();
-            const stateMatch = withoutZip.match(/\\b([A-Z]{2})\\b$/i);
+            const stateMatch = withoutZip.match(/\b([A-Z]{2})\b$/i);
             if (stateMatch) {
                 state = stateMatch[1];
                 city = withoutZip.replace(stateMatch[0], '').trim();
@@ -80,12 +80,26 @@ class ValidationOrchestrator {
                 state = withoutZip;
             }
         } else {
-            const stateMatch = lastPart.match(/\\b([A-Z]{2})\\b$/i);
+            // Try to extract state and ZIP from lastPart when no ZIP was found in initial match
+            const parts = lastPart.split(' ');
+            const stateMatch = lastPart.match(/\b([A-Z]{2})\b/i);
             if (stateMatch) {
                 state = stateMatch[1];
-                city = lastPart.replace(stateMatch[0], '').trim();
+                // Remove state from parts to get city
+                const stateIndex = parts.findIndex(part => part.toUpperCase() === state.toUpperCase());
+                if (stateIndex !== -1) {
+                    const cityParts = parts.slice(0, stateIndex);
+                    const zipParts = parts.slice(stateIndex + 1);
+                    city = cityParts.join(' ').trim();
+                    // Check if there's a ZIP after the state
+                    const zipInParts = zipParts.find(part => /^\d{5}(-\d{4})?$/.test(part));
+                    if (zipInParts) {
+                        zip = zipInParts.split('-')[0];
+                    }
+                }
             } else {
-                state = lastPart;
+                // Fallback: assume it's all city if no state pattern found
+                city = lastPart;
             }
         }
 

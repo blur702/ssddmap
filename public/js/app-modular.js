@@ -7,6 +7,7 @@ import { UIManager } from './ui.js';
 import { DataManager } from './data.js';
 import { ValidationManager } from './validation.js';
 import { AddressModalEnhanced } from './addressModalEnhanced.js';
+import { StateSelector } from './stateSelector.js';
 
 class CongressionalDistrictsApp {
     constructor() {
@@ -16,10 +17,11 @@ class CongressionalDistrictsApp {
         this.data = new DataManager();
         this.validation = new ValidationManager();
         this.addressModal = null;
+        this.stateSelector = null;
         
         this.currentState = null;
         this.currentDistrict = null;
-        this.isRepView = false;
+        this.isRepView = true; // Default to rep view
         this.districtLayers = {};
         this.currentGlowLayer = null;
     }
@@ -50,6 +52,11 @@ class CongressionalDistrictsApp {
             this.addressModal = new AddressModalEnhanced(this.map, this.ui);
             window.addressModal = this.addressModal; // Make accessible globally
             
+            // Initialize state selector
+            this.stateSelector = new StateSelector(this.map, this.data, this.ui);
+            this.stateSelector.setApp(this); // Give StateSelector reference to main app
+            window.stateSelector = this.stateSelector; // Make accessible globally for testing
+            
             // Setup event handlers
             this.setupEventHandlers();
             
@@ -76,16 +83,15 @@ class CongressionalDistrictsApp {
             this.map.setStyle(style);
         });
         
-        this.ui.on('onStateChange', (state) => {
-            this.loadStateDistricts(state);
-        });
+        // State change is now handled by StateSelector module
+        // this.ui.on('onStateChange', (state) => {
+        //     this.loadStateDistricts(state);
+        // });
         
         this.ui.on('onViewUSA', () => {
             this.map.viewUSA();
-            this.currentState = null;
-            this.ui.getElements().stateSelect.value = '';
-            this.ui.clearDistrictList();
-            this.loadAllDistricts();
+            this.stateSelector.reset();
+            this.stateSelector.showAllStates();
         });
         
         this.ui.on('onToggleRepView', (enabled) => {
@@ -147,15 +153,18 @@ class CongressionalDistrictsApp {
         try {
             this.ui.showLoading('Loading data...');
             
-            // Load states
-            const states = await this.data.fetchStates();
-            this.ui.populateStates(states);
+            // States are now loaded by StateSelector module
+            // const states = await this.data.fetchStates();
+            // this.ui.populateStates(states);
             
-            // Load all districts
-            await this.loadAllDistricts();
-            
-            // Load members data
+            // Load members data first
             await this.data.fetchMembers();
+            
+            // Load all districts through StateSelector (will use member data for coloring)
+            await this.stateSelector.showAllStates();
+            
+            // Apply initial rep view state
+            this.updateDistrictColors();
             
             // Update cache status
             const cacheStatus = await this.data.getCacheStatus();
@@ -402,10 +411,40 @@ class CongressionalDistrictsApp {
      * @param {string} districtKey - District key (state-district)
      */
     selectDistrictFromDropdown(districtKey) {
-        if (!districtKey) return;
+        if (!districtKey) {
+            // If no district selected, show state info again
+            if (this.stateSelector.getCurrentState()) {
+                // Get current state districts and show state info
+                const currentState = this.stateSelector.getCurrentState();
+                // We need to get the district data to show state info
+                this.refreshStateInfo(currentState);
+            }
+            return;
+        }
         
         const [state, district] = districtKey.split('-');
         this.selectDistrict(state, district);
+    }
+    
+    /**
+     * Refresh state info in sidebar
+     * @param {string} stateCode - State abbreviation
+     */
+    async refreshStateInfo(stateCode) {
+        try {
+            const response = await fetch(`/ssddmap/api/state/${stateCode}`);
+            if (response.ok) {
+                const stateData = await response.json();
+                const districtListData = stateData.map(district => ({
+                    state: stateCode,
+                    district: district.district,
+                    member: district.member
+                }));
+                this.ui.updateStateInfo(stateCode, districtListData);
+            }
+        } catch (error) {
+            console.error('Error refreshing state info:', error);
+        }
     }
     
     /**
@@ -539,12 +578,24 @@ class CongressionalDistrictsApp {
      * Update district colors based on rep view setting
      */
     updateDistrictColors() {
+        console.log('🎨 Updating district colors, isRepView:', this.isRepView);
         Object.entries(this.districtLayers).forEach(([districtKey, layer]) => {
             const member = this.data.cache.members[districtKey];
             const fillColor = this.isRepView && member ? 
                 this.data.getPartyColor(member.party) : '#6b7280';
             
-            layer.setStyle({ fillColor: fillColor });
+            console.log(`District ${districtKey}: member=${member?.name}, party=${member?.party}, color=${fillColor}`);
+            
+            // Update layer style with proper Leaflet method
+            if (layer && layer.setStyle) {
+                layer.setStyle({
+                    weight: 1,
+                    opacity: 0.8,
+                    color: '#444444',
+                    fillOpacity: 0.4,
+                    fillColor: fillColor
+                });
+            }
         });
     }
     

@@ -45,7 +45,7 @@ export class AddressModalEnhanced {
             states.forEach(state => {
                 const option = document.createElement('option');
                 option.value = state.code;
-                option.textContent = state.name;
+                option.textContent = state.code;
                 this.stateSelect.appendChild(option);
             });
             
@@ -114,7 +114,7 @@ export class AddressModalEnhanced {
         fallbackStates.forEach(state => {
             const option = document.createElement('option');
             option.value = state.code;
-            option.textContent = state.name;
+            option.textContent = state.code;
             this.stateSelect.appendChild(option);
         });
     }
@@ -187,14 +187,17 @@ export class AddressModalEnhanced {
         // API toggle changes
         document.getElementById('toggleUSPS').addEventListener('change', (e) => {
             this.apiStatus.usps.enabled = e.target.checked;
+            this.updateColumnVisibility('usps', e.target.checked);
         });
         
         document.getElementById('toggleCensus').addEventListener('change', (e) => {
             this.apiStatus.census.enabled = e.target.checked;
+            this.updateColumnVisibility('census', e.target.checked);
         });
         
         document.getElementById('toggleGoogle').addEventListener('change', (e) => {
             this.apiStatus.google.enabled = e.target.checked;
+            this.updateColumnVisibility('google', e.target.checked);
         });
     }
     
@@ -225,6 +228,33 @@ export class AddressModalEnhanced {
             if (column) column.style.display = 'none';
         });
         document.getElementById('comparisonSummary').style.display = 'none';
+    }
+    
+    updateColumnVisibility(api, isVisible) {
+        // Only update visibility if we have results
+        if (this.resultsContainer.style.display !== 'none') {
+            const column = document.getElementById(`${api}ResultColumn`);
+            if (column) {
+                // If toggled off, hide the column
+                if (!isVisible) {
+                    column.style.display = 'none';
+                } else if (this.currentResults[api]) {
+                    // If toggled on and we have results, show the column
+                    column.style.display = 'block';
+                }
+                
+                // Update comparison if multiple results exist
+                const enabledResults = Object.keys(this.currentResults).filter(key => 
+                    this.apiStatus[key] && this.apiStatus[key].enabled
+                );
+                
+                if (enabledResults.length > 1) {
+                    this.compareResults();
+                } else {
+                    document.getElementById('comparisonSummary').style.display = 'none';
+                }
+            }
+        }
     }
     
     async handleSubmit(e) {
@@ -546,7 +576,7 @@ export class AddressModalEnhanced {
         `;
     }
     
-    useResult(api) {
+    async useResult(api) {
         const result = this.currentResults[api];
         if (!result || !result.success) {
             this.ui.showNotification('No valid result to use', 'error');
@@ -560,6 +590,9 @@ export class AddressModalEnhanced {
         
         // Close modal
         this.close();
+        
+        // Clear any existing validation markers and lines
+        this.clearValidationResults();
         
         // Navigate to the location on map
         const coords = result.coordinates;
@@ -596,16 +629,195 @@ export class AddressModalEnhanced {
             </div>
         `);
         
-        // Add to map
+        // Store marker for later cleanup
+        this.currentMarker = marker;
         marker.addTo(this.mapManager.map);
         marker.openPopup();
         
-        // Load district boundaries
+        // Load district boundaries and calculate boundary point
         if (result.district) {
-            this.loadDistrictBoundaries(result.district.state, result.district.district);
+            await this.loadDistrictBoundaries(result.district.state, result.district.district);
+            
+            // Calculate and display boundary distance
+            await this.displayBoundaryDistance(coords, result.district, result);
         }
         
+        // Update sidebar with complete information
+        this.updateSidebarWithValidation(result, api);
+        
         this.ui.showNotification(`Address validated and displayed on map (${api.toUpperCase()})`, 'success');
+    }
+    
+    clearValidationResults() {
+        // Remove existing marker
+        if (this.currentMarker) {
+            this.mapManager.map.removeLayer(this.currentMarker);
+            this.currentMarker = null;
+        }
+        
+        // Remove existing boundary line
+        if (this.boundaryLine) {
+            this.mapManager.map.removeLayer(this.boundaryLine);
+            this.boundaryLine = null;
+        }
+        
+        // Remove boundary point marker
+        if (this.boundaryMarker) {
+            this.mapManager.map.removeLayer(this.boundaryMarker);
+            this.boundaryMarker = null;
+        }
+    }
+    
+    async displayBoundaryDistance(coords, district, result) {
+        try {
+            // Get the closest point on the district boundary
+            const response = await fetch('/ssddmap/api/closest-boundary-point', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    lat: coords.lat,
+                    lon: coords.lon,
+                    state: district.state,
+                    district: district.district
+                })
+            });
+            
+            if (!response.ok) {
+                console.error('Failed to get boundary point');
+                return;
+            }
+            
+            const boundaryData = await response.json();
+            
+            if (boundaryData.success && boundaryData.closestPoint) {
+                // Create line from address to boundary
+                const lineCoords = [
+                    [coords.lat, coords.lon],
+                    [boundaryData.closestPoint.lat, boundaryData.closestPoint.lon]
+                ];
+                
+                this.boundaryLine = L.polyline(lineCoords, {
+                    color: '#ff6b6b',
+                    weight: 3,
+                    opacity: 0.8,
+                    dashArray: '10, 5'
+                });
+                
+                // Add tooltip with distance
+                const distanceText = this.formatDistance(boundaryData.distance);
+                this.boundaryLine.bindTooltip(`Distance to boundary: ${distanceText}`, {
+                    permanent: false,
+                    direction: 'center'
+                });
+                
+                this.boundaryLine.addTo(this.mapManager.map);
+                
+                // Add small marker at boundary point
+                this.boundaryMarker = L.circleMarker([boundaryData.closestPoint.lat, boundaryData.closestPoint.lon], {
+                    radius: 6,
+                    fillColor: '#ff6b6b',
+                    color: '#fff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                });
+                
+                this.boundaryMarker.bindTooltip('Closest boundary point', {
+                    permanent: false
+                });
+                
+                this.boundaryMarker.addTo(this.mapManager.map);
+                
+                // Store distance for sidebar display
+                this.currentBoundaryDistance = boundaryData.distance;
+            }
+        } catch (error) {
+            console.error('Error displaying boundary distance:', error);
+        }
+    }
+    
+    formatDistance(distance) {
+        if (distance.miles < 0.1) {
+            return `${Math.round(distance.feet)} feet`;
+        } else if (distance.miles < 10) {
+            return `${distance.miles.toFixed(2)} miles`;
+        } else {
+            return `${Math.round(distance.miles)} miles`;
+        }
+    }
+    
+    updateSidebarWithValidation(result, api) {
+        // Show sidebar if not visible
+        const sidebar = document.getElementById('info-sidebar');
+        if (!sidebar.classList.contains('active')) {
+            sidebar.classList.add('active');
+        }
+        
+        // Update district info
+        const districtInfo = document.getElementById('districtInfo');
+        
+        let html = `
+            <div class="validation-result-display">
+                <h4>Validated Address</h4>
+                <div class="validated-address">
+                    <p class="address-line">${result.standardized.street}</p>
+                    <p class="address-line">${result.standardized.city}, ${result.standardized.state} ${result.standardized.zip || result.standardized.zipCode}</p>
+                    <p class="api-source">Validated by ${api.toUpperCase()}</p>
+                </div>
+                
+                <div class="district-section">
+                    <h4>Congressional District</h4>
+                    <div class="district-display">
+                        <span class="district-number">${result.district.state}-${result.district.district}</span>
+                    </div>
+                </div>
+        `;
+        
+        // Add boundary distance if available
+        if (this.currentBoundaryDistance) {
+            html += `
+                <div class="boundary-distance-section">
+                    <h4>Distance to District Boundary</h4>
+                    <div class="distance-display">
+                        <span class="distance-value">${this.formatDistance(this.currentBoundaryDistance)}</span>
+                        <p class="distance-detail">
+                            ${this.currentBoundaryDistance.meters.toFixed(0)} meters • 
+                            ${this.currentBoundaryDistance.kilometers.toFixed(2)} km
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Add additional info if available
+        if (result.additionalInfo) {
+            html += `
+                <div class="additional-info-section">
+                    <h4>Additional Information</h4>
+                    <div class="info-details">
+            `;
+            
+            if (result.additionalInfo.countyName) {
+                html += `<p><strong>County:</strong> ${result.additionalInfo.countyName}</p>`;
+            }
+            if (result.additionalInfo.carrierRoute) {
+                html += `<p><strong>Carrier Route:</strong> ${result.additionalInfo.carrierRoute}</p>`;
+            }
+            if (result.standardized.zipPlus4) {
+                html += `<p><strong>ZIP+4:</strong> ${result.standardized.zipCode}-${result.standardized.zipPlus4}</p>`;
+            }
+            
+            html += `
+                    </div>
+                </div>
+            `;
+        }
+        
+        html += '</div>';
+        
+        districtInfo.innerHTML = html;
     }
     
     async loadDistrictBoundaries(state, district) {

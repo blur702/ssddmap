@@ -237,6 +237,7 @@ export class DataManager {
             { abbreviation: 'CA', name: 'California' },
             { abbreviation: 'CO', name: 'Colorado' },
             { abbreviation: 'CT', name: 'Connecticut' },
+            { abbreviation: 'DC', name: 'District of Columbia' },
             { abbreviation: 'DE', name: 'Delaware' },
             { abbreviation: 'FL', name: 'Florida' },
             { abbreviation: 'GA', name: 'Georgia' },
