@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify View on Map Fix</title>
+</head>
+<body>
+    <h1>View on Map Button Test</h1>
+    <p>This test verifies that the View on Map button works correctly:</p>
+    
+    <ol>
+        <li>Open the application at <a href="http://localhost:3001/ssddmap/" target="_blank">http://localhost:3001/ssddmap/</a></li>
+        <li>Wait for the map to load completely (you should see district boundaries)</li>
+        <li>Click on any district on the map</li>
+        <li>The sidebar should open with district information</li>
+        <li>Look for the "View on Map" button in the sidebar</li>
+        <li>Click the "View on Map" button</li>
+        <li>The map should zoom to the selected district and highlight it</li>
+    </ol>
+    
+    <h2>Expected Behavior:</h2>
+    <ul>
+        <li>The View on Map button should be visible in the sidebar</li>
+        <li>Clicking it should trigger a zoom to the district</li>
+        <li>The district should be highlighted/outlined</li>
+        <li>The map should center on the district</li>
+    </ul>
+    
+    <h2>Debug Information:</h2>
+    <p>If it's not working, open developer tools and check:</p>
+    <ul>
+        <li>Are there any JavaScript errors in the console?</li>
+        <li>Does <code>window.modularApp?.districtInfoModule?.eventBus</code> exist?</li>
+        <li>Does <code>window.modularApp?.districtInfoModule?.currentDistrictKey</code> have a value?</li>
+        <li>Are there any "Centering on district" console messages when you click the button?</li>
+    </ul>
+    
+    <h2>Key Fixes Applied:</h2>
+    <ul>
+        <li>Updated DistrictInfoModule constructor to accept eventBus parameter</li>
+        <li>Modified app-new-modular.js to pass eventBus when creating DistrictInfoModule</li>
+        <li>Changed focusOnMap method to use this.eventBus instead of window.eventBus</li>
+        <li>Restored centerOnDistrict event handler in app-new-modular.js</li>
+    </ul>
+</body>
+</html>
