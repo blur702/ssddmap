@@ -1,0 +1,604 @@
+/* Sidebar Templates Styles */
+
+/* Representative Profile */
+.representative-profile {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Representative Header */
+.rep-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.rep-photo-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.rep-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e5e7eb;
+}
+
+.rep-photo-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #9ca3af;
+  border: 3px solid #e5e7eb;
+}
+
+.party-indicator {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.rep-basic-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rep-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.3;
+}
+
+.rep-title-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.district-badge {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.party-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.rep-state {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Representative Details */
+.rep-details {
+  background: #f9fafb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.rep-details.compact {
+  padding: 0.75rem;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.detail-icon {
+  font-size: 1rem;
+  width: 1.25rem;
+  text-align: center;
+}
+
+.detail-label {
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 0;
+}
+
+.detail-value {
+  color: #111827;
+  font-weight: 400;
+}
+
+.detail-link {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.detail-link:hover {
+  text-decoration: underline;
+}
+
+/* Section Styles */
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Contact Section */
+.contact-section {
+  background: #fef3c7;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.contact-options {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.contact-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.phone-button {
+  background: #10b981;
+  color: white;
+}
+
+.phone-button:hover {
+  background: #059669;
+}
+
+.form-button {
+  background: #3b82f6;
+  color: white;
+}
+
+.form-button:hover {
+  background: #2563eb;
+}
+
+/* Social Media Section */
+.social-section {
+  background: #f0f9ff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  color: #374151;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.social-link:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.social-icon {
+  font-size: 1rem;
+}
+
+/* Committees Section */
+.committees-section {
+  background: #faf5ff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.committees-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.committee-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 0.375rem;
+  border: 1px solid #e5e7eb;
+}
+
+.committee-name {
+  font-size: 0.875rem;
+  color: #111827;
+  flex: 1;
+}
+
+.committee-role {
+  font-size: 0.75rem;
+  color: #7c3aed;
+  font-weight: 500;
+  background: #f3e8ff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+/* Representative Actions */
+.rep-actions {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background: white;
+  color: #374151;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.btn-icon {
+  font-size: 1rem;
+}
+
+/* Compact Address Section */
+.compact-address-section {
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.address-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.copy-address-btn, .mini-copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.copy-address-btn:hover, .mini-copy-btn:hover {
+  background: #e2e8f0;
+  color: #374151;
+}
+
+.address-main {
+  font-size: 1rem;
+  color: #111827;
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  background: white;
+  border-radius: 0.375rem;
+  border: 1px solid #e5e7eb;
+}
+
+.address-metadata {
+  font-size: 0.875rem;
+}
+
+.metadata-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.metadata-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metadata-label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.metadata-value {
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.coordinates {
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 0.8rem;
+}
+
+.source {
+  font-style: italic;
+}
+
+/* DC Delegate Section */
+.dc-delegate-section {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  border: 1px solid #f59e0b;
+}
+
+.delegate-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.delegate-icon {
+  font-size: 2.5rem;
+  color: #d97706;
+}
+
+.delegate-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #92400e;
+  margin: 0;
+}
+
+.delegate-subtitle {
+  color: #b45309;
+  font-weight: 500;
+}
+
+.delegate-explanation {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-card {
+  background: white;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  border: 1px solid #f59e0b;
+}
+
+.info-card h5 {
+  margin: 0 0 0.5rem 0;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.info-text {
+  color: #374151;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.5;
+}
+
+.delegate-powers {
+  margin: 0;
+  padding-left: 1rem;
+  color: #374151;
+}
+
+.delegate-powers li {
+  margin-bottom: 0.25rem;
+}
+
+.delegate-note {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  border-left: 4px solid #f59e0b;
+}
+
+.delegate-note p {
+  margin: 0;
+  color: #92400e;
+  font-size: 0.875rem;
+}
+
+/* Vacant Seat Section */
+.vacant-seat-section {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  border: 1px solid #9ca3af;
+}
+
+.vacant-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.vacant-icon {
+  font-size: 2.5rem;
+  color: #6b7280;
+}
+
+.vacant-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #374151;
+  margin: 0;
+}
+
+.vacant-subtitle {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.vacant-explanation {
+  background: white;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  border: 1px solid #d1d5db;
+}
+
+.vacant-explanation .info-text {
+  margin-bottom: 0.75rem;
+}
+
+.vacant-explanation .info-note {
+  margin: 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+/* Copy feedback */
+.copy-feedback {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #10b981;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s;
+}
+
+.copy-feedback.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* No District Section */
+.no-district-section {
+  margin: 1rem 0;
+}
+
+.no-district-section .info-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.no-district-section .info-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #374151;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.no-district-section .info-message {
+  color: #6b7280;
+  margin: 0 0 0.5rem 0;
+}
+
+.no-district-section .suggestion {
+  color: #9ca3af;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Copy feedback error state */
+.copy-feedback.error {
+  background: #ef4444;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .rep-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .contact-options {
+    flex-direction: column;
+  }
+  
+  .contact-button {
+    justify-content: center;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .metadata-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+}

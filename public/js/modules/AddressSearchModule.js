@@ -3,11 +3,13 @@
  * This module uses the SidepanelInterface to display comprehensive address and district data
  */
 import { SidepanelInterface } from '../ui/SidepanelInterface.js';
+import { SidebarTemplates } from '../common/SidebarTemplates.js';
 
 export class AddressSearchModule {
   constructor (sidebarElement, dataManager, eventBus = null, boundaryDistanceModule = null) {
     this.dataManager = dataManager;
     this.sidepanelInterface = new SidepanelInterface(sidebarElement);
+    this.templates = new SidebarTemplates();
     this.currentSearchResult = null;
     this.eventBus = eventBus;
     this.callbacks = {};
@@ -92,51 +94,26 @@ export class AddressSearchModule {
   }
 
   /**
-     * Generate content for address search result
+     * Generate content for address search result using new templates
      */
   generateSearchResultContent (searchResult, districtInfo, boundaryResult = null) {
-    // Address section
-    const addressSection = this.sidepanelInterface.createSection('Found Address', `
-            <div class="search-address">
-                <p class="address-main">${searchResult.address}</p>
-                <div class="coordinates">
-                    <span class="coord-label">Coordinates:</span>
-                    <span class="coord-value">${searchResult.lat.toFixed(6)}, ${searchResult.lon.toFixed(6)}</span>
-                </div>
-                <div class="data-source">
-                    <span class="source-label">Data Source:</span>
-                    <span class="source-value">${this.formatDataSource(searchResult.source)}</span>
-                </div>
-            </div>
-        `, 'address-section');
+    let content = '';
 
-    // District section
-    let districtSection = '';
-    if (districtInfo) {
-      districtSection = this.sidepanelInterface.createSection('Congressional District', `
-                <div class="district-assignment">
-                    <div class="district-header">
-                        <h4 class="district-number">${districtInfo.state}-${districtInfo.district}</h4>
-                        ${districtInfo.representative
-    ? this.sidepanelInterface.createPartyIndicator(districtInfo.representative.party, 'large')
-    : this.sidepanelInterface.createPartyIndicator(null, 'large')}
-                    </div>
-                    ${this.generateRepresentativeInfo(districtInfo.representative)}
-                </div>
-            `, 'district-section');
-    } else if (searchResult.state || searchResult.district) {
-      // Partial district info available
-      districtSection = this.sidepanelInterface.createSection('Congressional District', `
-                <div class="district-partial">
-                    <p class="warning-message">
-                        ${searchResult.state ? `State: ${searchResult.state}` : ''}
-                        ${searchResult.district ? `District: ${searchResult.district}` : ''}
-                    </p>
-                    <p class="info-message">Complete district information not available</p>
-                </div>
-            `, 'district-section');
+    // 1. Representative/District Section (Priority #1)
+    if (districtInfo && districtInfo.representative) {
+      // Full representative information
+      content += this.templates.createRepresentativeTemplate(
+        districtInfo.representative,
+        { state: districtInfo.state, district: districtInfo.district },
+        { showActions: true, showBioguide: true }
+      );
+    } else if (districtInfo && !districtInfo.representative) {
+      // Vacant seat
+      content += this.templates.createVacantSeatTemplate(
+        { state: districtInfo.state, district: districtInfo.district }
+      );
     } else {
-      // Check if this is a DC address (no traditional congressional district)
+      // Check for DC or no district info
       const isDC = searchResult.address && (
         searchResult.address.includes('District of Columbia') ||
         searchResult.address.includes('Washington, DC') ||
@@ -144,58 +121,92 @@ export class AddressSearchModule {
       );
 
       if (isDC) {
-        districtSection = this.sidepanelInterface.createSection('Congressional District', `
-                <div class="dc-delegate-info">
-                    <h4 class="district-number">DC (Non-voting Delegate)</h4>
-                    <div class="dc-info">
-                        <p class="info-message">
-                            Washington DC has a non-voting delegate to Congress rather than a traditional representative.
-                        </p>
-                        <p class="dc-note">
-                            The delegate can vote in committees but not on final passage of legislation.
-                        </p>
-                    </div>
-                </div>
-            `, 'district-section');
+        content += this.templates.createDCDelegateTemplate();
       } else {
-        districtSection = this.sidepanelInterface.createSection('Congressional District', `
-                <div class="no-district-info">
-                    <p class="info-message">District information not available for this location</p>
-                    <p class="suggestion">Try using a more specific address or ZIP code</p>
-                </div>
-            `, 'district-section');
+        // No district information available
+        content += `
+          <div class="no-district-section">
+            <div class="info-card">
+              <h4>🗺️ Congressional District</h4>
+              <p class="info-message">District information not available for this location</p>
+              <p class="suggestion">Try using a more specific address or ZIP code</p>
+            </div>
+          </div>
+        `;
       }
     }
 
-    // Boundary distance section (if available)
-    let boundarySection = '';
+    // 2. Compact Address Section (Priority #2)
+    content += this.templates.createCompactAddressTemplate({
+      address: searchResult.address,
+      lat: searchResult.lat,
+      lon: searchResult.lon,
+      source: searchResult.source,
+      zip4: searchResult.zip4
+    });
+
+    // 3. Boundary Distance Section (if available)
     if (boundaryResult && boundaryResult.success) {
-      boundarySection = this.generateBoundaryDistanceSection(boundaryResult);
+      content += this.generateBoundaryDistanceSection(boundaryResult);
     }
 
-    // Resolution summary section (for USPS + AI results)
-    let resolutionSection = '';
+    // 4. Resolution Summary Section (for USPS + AI results)
     if (searchResult.source === 'usps_ai' && searchResult.resolutionSummary) {
-      resolutionSection = this.generateResolutionSection(searchResult);
+      content += this.generateResolutionSection(searchResult);
     }
 
-    // Comparison section (if available)
-    let comparisonSection = '';
+    // 5. Comparison Section (if available)
     if (searchResult.comparison) {
-      comparisonSection = this.generateComparisonSection(searchResult.comparison);
+      content += this.generateComparisonSection(searchResult.comparison);
     }
 
-    // Action buttons section
-    const actionsSection = this.sidepanelInterface.createSection('Actions', `
-            <div class="action-buttons">
-                ${this.sidepanelInterface.createButton('View on Map', () => this.focusOnMap(), 'btn-primary')}
-                ${districtInfo ? this.sidepanelInterface.createButton('View District Details', () => this.showDistrictDetails(districtInfo), 'btn-secondary') : ''}
-                ${boundaryResult && boundaryResult.success ? this.sidepanelInterface.createButton('Toggle Boundary View', () => this.toggleBoundaryVisualization(), 'btn-secondary') : ''}
-                ${this.sidepanelInterface.createButton('New Search', () => this.clearAndFocusSearch(), 'btn-secondary')}
-            </div>
-        `, 'actions-section');
+    // Setup event listeners for action buttons
+    this.setupActionListeners();
 
-    return addressSection + districtSection + boundarySection + resolutionSection + comparisonSection + actionsSection;
+    return content;
+  }
+
+  /**
+     * Setup action button listeners
+     */
+  setupActionListeners () {
+    // Remove existing listeners to prevent duplicates
+    document.removeEventListener('click', this.boundActionHandler);
+
+    // Bind the handler to preserve 'this' context
+    this.boundActionHandler = this.handleActionClick.bind(this);
+
+    // Add event listener for action buttons
+    document.addEventListener('click', this.boundActionHandler);
+  }
+
+  /**
+   * Handle action button clicks
+   */
+  handleActionClick (event) {
+    const button = event.target.closest('[data-action]');
+    if (!button) return;
+
+    event.preventDefault();
+
+    const action = button.dataset.action;
+
+    switch (action) {
+    case 'view-on-map':
+      this.focusOnMap();
+      break;
+    case 'new-search':
+      this.clearAndFocusSearch();
+      break;
+    case 'visit-website':
+      // Let the default link behavior handle this
+      break;
+    case 'contact-rep':
+      // Let the default link behavior handle this
+      break;
+    default:
+      console.log('Unknown action:', action);
+    }
   }
 
   /**
@@ -290,63 +301,6 @@ export class AddressSearchModule {
     return this.sidepanelInterface.createSection('Address Resolution', content, 'resolution-section');
   }
 
-  /**
-     * Generate representative information HTML
-     */
-  generateRepresentativeInfo (representative) {
-    if (!representative || !representative.name) {
-      return `
-                <div class="vacant-seat">
-                    <p class="vacant-message">This seat is currently vacant</p>
-                </div>
-            `;
-    }
-
-    return `
-            <div class="rep-details">
-                ${this.sidepanelInterface.createRepPhoto(representative.photo, representative.name)}
-                <div class="rep-info">
-                    <h5 class="rep-name">${representative.name}</h5>
-                    <p class="rep-party">${this.getFullPartyName(representative.party)}</p>
-                    ${this.sidepanelInterface.createInfoItem('Bioguide ID', representative.bioguideId)}
-                    ${this.sidepanelInterface.createInfoItem('Phone', representative.phone)}
-                    ${this.sidepanelInterface.createInfoItem('Office', representative.office)}
-                    ${representative.website
-    ? `
-                        <div class="info-item">
-                            <span class="info-label">Website:</span>
-                            <span class="info-value">${this.sidepanelInterface.createLink(representative.website, 'Official Website')}</span>
-                        </div>
-                    `
-    : ''}
-                </div>
-            </div>
-            ${this.generateCommitteesInfo(representative.committees)}
-        `;
-  }
-
-  /**
-     * Generate committees information
-     */
-  generateCommitteesInfo (committees) {
-    if (!committees || committees.length === 0) return '';
-
-    return `
-            <div class="committees-info">
-                <h6>Committee Assignments</h6>
-                <ul class="committees-list">
-                    ${committees.map(committee => `
-                        <li class="committee-item">
-                            <span class="committee-name">${committee.name}</span>
-                            ${committee.role && committee.role !== 'Member'
-    ? `<span class="committee-role">(${committee.role})</span>`
-    : ''}
-                        </li>
-                    `).join('')}
-                </ul>
-            </div>
-        `;
-  }
 
   /**
      * Generate comparison section for multiple data sources
@@ -422,17 +376,6 @@ export class AddressSearchModule {
     }
   }
 
-  /**
-     * Get full party name
-     */
-  getFullPartyName (party) {
-    switch (party) {
-    case 'D': return 'Democrat';
-    case 'R': return 'Republican';
-    case 'I': return 'Independent';
-    default: return 'Unknown';
-    }
-  }
 
   /**
      * Focus on the location on map
@@ -575,6 +518,10 @@ export class AddressSearchModule {
     this.currentBoundaryResult = null;
     if (this.boundaryDistanceModule) {
       this.boundaryDistanceModule.clearBoundaryVisualization();
+    }
+    // Remove action listeners
+    if (this.boundActionHandler) {
+      document.removeEventListener('click', this.boundActionHandler);
     }
     this.callbacks = {};
     this.eventBus = null;
