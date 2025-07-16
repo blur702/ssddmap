@@ -160,11 +160,22 @@ async function importHouseData() {
             const fullName = info['official-name'] || 
                 `${info.courtesy || ''} ${info.firstname || ''} ${info.middlename || ''} ${info.lastname} ${info.suffix || ''}`.trim();
             
-            // Check if member exists
-            const existingMember = await client.query(
-                'SELECT id FROM members WHERE state_code = $1 AND district_number = $2',
-                [stateCode, districtNum]
-            );
+            // Check if member exists by bioguide ID first (primary), then by state-district (fallback)
+            let existingMember;
+            if (info.bioguideID) {
+                existingMember = await client.query(
+                    'SELECT id FROM members WHERE bioguide_id = $1',
+                    [info.bioguideID]
+                );
+            }
+            
+            // Fallback to state-district if no bioguide ID match found
+            if (!existingMember || existingMember.rows.length === 0) {
+                existingMember = await client.query(
+                    'SELECT id FROM members WHERE state_code = $1 AND district_number = $2',
+                    [stateCode, districtNum]
+                );
+            }
             
             let memberId;
             if (existingMember.rows.length > 0) {

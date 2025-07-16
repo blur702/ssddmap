@@ -99,31 +99,8 @@ export class SidebarTemplates {
    * Create contact section
    */
   createContactSection (representative) {
-    if (!representative.phone && !representative.contactForm) return '';
-
-    return `
-      <div class="contact-section">
-        <h5 class="section-title">📞 Contact Information</h5>
-        <div class="contact-options">
-          ${representative.phone
-    ? `
-            <a href="tel:${representative.phone}" class="contact-button phone-button">
-              <span class="contact-icon">📞</span>
-              <span class="contact-text">Call Office</span>
-            </a>
-          `
-    : ''}
-          ${representative.contactForm
-    ? `
-            <a href="${representative.contactForm}" target="_blank" class="contact-button form-button">
-              <span class="contact-icon">📧</span>
-              <span class="contact-text">Contact Form</span>
-            </a>
-          `
-    : ''}
-        </div>
-      </div>
-    `;
+    // Remove phone and contact buttons - not needed
+    return '';
   }
 
   /**
@@ -161,16 +138,35 @@ export class SidebarTemplates {
    * Create committees section
    */
   createCommitteesSection (committees) {
-    if (!committees || committees.length === 0) return '';
+    if (!committees) return '';
 
-    const committeeList = committees.map(committee => `
-      <div class="committee-item">
-        <span class="committee-name">${committee.name}</span>
-        ${committee.role && committee.role !== 'Member'
-    ? `<span class="committee-role">${committee.role}</span>`
+    // Handle both single committee object and array of committees
+    let committeeArray = [];
+
+    if (Array.isArray(committees)) {
+      committeeArray = committees;
+    } else if (committees._ || committees.title) {
+      // Single committee object
+      committeeArray = [committees];
+    } else {
+      return '';
+    }
+
+    if (committeeArray.length === 0) return '';
+
+    const committeeList = committeeArray.map(committee => {
+      const name = committee._ || committee.name || 'Unknown Committee';
+      const role = committee.title || committee.role || 'Member';
+
+      return `
+        <div class="committee-item">
+          <span class="committee-name">${name}</span>
+          ${role && role !== 'Member'
+    ? `<span class="committee-role">${role}</span>`
     : ''}
-      </div>
-    `).join('');
+        </div>
+      `;
+    }).join('');
 
     return `
       <div class="committees-section">
