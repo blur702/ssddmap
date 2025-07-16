@@ -3,10 +3,13 @@ const { Pool } = require('pg');
 const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
-// const turf = require('@turf/turf'); // Unused, commented out
+const morgan = require('morgan');
 const fetch = require('node-fetch');
 const ValidationService = require('./services/validationService');
 const USPSOAuthService = require('./services/uspsOAuthService');
+const { USPSValidationService } = require('./services/usps-validation');
+const logger = require('./config/logger');
+const { requestTracker, errorTracker, getApiStats } = require('./middleware/apiReporting');
 require('dotenv').config();
 
 const app = express();
@@ -24,15 +27,22 @@ const pool = new Pool({
 // Test database connection
 pool.query('SELECT NOW()', (err, res) => {
   if (err) {
-    console.error('Database connection error:', err);
+    logger.error('Database connection error', { error: err.message, stack: err.stack });
   } else {
-    console.log('Database connected:', res.rows[0].now);
+    logger.info('Database connected', { timestamp: res.rows[0].now });
   }
 });
 
+// Logging middleware
+app.use(morgan('combined', { stream: logger.stream }));
+
+// Request tracking and reporting middleware
+app.use(requestTracker);
+
 // Serve static files from public directory
 app.use('/ssddmap', express.static(path.join(__dirname, 'public')));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Create router for /ssddmap prefix
 const router = express.Router();
@@ -40,6 +50,7 @@ const router = express.Router();
 // Initialize services
 const validationService = new ValidationService(pool);
 const uspsService = new USPSOAuthService();
+const uspsValidationService = new USPSValidationService(pool);
 
 // Get all available states
 router.get('/api/states', async (req, res) => {
@@ -1091,29 +1102,53 @@ router.get('/api/county-boundaries', async (req, res) => {
 });
 
 // Health check endpoint
-router.get('/api/health', async (req, res) => {
-  try {
-    await pool.query('SELECT 1');
-    res.json({ status: 'healthy', database: 'connected' });
-  } catch (error) {
-    res.status(500).json({ status: 'unhealthy', database: 'disconnected', error: error.message });
-  }
-});
+// Health endpoint is defined after the router mounting with comprehensive data
 
 // Configuration status endpoint
 router.get('/api/config-status', async (req, res) => {
   try {
-    // For now, return a basic config status
-    // In a real implementation, this would check actual API configurations
+    // Check for USPS configuration
+    const uspsConfigured = !!(process.env.USPS_CLIENT_ID && process.env.USPS_CLIENT_SECRET);
+    const smartyConfigured = !!(process.env.SMARTY_AUTH_ID && process.env.SMARTY_AUTH_TOKEN);
+    
+    let uspsValid = false;
+    let smartyValid = false;
+    
+    // Test USPS connection if configured
+    if (uspsConfigured) {
+      try {
+        const uspsService = new USPSOAuthService();
+        const testResult = await uspsService.testConnection();
+        uspsValid = testResult.success;
+      } catch (error) {
+        console.log('USPS connection test failed:', error.message);
+      }
+    }
+    
+    // Test Smarty connection if configured
+    if (smartyConfigured) {
+      try {
+        // Simple test to verify Smarty credentials
+        const testUrl = 'https://us-street.api.smartystreets.com/street-address';
+        const testResponse = await fetch(testUrl + '?auth-id=' + process.env.SMARTY_AUTH_ID + '&auth-token=' + process.env.SMARTY_AUTH_TOKEN, {
+          method: 'GET'
+        });
+        smartyValid = testResponse.status < 500; // Any non-server error is acceptable for credential test
+      } catch (error) {
+        console.log('Smarty connection test failed:', error.message);
+      }
+    }
+    
     res.json({
       usps: {
-        configured: false,
-        tokenValid: false
+        configured: uspsConfigured,
+        tokenValid: uspsValid
       },
       smarty: {
-        configured: false
+        configured: smartyConfigured,
+        tokenValid: smartyValid
       },
-      defaultMethod: 'census'
+      defaultMethod: process.env.DEFAULT_LOOKUP_METHOD || 'census'
     });
   } catch (error) {
     console.error('Error checking config status:', error);
@@ -1121,12 +1156,65 @@ router.get('/api/config-status', async (req, res) => {
   }
 });
 
-// Save configuration endpoint (stub)
+// Save configuration endpoint
 router.post('/api/save-config', async (req, res) => {
   try {
-    // In a real implementation, this would save API credentials securely
-    console.log('Config save requested (not implemented)');
-    res.json({ success: true, message: 'Configuration saved (stub)' });
+    const { lookupMethod, uspsClientId, uspsClientSecret, smartyAuthId, smartyAuthToken } = req.body;
+    
+    // Validate that at least one service is configured
+    if (!uspsClientId && !smartyAuthId) {
+      return res.status(400).json({ error: 'At least one service must be configured' });
+    }
+    
+    // Update environment variables
+    const envPath = path.join(__dirname, '.env');
+    let envContent = '';
+    
+    // Read existing .env file
+    try {
+      envContent = fs.readFileSync(envPath, 'utf8');
+    } catch (error) {
+      console.log('Creating new .env file');
+    }
+    
+    // Helper function to update or add environment variable
+    const updateEnvVar = (content, key, value) => {
+      const regex = new RegExp(`^${key}=.*$`, 'm');
+      if (regex.test(content)) {
+        return content.replace(regex, `${key}=${value}`);
+      } else {
+        return content + `\n${key}=${value}`;
+      }
+    };
+    
+    // Update configuration values
+    if (lookupMethod) {
+      envContent = updateEnvVar(envContent, 'DEFAULT_LOOKUP_METHOD', lookupMethod);
+    }
+    
+    if (uspsClientId) {
+      envContent = updateEnvVar(envContent, 'USPS_CLIENT_ID', uspsClientId);
+    }
+    
+    if (uspsClientSecret) {
+      envContent = updateEnvVar(envContent, 'USPS_CLIENT_SECRET', uspsClientSecret);
+    }
+    
+    if (smartyAuthId) {
+      envContent = updateEnvVar(envContent, 'SMARTY_AUTH_ID', smartyAuthId);
+    }
+    
+    if (smartyAuthToken) {
+      envContent = updateEnvVar(envContent, 'SMARTY_AUTH_TOKEN', smartyAuthToken);
+    }
+    
+    // Write updated .env file
+    fs.writeFileSync(envPath, envContent);
+    
+    // Reload environment variables
+    require('dotenv').config();
+    
+    res.json({ success: true, message: 'Configuration saved successfully' });
   } catch (error) {
     console.error('Error saving config:', error);
     res.status(500).json({ error: error.message });
@@ -1269,6 +1357,76 @@ router.post('/api/validate-address', async (req, res) => {
     }
   } catch (error) {
     console.error('Address validation error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// USPS-Only Address Validation Endpoints
+// USPS address validation with suggestions
+router.post('/api/usps-validate-address', async (req, res) => {
+  try {
+    const { address } = req.body;
+    if (!address || typeof address !== 'string' || !address.trim()) {
+      return res.status(400).json({ error: 'Valid address is required' });
+    }
+    
+    const trimmedAddress = address.trim();
+    console.log('USPS validation request for:', trimmedAddress);
+    
+    const results = await uspsValidationService.validateAddress(trimmedAddress);
+    res.json(results);
+    
+  } catch (error) {
+    console.error('USPS validation error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Validate a specific suggested address
+router.post('/api/usps-validate-suggestion', async (req, res) => {
+  try {
+    const { suggestion } = req.body;
+    if (!suggestion || !suggestion.address) {
+      return res.status(400).json({ error: 'Valid suggestion is required' });
+    }
+    
+    console.log('USPS suggestion validation for:', suggestion.description);
+    
+    const results = await uspsValidationService.validateSuggestedAddress(suggestion);
+    res.json(results);
+    
+  } catch (error) {
+    console.error('USPS suggestion validation error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get USPS service status
+router.get('/api/usps-validation-status', async (req, res) => {
+  try {
+    const status = await uspsValidationService.getStatus();
+    res.json(status);
+  } catch (error) {
+    console.error('USPS status check error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Geocode a validated USPS address for map display
+router.post('/api/usps-geocode-address', async (req, res) => {
+  try {
+    const { validationResult } = req.body;
+    if (!validationResult || !validationResult.success) {
+      return res.status(400).json({ error: 'Valid USPS validation result is required' });
+    }
+    
+    console.log('Geocoding validated address for map display');
+    
+    const geocodeResult = await uspsValidationService.geocodeValidatedAddress(validationResult);
+    res.json(geocodeResult);
+    
+  } catch (error) {
+    console.error('USPS geocoding error:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -1529,6 +1687,169 @@ router.post('/api/test/usps', async (req, res) => {
   }
 });
 
+// Test USPS configuration (alternative endpoint for ConfigurationManager)
+router.post('/api/test-usps', async (req, res) => {
+  try {
+    const { clientId, clientSecret } = req.body;
+
+    if (!clientId || !clientSecret) {
+      return res.status(400).json({ error: 'Client ID and Secret are required' });
+    }
+
+    // Create temporary service instance with provided credentials
+    const testService = new USPSOAuthService();
+    testService.clientId = clientId;
+    testService.clientSecret = clientSecret;
+
+    // Test connection
+    const result = await testService.testConnection();
+
+    res.json(result);
+  } catch (error) {
+    console.error('USPS test error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Test Smarty configuration
+router.post('/api/test-smarty', async (req, res) => {
+  try {
+    const { authId, authToken } = req.body;
+
+    if (!authId || !authToken) {
+      return res.status(400).json({ error: 'Auth ID and Token are required' });
+    }
+
+    // Test with a simple address lookup
+    const testAddress = '1600 Pennsylvania Ave, Washington, DC';
+    const url = `https://us-street.api.smartystreets.com/street-address?auth-id=${authId}&auth-token=${authToken}&street=${encodeURIComponent(testAddress)}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (response.ok && Array.isArray(data)) {
+      res.json({ success: true, message: 'Smarty API is working correctly' });
+    } else {
+      res.json({ success: false, error: 'Invalid credentials or API error' });
+    }
+  } catch (error) {
+    console.error('Smarty test error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// Google Gemini API for address correction suggestions
+router.post('/api/gemini-address-corrections', async (req, res) => {
+  try {
+    const { originalAddress, errorCode, errorMessage, errorDetails } = req.body;
+
+    if (!originalAddress) {
+      return res.status(400).json({ error: 'Original address is required' });
+    }
+
+    // Check if Gemini API key is configured
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: 'Gemini API key not configured' });
+    }
+
+    // Construct the prompt for Gemini
+    const prompt = `I need help correcting a US address that failed USPS validation. 
+
+Original Address: "${originalAddress}"
+Error Code: ${errorCode || 'Unknown'}
+Error Message: ${errorMessage || 'Unknown error'}
+Error Details: ${errorDetails || 'No additional details'}
+
+Please provide 3-5 corrected address suggestions that might validate successfully. Consider common issues like:
+- City name spelling corrections
+- State abbreviation corrections  
+- Street name variations and common abbreviations
+- ZIP code corrections based on city/state
+- Directional indicators (N, S, E, W)
+- Common city name variations
+
+For each suggestion, provide:
+1. The corrected full address
+2. A brief explanation of what was changed
+3. A confidence level (1-10)
+
+Format your response as a JSON array with this structure:
+[
+  {
+    "address": "corrected full address",
+    "explanation": "what was changed",
+    "confidence": 8
+  }
+]
+
+Focus on realistic corrections that would likely pass USPS validation.`;
+
+    // Call Gemini API
+    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }]
+      })
+    });
+
+    if (!geminiResponse.ok) {
+      const errorText = await geminiResponse.text();
+      console.error('Gemini API error:', geminiResponse.status, errorText);
+      throw new Error(`Gemini API error: ${geminiResponse.status} - ${errorText}`);
+    }
+
+    const geminiData = await geminiResponse.json();
+    const generatedText = geminiData.candidates[0].content.parts[0].text;
+
+    // Parse the JSON response from Gemini
+    let suggestions = [];
+    try {
+      // Extract JSON from the response (in case it's wrapped in markdown)
+      const jsonMatch = generatedText.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        suggestions = JSON.parse(jsonMatch[0]);
+      } else {
+        // Fallback parsing if no JSON array found
+        suggestions = JSON.parse(generatedText);
+      }
+    } catch (parseError) {
+      console.error('Failed to parse Gemini response:', parseError);
+      return res.status(500).json({ error: 'Failed to parse AI response' });
+    }
+
+    // Validate and clean suggestions
+    const validSuggestions = suggestions.filter(s => s.address && s.explanation)
+      .map(s => ({
+        address: s.address.trim(),
+        explanation: s.explanation.trim(),
+        confidence: Math.min(10, Math.max(1, parseInt(s.confidence) || 5))
+      }))
+      .slice(0, 5); // Limit to 5 suggestions
+
+    res.json({
+      success: true,
+      originalAddress,
+      suggestions: validSuggestions,
+      errorContext: {
+        code: errorCode,
+        message: errorMessage,
+        details: errorDetails
+      }
+    });
+
+  } catch (error) {
+    console.error('Gemini address correction error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Save Google configuration
 router.post('/api/config/google', async (req, res) => {
   try {
@@ -1588,10 +1909,139 @@ router.post('/api/test/google', async (req, res) => {
   }
 });
 
+// Gemini address correction proxy endpoint
+router.post('/api/gemini-correction', async (req, res) => {
+  try {
+    const { address, uspsError } = req.body;
+    
+    if (!address) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Address is required' 
+      });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Gemini API key not configured' 
+      });
+    }
+
+    // Build the prompt for Gemini
+    const prompt = `You are an address correction expert. Please help fix this address that failed USPS validation.
+
+Original address: ${address}
+${uspsError ? `USPS Error: ${uspsError}` : ''}
+
+Please provide a corrected version of this address that would be more likely to pass USPS validation. Focus on:
+- Correct spelling of street names
+- Proper abbreviations (St, Ave, Blvd, etc.)
+- Correct formatting
+- Common address issues
+
+Respond with just the corrected address, nothing else.`;
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'User-Agent': 'SSDD-Map/1.0'
+      },
+      body: JSON.stringify({
+        contents: [{ 
+          parts: [{ text: prompt }] 
+        }]
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Gemini API error: ${response.status} ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    
+    if (result.candidates && result.candidates[0] && result.candidates[0].content) {
+      const correctedAddress = result.candidates[0].content.parts[0].text.trim();
+      res.json({ 
+        success: true, 
+        correctedAddress,
+        originalAddress: address 
+      });
+    } else {
+      res.json({ 
+        success: false, 
+        error: 'No correction suggestion available' 
+      });
+    }
+  } catch (error) {
+    console.error('Gemini correction error:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
 // Mount router at /ssddmap
+// API reporting endpoint - should be before the main router
+router.get('/api/system/stats', (req, res) => {
+  try {
+    const stats = getApiStats();
+    logger.info('API stats requested', { requestId: req.requestId });
+    res.json(stats);
+  } catch (error) {
+    logger.error('Error fetching API stats', { 
+      requestId: req.requestId, 
+      error: error.message 
+    });
+    res.status(500).json({ error: 'Failed to fetch API statistics' });
+  }
+});
+
+// Health check endpoint
+router.get('/api/health', (req, res) => {
+  const healthStatus = {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memoryUsage: process.memoryUsage(),
+    version: process.version,
+    environment: process.env.NODE_ENV || 'development'
+  };
+  
+  logger.info('Health check requested', { requestId: req.requestId });
+  res.json(healthStatus);
+});
+
 app.use('/ssddmap', router);
 
+// Error handling middleware (must be after router)
+app.use(errorTracker);
+
+// Global error handler
+app.use((err, req, res, next) => {
+  logger.error('Global error handler', {
+    requestId: req.requestId,
+    error: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method
+  });
+  
+  res.status(500).json({ 
+    error: 'Internal server error',
+    requestId: req.requestId
+  });
+});
+
 app.listen(PORT, () => {
+  logger.info('Server started', {
+    port: PORT,
+    environment: process.env.NODE_ENV || 'development',
+    database: 'PostgreSQL',
+    timestamp: new Date().toISOString()
+  });
   console.log(`Server running at http://localhost:${PORT}`);
   console.log('Using PostgreSQL database for optimized performance');
 });
