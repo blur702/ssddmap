@@ -12,7 +12,10 @@
     "test:report": "playwright show-report",
     "test:ci": "playwright test --reporter=html",
     "test:headed": "playwright test --headed",
-    "lint": "echo 'Linting JavaScript files...' && find public/js -name '*.js' -exec node -c {} \\;",
+    "lint": "eslint public/js/**/*.js services/**/*.js server.js --fix-dry-run",
+    "lint:fix": "eslint public/js/**/*.js services/**/*.js server.js --fix",
+    "lint:check": "eslint public/js/**/*.js services/**/*.js server.js",
+    "lint:staged": "eslint --fix",
     "audit": "npm audit --audit-level moderate",
     "health": "curl -f http://localhost:3001 || exit 1",
     "pretest": "npm run health",
@@ -40,6 +43,11 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.54.1",
-    "playwright": "^1.54.1"
+    "playwright": "^1.54.1",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-n": "^16.6.0",
+    "eslint-plugin-promise": "^6.1.0"
   }
 }

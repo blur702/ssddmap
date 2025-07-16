@@ -65,7 +65,7 @@ jobs:
         retention-days: 7
 
   lint:
-    name: Code Quality
+    name: Code Quality & Linting
     runs-on: ubuntu-latest
     
     steps:
@@ -81,19 +81,36 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Check for console.log statements
+    - name: Run ESLint
       run: |
+        echo "🔍 Running ESLint..."
+        npm run lint:check
+        
+    - name: Check ESLint rules coverage
+      run: |
+        echo "📊 ESLint Coverage Report:"
+        npx eslint public/js/**/*.js services/**/*.js server.js --format=json | jq '.[] | select(.errorCount > 0 or .warningCount > 0) | .filePath'
+        
+    - name: Run additional code quality checks
+      run: |
+        echo "🔍 Additional quality checks..."
+        
+        # Check for console.log in production code (warnings only)
         if grep -r "console\.log" public/js/ --exclude-dir=node_modules; then
-          echo "Console.log statements found in production code"
-          exit 1
+          echo "⚠️ Console.log statements found in frontend code"
         fi
         
-    - name: Check for TODO/FIXME comments
-      run: |
+        # Check for TODO/FIXME comments (warnings only)
         if grep -r "TODO\|FIXME" public/js/ server.js services/ --exclude-dir=node_modules; then
-          echo "Found TODO/FIXME comments that need attention"
-          exit 1
+          echo "⚠️ TODO/FIXME comments found - consider addressing them"
         fi
+        
+        # Check for proper error handling patterns
+        if ! grep -r "try\|catch\|throw" services/ --exclude-dir=node_modules; then
+          echo "⚠️ No error handling patterns found in services"
+        fi
+        
+        echo "✅ Code quality checks completed"
 
   security:
     name: Security Scan

@@ -1,0 +1,50 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.bundle.js
+
+# Test outputs
+playwright-report/
+test-results/
+coverage/
+
+# Cache and logs
+cache/
+logs/
+*.log
+
+# Configuration files that don't need linting
+*.config.js
+lighthouserc.js
+
+# Data files
+*.json
+*.kml
+*.csv
+*.sql
+
+# Git
+.git/
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*.backup
+*.bak
+
+# Environment files
+.env*
+
+# Database files
+*.db
+*.sqlite

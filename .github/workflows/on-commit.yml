@@ -22,12 +22,15 @@ jobs:
     - name: Install dependencies
       run: npm ci
       
-    - name: Quick syntax check
+    - name: Quick syntax and lint check
       run: |
-        echo "🔍 Checking JavaScript syntax..."
-        find public/js -name "*.js" -exec node -c {} \;
-        find services -name "*.js" -exec node -c {} \;
-        node -c server.js
+        echo "🔍 Running quick ESLint check..."
+        npm run lint:check || {
+          echo "❌ ESLint issues found"
+          echo "💡 Run 'npm run lint:fix' locally to auto-fix issues"
+          exit 1
+        }
+        echo "✅ ESLint checks passed"
         
     - name: Security quick scan
       run: |
