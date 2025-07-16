@@ -28,6 +28,7 @@ export class AddressSearchModule {
      * @param {Object} searchResult.districtInfo - District info from API
      */
   async displaySearchResult (searchResult) {
+    console.log('🔍 AddressSearchModule.displaySearchResult called with:', searchResult);
     this.currentSearchResult = searchResult;
 
     // Get district information - prefer from searchResult if available
@@ -78,11 +79,16 @@ export class AddressSearchModule {
     const title = 'Address Search Result';
     const content = this.generateSearchResultContent(searchResult, districtInfo, boundaryResult);
 
+    console.log('🔍 AddressSearchModule showing sidebar with title:', title);
+    console.log('🔍 AddressSearchModule content length:', content.length);
+
     this.sidepanelInterface.show({
       title,
       content,
       data: { searchResult, districtInfo, boundaryResult }
     });
+
+    console.log('✅ AddressSearchModule.displaySearchResult completed');
   }
 
   /**
@@ -130,12 +136,35 @@ export class AddressSearchModule {
                 </div>
             `, 'district-section');
     } else {
-      districtSection = this.sidepanelInterface.createSection('Congressional District', `
+      // Check if this is a DC address (no traditional congressional district)
+      const isDC = searchResult.address && (
+        searchResult.address.includes('District of Columbia') ||
+        searchResult.address.includes('Washington, DC') ||
+        searchResult.address.includes('Washington, D.C.')
+      );
+
+      if (isDC) {
+        districtSection = this.sidepanelInterface.createSection('Congressional District', `
+                <div class="dc-delegate-info">
+                    <h4 class="district-number">DC (Non-voting Delegate)</h4>
+                    <div class="dc-info">
+                        <p class="info-message">
+                            Washington DC has a non-voting delegate to Congress rather than a traditional representative.
+                        </p>
+                        <p class="dc-note">
+                            The delegate can vote in committees but not on final passage of legislation.
+                        </p>
+                    </div>
+                </div>
+            `, 'district-section');
+      } else {
+        districtSection = this.sidepanelInterface.createSection('Congressional District', `
                 <div class="no-district-info">
                     <p class="info-message">District information not available for this location</p>
                     <p class="suggestion">Try using a more specific address or ZIP code</p>
                 </div>
             `, 'district-section');
+      }
     }
 
     // Boundary distance section (if available)

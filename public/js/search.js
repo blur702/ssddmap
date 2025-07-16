@@ -241,11 +241,19 @@ export class SearchManager {
             let result;
             
             if (preselectedResult) {
+                // For preselected results (from autosuggest), we need to do district lookup
+                const districtResponse = await fetch(`/ssddmap/api/find-district?lat=${preselectedResult.lat}&lon=${preselectedResult.lon}`);
+                const districtData = await districtResponse.json();
+                
                 result = {
                     address: address,
                     lat: preselectedResult.lat,
                     lon: preselectedResult.lon,
-                    source: 'nominatim'
+                    source: 'nominatim',
+                    state: districtData.found ? districtData.state : null,
+                    district: districtData.found ? districtData.district : null,
+                    member: districtData.found ? districtData.member : null,
+                    districtInfo: districtData
                 };
             } else {
                 // Use selected location method
